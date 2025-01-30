@@ -383,7 +383,7 @@ def render_dashboard():
     
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
-    
+    print(dati_filtrati)
 
 
     
