@@ -434,9 +434,7 @@ def render_dashboard():
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
         st.plotly_chart(fig)
         st.divider()
-        marginalità_totale
-        marginalità_locazioni
-        marginalità_pulizie
+        
         col3, col4, col5 = st.columns([1,1,1])
 
         with col3:
