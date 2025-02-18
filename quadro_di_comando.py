@@ -1153,7 +1153,7 @@ def visualizza_andamento_ricavi(dati_filtrati, colonne_da_visualizzare):
         xaxis_title="",
         yaxis_title="",
         showlegend=False,
-        height=300,  # Altezza compatta
+        height=400,  # Altezza compatta
         width=300,   # Larghezza compatta
         hovermode="x unified"
     )
