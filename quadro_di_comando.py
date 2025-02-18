@@ -395,7 +395,7 @@ def render_dashboard():
    
         
             
-    col1, col2, col3, col4, col4_1 = st.columns([6, 4, 4, 4,6])  # Tre colonne di uguale larghezza
+    col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
 
     # Colonna 1: Grafico ad anello + KPI
     
@@ -403,21 +403,37 @@ def render_dashboard():
     with col1:
         
         
-        fig_ricavi = visualizza_andamento_ricavi(dati_filtrati)
-        if fig_ricavi:
-            st.plotly_chart(fig_ricavi, use_container_width=True)
-                            
-    with col2:
-        #grafico ad anello 
+        st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
+
         # Sub-layout per centrare il grafico e il dato
-        
-        with col2:
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_locazioni"]
-            grafico_anello = create_donut_chart1(totale, kpi)
+            kpi = kpis["commissioni_totali"]
+            grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col2:
-            st.metric("💰 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
+        with metrica_col:
+            st.metric("📈 Costi (€)", f"{kpis['commissioni_totali']:,.2f}")
+
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["marginalità_totale"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("📈 Margine sul venduto (€)", f"{kpis['marginalità_totale']:,.2f}")
+         
+        
+                      
+        
+      
+    with col2:
+        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
+        fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
+        st.plotly_chart(fig)
+
            
     with col3:
         
@@ -1032,62 +1048,59 @@ def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, sta
 
 ####################  grafico andamento dei ricavi ####################
 
-def visualizza_andamento_ricavi(dati_filtrati):
+
+
+def visualizza_andamento_ricavi(dati_filtrati, colonne_da_visualizzare):
     """
-    Crea un grafico a linee per visualizzare l'andamento dei ricavi totali, locazioni e pulizie nel tempo.
+    Crea un grafico a linee per visualizzare l'andamento di diverse metriche nel tempo.
 
     Parametri:
         dati_filtrati (DataFrame): Un DataFrame contenente i dati filtrati,
-                                   con colonne 'Data Check-In', 'Ricavi Locazione', 'Ricavi Pulizie'.
+                                   con una colonna 'Data Check-In' e altre colonne numeriche da visualizzare.
+        colonne_da_visualizzare (list): Lista delle colonne da mostrare nel grafico.
 
     Output:
-        Ritorna una figura Plotly che rappresenta l'andamento dei ricavi nel tempo.
+        Ritorna una figura Plotly che rappresenta l'andamento delle metriche nel tempo.
     """
     if dati_filtrati.empty:
         st.warning("Nessun dato disponibile per creare il grafico.")
         return None
 
-    # Prepara i dati
+    # Assicura che 'Data Check-In' sia in formato datetime
     dati_filtrati['Data Check-In'] = pd.to_datetime(dati_filtrati['Data Check-In'], errors='coerce')
     dati_filtrati = dati_filtrati.dropna(subset=['Data Check-In'])
 
-    # Calcola i ricavi totali
-    dati_filtrati['Ricavi Totali'] = dati_filtrati['Ricavi Locazione'] + dati_filtrati['Ricavi Pulizie']
-
-    # Raggruppa per mese
+    # Raggruppa per mese, sommando le colonne selezionate
     dati_gruppati = dati_filtrati.groupby(dati_filtrati['Data Check-In'].dt.to_period('M')).agg({
-        'Ricavi Locazione': 'sum',
-        'Ricavi Pulizie': 'sum',
-        'Ricavi Totali': 'sum'
+        col: 'sum' for col in colonne_da_visualizzare
     }).reset_index()
 
-    # Converti il periodo in un formato datetime per il grafico
+    # Converti il periodo in datetime per il grafico
     dati_gruppati['Data'] = dati_gruppati['Data Check-In'].dt.to_timestamp()
-    
-    
 
-    # Crea il grafico con Plotly
+    # Crea il grafico con le colonne specificate
     fig = px.line(
         dati_gruppati,
         x='Data',
-        y=['Ricavi Totali', 'Ricavi Locazione', 'Ricavi Pulizie'],
+        y=colonne_da_visualizzare,
         title="",
         labels={'value': 'Ricavi (€)', 'Data': 'Mese'},
         markers=True,
-        line_shape="spline"  # Aggiunge la smussatura
+        line_shape="spline"  # Smussatura linee
     )
 
     # Personalizzazione del layout
     fig.update_layout(
         xaxis_title="",
-        yaxis_title= "",
+        yaxis_title="",
         showlegend=False,
         height=300,  # Altezza compatta
-        width=300, #larghezza
+        width=300,   # Larghezza compatta
         hovermode="x unified"
     )
 
     return fig
+
 
 ####################  grafico a barre ricavi/commissioni   ####################
 
