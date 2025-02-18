@@ -814,6 +814,18 @@ def dashboard_proprietari():
                 st.metric("📊 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
 
         with col5:
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col5:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_pulizie"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col5:
+                st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
+
+
+
     # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
     col12, col13, col14 = st.columns([4.5,9,4.5])  
     
