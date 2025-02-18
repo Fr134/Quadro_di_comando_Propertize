@@ -752,8 +752,8 @@ def dashboard_proprietari():
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
 
 
-
-    col1, col2, col3, col4 = st.columns([6, 4, 4, 4])  # Tre colonne di uguale larghezza
+    col01, col02 = st.columns([])
+    col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     
     with col1:
         
@@ -784,46 +784,36 @@ def dashboard_proprietari():
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
           
     with col2:
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
         st.plotly_chart(fig)
         st.divider()
-        with col2:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_locazioni"]
-            grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col2:
-            st.metric("💰 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
-           
-    with col3:
         
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        
+        col3, col4, col5 = st.columns([1,1,1])
+
         with col3:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_pulizie"]
-            grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col3:
-            st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
-                       
-    with col4:
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col3:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_totale"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col3:
+                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
+
         with col4:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_totale"]
-            grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col4:
-            st.metric("💰 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
-        
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col4:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_locazioni"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col4:
+                st.metric("📊 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
+
+        with col5:
     # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
     col12, col13, col14 = st.columns([4.5,9,4.5])  
     
