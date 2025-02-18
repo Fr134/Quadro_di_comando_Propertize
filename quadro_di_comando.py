@@ -752,7 +752,7 @@ def dashboard_proprietari():
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
 
 
-    col01, col02 = st.columns([])
+    
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     
     with col1:
