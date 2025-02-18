@@ -682,7 +682,7 @@ def dashboard_proprietari():
     
     with col1:
         
-        with col5:
+        with col1:
             st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
                       
         
