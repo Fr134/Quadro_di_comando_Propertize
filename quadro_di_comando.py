@@ -520,6 +520,103 @@ def render_dashboard():
     
     st.divider()
             
+    
+
+
+def analisi_immobili():
+
+
+def dashboard_proprietari():
+    inject_custom_css()
+    st.title("📊 Performance immobili")
+
+    
+
+    # Verifica se i dati principali sono disponibili
+    if 'data' not in st.session_state or st.session_state['data'] is None:
+        st.error("Nessun dato disponibile. Torna alla pagina di caricamento.")
+        return
+
+    # Verifica se il file è disponibile per il calcolo delle notti disponibili
+    if 'uploaded_file' not in st.session_state:
+        st.error("Nessun file caricato per il calcolo delle notti disponibili.")
+        return
+
+    file_path = st.session_state['uploaded_file']
+    data = st.session_state['data']
+
+    # Sezione Filtri
+    with st.sidebar.expander("🔍 Filtro Dati"):
+        st.markdown("### Filtra i dati")
+        
+        # Filtro per intervallo di date
+        start_date = st.date_input(
+            "Data Inizio",
+            data['Data Check-In'].min().date(),
+            key="start_date_filter"
+        )
+        end_date = st.date_input(
+            "Data Fine",
+            data['Data Check-In'].max().date(),
+            key="end_date_filter"
+        )
+
+        # Filtro per appartamento
+        view_option = st.radio(
+            "Visualizza",
+            ("Tutti gli Appartamenti", "Singolo Appartamento"),
+            key="view_option_filter"
+        )
+        appartamento = None
+        if view_option == "Singolo Appartamento":
+            appartamento = st.selectbox(
+                "Seleziona Appartamento",
+                data['Nome Appartamento'].unique(),
+                key="appartamento_filter"
+            )
+
+        # Filtraggio dei dati principali
+        dati_filtrati = data[
+            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
+            (data['Data Check-In'] <= pd.Timestamp(end_date))
+        ]
+        if appartamento:
+            dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == appartamento]
+
+        # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
+        if 'ricavi_totali' not in dati_filtrati.columns:
+            dati_filtrati['ricavi_totali'] = dati_filtrati['Ricavi Locazione'] - dati_filtrati['IVA Provvigioni PM'] - dati_filtrati['Commissioni OTA'] * 0.22 + dati_filtrati['Ricavi Pulizie'] / 1.22
+        if 'commissioni_totali' not in dati_filtrati.columns:
+            dati_filtrati['commissioni_totali'] = dati_filtrati['Commissioni OTA'] / 1.22 + dati_filtrati['Commissioni ITW Nette']
+
+        # Calcola le notti disponibili
+        notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
+        
+        # Filtra le notti disponibili in base al filtro appartamento
+        if appartamento:
+            notti_disponibili_filtrate = notti_disponibili_df[
+                notti_disponibili_df['Appartamento'] == appartamento
+            ]
+        else:
+            notti_disponibili_filtrate = notti_disponibili_df
+
+        # Salva i dati filtrati nel session state
+        st.session_state['filtered_data'] = dati_filtrati
+        st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
+
+    # Usa i dati filtrati se disponibili
+    if 'filtered_data' in st.session_state:
+        dati_filtrati = st.session_state['filtered_data']
+    if 'filtered_notti_disponibili' in st.session_state:
+        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
+
+
+    # Calcolo dei KPI
+    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
+    st.dataframe(kpis)
+
+
+
     col8, col9, col10, col11 = st.columns([4.5, 4.5, 4.5, 4.5])  # Tre colonne di uguale larghezza
     
     with col8:
@@ -617,93 +714,6 @@ def render_dashboard():
         st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
         st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
          
-
-
-
-
-def dashboard_proprietari():
-    inject_custom_css()
-    st.title("📊 Performance immobili")
-
-    
-
-    # Verifica se i dati principali sono disponibili
-    if 'data' not in st.session_state or st.session_state['data'] is None:
-        st.error("Nessun dato disponibile. Torna alla pagina di caricamento.")
-        return
-
-    # Verifica se il file è disponibile per il calcolo delle notti disponibili
-    if 'uploaded_file' not in st.session_state:
-        st.error("Nessun file caricato per il calcolo delle notti disponibili.")
-        return
-
-    file_path = st.session_state['uploaded_file']
-    data = st.session_state['data']
-
-    # Sezione Filtri
-    with st.sidebar.expander("🔍 Filtro Dati"):
-        st.markdown("### Filtra i dati")
-        
-        # Filtro per intervallo di date
-        start_date = st.date_input(
-            "Data Inizio",
-            data['Data Check-In'].min().date(),
-            key="start_date_filter"
-        )
-        end_date = st.date_input(
-            "Data Fine",
-            data['Data Check-In'].max().date(),
-            key="end_date_filter"
-        )
-
-        # Filtro per appartamento
-        view_option = st.radio(
-            "Visualizza",
-            ("Tutti gli Appartamenti", "Singolo Appartamento"),
-            key="view_option_filter"
-        )
-        appartamento = None
-        if view_option == "Singolo Appartamento":
-            appartamento = st.selectbox(
-                "Seleziona Appartamento",
-                data['Nome Appartamento'].unique(),
-                key="appartamento_filter"
-            )
-
-        # Filtraggio dei dati principali
-        dati_filtrati = data[
-            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
-            (data['Data Check-In'] <= pd.Timestamp(end_date))
-        ]
-        if appartamento:
-            dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == appartamento]
-
-        # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
-        if 'ricavi_totali' not in dati_filtrati.columns:
-            dati_filtrati['ricavi_totali'] = dati_filtrati['Ricavi Locazione'] - dati_filtrati['IVA Provvigioni PM'] - dati_filtrati['Commissioni OTA'] * 0.22 + dati_filtrati['Ricavi Pulizie'] / 1.22
-        if 'commissioni_totali' not in dati_filtrati.columns:
-            dati_filtrati['commissioni_totali'] = dati_filtrati['Commissioni OTA'] / 1.22 + dati_filtrati['Commissioni ITW Nette']
-
-        # Calcola le notti disponibili
-        notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
-        
-        # Filtra le notti disponibili in base al filtro appartamento
-        if appartamento:
-            notti_disponibili_filtrate = notti_disponibili_df[
-                notti_disponibili_df['Appartamento'] == appartamento
-            ]
-        else:
-            notti_disponibili_filtrate = notti_disponibili_df
-
-        # Salva i dati filtrati nel session state
-        st.session_state['filtered_data'] = dati_filtrati
-        st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
-
-    # Usa i dati filtrati se disponibili
-    if 'filtered_data' in st.session_state:
-        dati_filtrati = st.session_state['filtered_data']
-    if 'filtered_notti_disponibili' in st.session_state:
-        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
 
     
 
