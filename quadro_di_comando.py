@@ -787,6 +787,10 @@ def dashboard_proprietari():
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
         
+        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
+        fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
+        st.plotly_chart(fig)
+        st.divider()
         with col2:
             totale = kpis["ricavi_totali"]
             kpi = kpis["marginalità_locazioni"]
