@@ -675,7 +675,6 @@ def dashboard_proprietari():
 
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
-    st.dataframe(kpis)
 
     # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
     col12, col13, col14 = st.columns([4.5,9,4.5])  
