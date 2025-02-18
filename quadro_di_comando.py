@@ -413,7 +413,7 @@ def render_dashboard():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 Costi (€)", f"{kpis['commissioni_totali']:,.2f}")
+            st.metric("📈 Costi (€)", f"{kpis['totale_commissioni']:,.2f}")
 
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
