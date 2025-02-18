@@ -473,10 +473,7 @@ def render_dashboard():
             
             
                        
-    with col4:
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        
+    
 
     
            
