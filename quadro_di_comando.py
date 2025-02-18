@@ -783,10 +783,7 @@ def dashboard_proprietari():
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
 
-        totale_commissioni
-        commissioni_ota
-        commissioni_itw
-
+     
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
@@ -819,12 +816,6 @@ def dashboard_proprietari():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['commissioni_itw']:,.2f}") 
-
-
-        
-
-        
-        
 
 
 
