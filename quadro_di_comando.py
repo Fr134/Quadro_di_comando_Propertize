@@ -523,9 +523,6 @@ def render_dashboard():
     
 
 
-def analisi_immobili():
-
-
 def dashboard_proprietari():
     inject_custom_css()
     st.title("📊 Performance immobili")
