@@ -311,7 +311,7 @@ def render_dashboard():
 
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
-    print(data)
+    
     
     
     
@@ -384,7 +384,7 @@ def render_dashboard():
     
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
-    st.dataframe(kpis)
+    
 
 
     
