@@ -295,7 +295,7 @@ def render_dashboard():
     Visualizza la dashboard con KPI, grafici e calcolo dinamico delle notti disponibili.
     """
     inject_custom_css()
-    st.title("📊 Dashboard Dati immobiliari")
+    st.title("📊 Propertize")
 
     
 
@@ -425,8 +425,6 @@ def render_dashboard():
         with metrica_col:
             st.metric("📈 Margine sul venduto (€)", f"{kpis['marginalità_totale']:,.2f}")
          
-        
-                      
         
       
     with col2:
