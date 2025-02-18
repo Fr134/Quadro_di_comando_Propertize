@@ -409,7 +409,7 @@ def render_dashboard():
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_totali"]
+            kpi = kpis["totale_commissioni"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
