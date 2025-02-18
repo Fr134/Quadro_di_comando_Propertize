@@ -684,6 +684,7 @@ def dashboard_proprietari():
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
         st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
+        st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
         
     with col13:
         # Integrazione nella dashboard
