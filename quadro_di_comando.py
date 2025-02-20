@@ -920,7 +920,7 @@ def dashboard_proprietari():
     
 def dashboard_analisi_performance():
     inject_custom_css()
-    st.title("📊 Performance immobili")
+    st.title("📊 Analisi Performance ")
 
     
 
@@ -1128,6 +1128,7 @@ def dashboard_analisi_performance():
                 st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
 
     st.divider()
+    st.title("📊 Analisi Prenotazioni ")
 
     # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
     col12, col13, col14 = st.columns([4.5,9,4.5])  
