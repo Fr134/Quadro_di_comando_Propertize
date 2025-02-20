@@ -1138,17 +1138,19 @@ def dashboard_analisi_performance():
         st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
-
-    #grafico ad anello 
+        
+        #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
-    grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-    with grafico_col:
-        totale = 100
-        kpi = kpis["tasso_di_occupazione"]
-        grafico_anello = create_donut_chart(totale, kpi)
-        st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-    with metrica_col:
-        st.metric("Tasso di occupazione (%)", f"{kpis['tasso_di_occupazione']:,.2f}")
+        with col12:
+            totale = 100
+            kpi = kpis["tasso_di_occupazione"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col12:
+            st.metric("📊 Tasso di occupazione (%)", f"{kpis['tasso_di_occupazione']:,.2f}")
+
+    
+        
         
     with col13:
         # Integrazione nella dashboard
