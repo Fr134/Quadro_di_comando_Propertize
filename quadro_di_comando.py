@@ -811,11 +811,23 @@ def dashboard_proprietari():
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_proprietari"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}") 
+
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_itw"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}") 
+        
 
 
 
