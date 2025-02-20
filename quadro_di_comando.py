@@ -1147,11 +1147,9 @@ def dashboard_analisi_performance():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with col12:
-            st.metric("📊 Tasso di occupazione (%)", f"{kpis['tasso_di_occupazione']:,.2f}")
+            st.metric("📊 Tasso di occupazione (%)")
 
-    
-        
-        
+  
     with col13:
         # Integrazione nella dashboard
         fig = visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date)
