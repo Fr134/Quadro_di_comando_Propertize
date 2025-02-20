@@ -288,7 +288,7 @@ def inject_custom_css():
 
 
 ############## Funzione per visualizzare i KPI e i grafici      #############   
-
+dashboard_analisi_performance
 
 def render_dashboard():
     """
@@ -918,7 +918,272 @@ def dashboard_proprietari():
     
     
     
+def dashboard_analisi_performance():
+    inject_custom_css()
+    st.title("📊 Performance immobili")
 
+    
+
+    # Verifica se i dati principali sono disponibili
+    if 'data' not in st.session_state or st.session_state['data'] is None:
+        st.error("Nessun dato disponibile. Torna alla pagina di caricamento.")
+        return
+
+    # Verifica se il file è disponibile per il calcolo delle notti disponibili
+    if 'uploaded_file' not in st.session_state:
+        st.error("Nessun file caricato per il calcolo delle notti disponibili.")
+        return
+
+    file_path = st.session_state['uploaded_file']
+    data = st.session_state['data']
+
+    # Sezione Filtri
+    with st.sidebar.expander("🔍 Filtro Dati"):
+        st.markdown("### Filtra i dati")
+        
+        # Filtro per intervallo di date
+        start_date = st.date_input(
+            "Data Inizio",
+            data['Data Check-In'].min().date(),
+            key="start_date_filter"
+        )
+        end_date = st.date_input(
+            "Data Fine",
+            data['Data Check-In'].max().date(),
+            key="end_date_filter"
+        )
+
+        # Filtro per appartamento
+        view_option = st.radio(
+            "Visualizza",
+            ("Tutti gli Appartamenti", "Singolo Appartamento"),
+            key="view_option_filter"
+        )
+        appartamento = None
+        if view_option == "Singolo Appartamento":
+            appartamento = st.selectbox(
+                "Seleziona Appartamento",
+                data['Nome Appartamento'].unique(),
+                key="appartamento_filter"
+            )
+
+        # Filtraggio dei dati principali
+        dati_filtrati = data[
+            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
+            (data['Data Check-In'] <= pd.Timestamp(end_date))
+        ]
+        if appartamento:
+            dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == appartamento]
+
+        # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
+        if 'ricavi_totali' not in dati_filtrati.columns:
+            dati_filtrati['ricavi_totali'] = dati_filtrati['Ricavi Locazione'] - dati_filtrati['IVA Provvigioni PM'] - dati_filtrati['Commissioni OTA'] * 0.22 + dati_filtrati['Ricavi Pulizie'] / 1.22
+        if 'commissioni_totali' not in dati_filtrati.columns:
+            dati_filtrati['commissioni_totali'] = dati_filtrati['Commissioni OTA'] / 1.22 + dati_filtrati['Commissioni ITW Nette']
+
+        # Calcola le notti disponibili
+        notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
+        
+        # Filtra le notti disponibili in base al filtro appartamento
+        if appartamento:
+            notti_disponibili_filtrate = notti_disponibili_df[
+                notti_disponibili_df['Appartamento'] == appartamento
+            ]
+        else:
+            notti_disponibili_filtrate = notti_disponibili_df
+
+        # Salva i dati filtrati nel session state
+        st.session_state['filtered_data'] = dati_filtrati
+        st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
+
+    # Usa i dati filtrati se disponibili
+    if 'filtered_data' in st.session_state:
+        dati_filtrati = st.session_state['filtered_data']
+    if 'filtered_notti_disponibili' in st.session_state:
+        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
+
+
+    # Calcolo dei KPI
+    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
+
+
+    
+    col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
+    
+    with col1:
+        
+        with col1:
+            st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
+                      
+        
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["totale_ricavi_locazione"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
+            
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["totale_ricavi_pulizie"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
+
+     
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["totale_commissioni"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("📈 Totale Commissioni (€)", f"{kpis['totale_commissioni']:,.2f}")
+            
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_ota"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
+
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_proprietari"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}") 
+
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_itw"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}") 
+        
+
+
+
+    with col2:
+        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
+        fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
+        st.plotly_chart(fig)
+        st.divider()
+        
+        col3, col4, col5 = st.columns([1,1,1])
+
+        with col3:
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col3:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_totale"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col3:
+                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
+
+        with col4:
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col4:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_locazioni"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col4:
+                st.metric("📊 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
+
+        with col5:
+            #grafico ad anello 
+            # Sub-layout per centrare il grafico e il dato
+            with col5:
+                totale = kpis["ricavi_totali"]
+                kpi = kpis["marginalità_pulizie"]
+                grafico_anello = create_donut_chart1(totale, kpi)
+                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            with col5:
+                st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
+
+    st.divider()
+
+    # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
+    col12, col13, col14 = st.columns([4.5,9,4.5])  
+    
+    with col12:
+    
+        st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
+        st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
+        st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
+        st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
+
+    #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+    grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+    with grafico_col:
+        totale = 100
+        kpi = kpis["tasso_di_occupazione"]
+        grafico_anello = create_donut_chart(totale, kpi)
+        st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+    with metrica_col:
+        st.metric("Tasso di occupazione (%)", f"{kpis['tasso_di_occupazione']:,.2f}")
+        
+    with col13:
+        # Integrazione nella dashboard
+        fig = visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date)
+        if fig:
+            st.plotly_chart(fig, use_container_width=True)
+    
+
+
+        col13_1, col13_2 = st.columns([2,2])
+        
+        with col13_1:
+            st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
+            st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")
+        with col13_2:
+            st.metric("📈 Notti occupate (€)", f"{kpis['notti_occupate']:,.0f}")
+            st.metric("📈 Tasso di occupazione (€)", f"{kpis['tasso_di_occupazione']:,.0f}")
+            
+        
+    with col14:
+        
+        st.metric("📈 Margine medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
+        st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
+        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+         
+
+
+    
+
+
+
+   
+    
+    
+   
 
 ############## Funzione per creare un grafico ad anello compatto    #############   
 
@@ -1297,12 +1562,14 @@ def crea_grafico_barre(df, ricavi_colonna, commissioni_colonna, marginalita_colo
 
 
 # Main
-menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Dashboard Propietari"])
+menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari"])
 
 if menu == "Carica File":
     upload_file()
 elif menu == "Dashboard":
     render_dashboard()
+elif menu == "Analisi Performance":
+    dashboard_analisi_performance()
 elif menu == "Dashboard Propietari":
     dashboard_proprietari()
 
