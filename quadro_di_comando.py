@@ -793,7 +793,7 @@ def dashboard_proprietari():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_commissioni']:,.2f}")
+            st.metric("📈 Totale Commissioni (€)", f"{kpis['totale_commissioni']:,.2f}")
             
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -804,7 +804,7 @@ def dashboard_proprietari():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['commissioni_ota']:,.2f}")
+            st.metric("🧹 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
 
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -815,7 +815,7 @@ def dashboard_proprietari():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['commissioni_itw']:,.2f}") 
+            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}") 
 
 
 
@@ -860,7 +860,7 @@ def dashboard_proprietari():
             with col5:
                 st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
 
-
+    st.divider()
 
     # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
     col12, col13, col14 = st.columns([4.5,9,4.5])  
@@ -1080,10 +1080,10 @@ def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, sta
 
     # Calcola metriche richieste
     dati_filtrati['Tasso di Occupazione'] = dati_filtrati['Notti Occupate'] / notti_disponibili_filtrate['Notti Disponibili'] * 100
-    dati_filtrati['Valore Prenotazione'] = dati_filtrati['ricavi_totali']
+    
     dati_filtrati['Prezzo Medio Notte'] = dati_filtrati['ricavi_totali'] / dati_filtrati['Notti Occupate']
     dati_filtrati['Margine Medio Notte'] = dati_filtrati['marginalità_totale'] / dati_filtrati['Notti Occupate']
-    dati_filtrati['Margine Prenotazione'] = dati_filtrati['marginalità_totale']
+    
 
     # Determina la scala temporale
     delta = (pd.Timestamp(end_date) - pd.Timestamp(start_date)).days
@@ -1101,10 +1101,9 @@ def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, sta
     dati_filtrati['Periodo'] = dati_filtrati['Data Check-In'].dt.to_period(freq).dt.start_time
     grouped_data = dati_filtrati.groupby('Periodo').agg({
         'Tasso di Occupazione': 'mean',
-        'Valore Prenotazione': 'mean',
         'Prezzo Medio Notte': 'mean',
         'Margine Medio Notte': 'mean',
-        'Margine Prenotazione': 'mean'
+        
     }).reset_index()
 
     # Trasforma i dati in formato lungo
@@ -1112,10 +1111,9 @@ def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, sta
         id_vars=['Periodo'],
         value_vars=[
             'Tasso di Occupazione',
-            'Valore Prenotazione',
             'Prezzo Medio Notte',
             'Margine Medio Notte',
-            'Margine Prenotazione'
+            
         ],
         var_name='Metrica',
         value_name='Valore'
