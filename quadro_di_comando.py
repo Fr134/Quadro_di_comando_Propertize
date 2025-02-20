@@ -288,7 +288,7 @@ def inject_custom_css():
 
 
 ############## Funzione per visualizzare i KPI e i grafici      #############   
-dashboard_analisi_performance
+
 
 def render_dashboard():
     """
