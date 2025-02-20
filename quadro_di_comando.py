@@ -1136,7 +1136,9 @@ def dashboard_analisi_performance():
     
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
         st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
-        st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
+        st.metric("📈 M.S.V medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
+        st.metric("📈 M.S.V pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
+        
         
         
         #grafico ad anello 
@@ -1170,14 +1172,15 @@ def dashboard_analisi_performance():
         
     with col14:
         
-        st.metric("📈 Margine medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
-        st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
-        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+        st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
+        st.metric("📈 M.S.V medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+        
 
 ##################################################################################################
 ##################################################################################################
 ##################################################################################################
         ####################### MODFICARE ###############################
+        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo Pulizia (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo biancheria (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo scorte (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
