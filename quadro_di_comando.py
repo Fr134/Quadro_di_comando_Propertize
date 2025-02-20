@@ -2,7 +2,8 @@ import pandas as pd
 import streamlit as st
 import plotly.express as px
 import plotly.graph_objects as go
-
+import folium
+from streamlit_folium import st_folium
 
 
 # Configurazione della pagina
@@ -1283,12 +1284,35 @@ def render_calcolatore():
 
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     with col1:
-        zona = st.selectbox(
-                "Seleziona zona",
-                data['Nome Appartamento'].unique(),
-                key="appartamento_filter"
-            )
+        # Dizionario con località e coordinate
+        localita = {
+            "Cagliari (CA)": (39.2238, 9.1217),
+            "Sassari (SS)": (40.7259, 8.5601),
+            "Olbia (OT)": (40.923, 9.497),
+            "Oristano (OR)": (39.9047, 8.588),
+            "Nuoro (NU)": (40.3202, 9.3347)
+    
+        }
 
+        # Selectbox per scegliere la località
+        localita_scelta = st.selectbox("Seleziona una località:", list(localita.keys()))
+
+        # Recupera le coordinate della località selezionata
+        lat, lon = localita[localita_scelta]
+
+        # Creazione della mappa con Folium
+        mappa = folium.Map(location=[lat, lon], zoom_start=12)
+
+        # Aggiunge un marcatore per evidenziare la località
+        folium.Marker(
+           [lat, lon], 
+           popup=f"<b>{localita_scelta}</b>", 
+           tooltip="Clicca per info"
+    
+        ).add_to(mappa)
+
+        # Mostra la mappa in Streamlit
+        st_folium(mappa, width=700, height=500)
 
 
 
