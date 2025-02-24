@@ -148,6 +148,29 @@ def load_and_preprocess_data(uploaded_file):
     data['Mese'] = data['Data Check-In'].dt.to_period('M').astype(str)
     return data
 
+
+def load_and_preprocess_input_data(uploaded_file):
+    data = pd.read_excel(
+        uploaded_file,
+        sheet_name=0,
+        usecols="A,B,C,D,E",
+        dtype=str,
+        engine="openpyxl"
+    )
+
+    data.columns = [
+        'Nome Appartamento',
+        'ID Appartamento',
+        'Comune',
+        'Zona',
+        'coordinate'
+        
+    ]
+
+    data = data.dropna(subset=['ID Appartamento'])
+    return pd.DataFrame(data)
+
+
 ############## Calcolo dei KPI    #############   
 
 
