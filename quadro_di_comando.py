@@ -1082,8 +1082,6 @@ def dashboard_analisi_performance():
     inject_custom_css()
     st.title("📊 Analisi Performance ")
 
-    
-
     # Verifica se i dati principali sono disponibili
     if 'data' not in st.session_state or st.session_state['data'] is None:
         st.error("Nessun dato disponibile. Torna alla pagina di caricamento.")
@@ -1094,15 +1092,14 @@ def dashboard_analisi_performance():
         st.error("Nessun file caricato per il calcolo delle notti disponibili.")
         return
 
-    # Sezione Filtri
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
     data = localizzatore(file_path, data)
 
-    # Sezione Filtri
+    # SEZIONE FILTRI (in sidebar)
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
-        
+
         # Filtro per intervallo di date
         start_date = st.date_input(
             "Data Inizio",
@@ -1115,6 +1112,13 @@ def dashboard_analisi_performance():
             key="end_date_filter"
         )
         
+        # Nuovo filtro per Modalità Confronto
+        confronto_mode = st.radio(
+            "Modalità Confronto",
+            ("Nessun Confronto", "Confronto Immobili", "Confronto Zone"),
+            key="confronto_mode"
+        )
+        
         # Filtro per appartamento
         view_option = st.radio(
             "Visualizza Appartamenti",
@@ -1122,18 +1126,26 @@ def dashboard_analisi_performance():
             key="view_option_filter"
         )
         immobili_selezionati = None
-        if view_option == "Singolo Appartamento":
-            immobili_selezionati = st.selectbox(
-                "Seleziona Appartamento",
-                data['Nome Appartamento'].unique(),
-                key="appartamento_filter"
-            )
-        elif view_option == "Multipli Appartamenti":
+        if confronto_mode == "Confronto Immobili":
+            # Se confronto attivo, fornisce la possibilità di selezionare due immobili
             immobili_selezionati = st.multiselect(
-                "Seleziona uno o più Appartamenti",
+                "Seleziona due Appartamenti da confrontare",
                 data['Nome Appartamento'].unique(),
-                key="appartamento_filter_multi"
+                key="confronto_immobili"
             )
+        else:
+            if view_option == "Singolo Appartamento":
+                immobili_selezionati = st.selectbox(
+                    "Seleziona Appartamento",
+                    data['Nome Appartamento'].unique(),
+                    key="appartamento_filter"
+                )
+            elif view_option == "Multipli Appartamenti":
+                immobili_selezionati = st.multiselect(
+                    "Seleziona uno o più Appartamenti",
+                    data['Nome Appartamento'].unique(),
+                    key="appartamento_filter_multi"
+                )
         
         # Filtro per zona
         zona_option = st.radio(
@@ -1142,39 +1154,45 @@ def dashboard_analisi_performance():
             key="zona_option_filter"
         )
         zona_selezionata = None
-        if zona_option == "Singola Zona":
-            zona_selezionata = st.selectbox(
-                "Seleziona Zona",
-                list(data['zona'].unique()),
-                key="zona_filter"
-            )
-        elif zona_option == "Multipla Zona":
+        if confronto_mode == "Confronto Zone":
             zona_selezionata = st.multiselect(
-                "Seleziona una o più Zone",
+                "Seleziona due Zone da confrontare",
                 list(data['zona'].unique()),
-                key="zona_filter_multi"
+                key="confronto_zone"
             )
+        else:
+            if zona_option == "Singola Zona":
+                zona_selezionata = st.selectbox(
+                    "Seleziona Zona",
+                    list(data['zona'].unique()),
+                    key="zona_filter"
+                )
+            elif zona_option == "Multipla Zona":
+                zona_selezionata = st.multiselect(
+                    "Seleziona una o più Zone",
+                    list(data['zona'].unique()),
+                    key="zona_filter_multi"
+                )
         
         # Filtraggio dei dati principali in base alle date
         dati_filtrati = data[
             (data['Data Check-In'] >= pd.Timestamp(start_date)) &
             (data['Data Check-In'] <= pd.Timestamp(end_date))
         ]
-        
-        # Filtra in base agli immobili
-        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
-            if view_option == "Singolo Appartamento":
-                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == immobili_selezionati]
-            else:  # Multipli Appartamenti
-                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'].isin(immobili_selezionati)]
-        
-        # Filtra in base alla zona
-        if zona_option != "Tutte le Zone" and zona_selezionata:
-            if zona_option == "Singola Zona":
-                dati_filtrati = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
-            else:  # Multipla Zona
-                dati_filtrati = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
-        
+        # Se non si sta effettuando un confronto, applica i filtri sugli immobili e sulle zone
+        if confronto_mode == "Nessun Confronto":
+            if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
+                if view_option == "Singolo Appartamento":
+                    dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == immobili_selezionati]
+                else:
+                    dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'].isin(immobili_selezionati)]
+            if zona_option != "Tutte le Zone" and zona_selezionata:
+                if zona_option == "Singola Zona":
+                    dati_filtrati = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
+                else:
+                    dati_filtrati = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
+        # Non applichiamo ulteriori filtri se siamo in modalità confronto (si considerano l'intero dataset filtrato per date)
+
         # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
         if 'ricavi_totali' not in dati_filtrati.columns:
             dati_filtrati['ricavi_totali'] = (
@@ -1191,9 +1209,7 @@ def dashboard_analisi_performance():
         
         # Calcola le notti disponibili
         notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
-        
-        # Filtra le notti disponibili in base al filtro appartamento
-        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
+        if view_option != "Tutti gli Appartamenti" and immobili_selezionati and confronto_mode == "Nessun Confronto":
             if view_option == "Singolo Appartamento":
                 notti_disponibili_filtrate = notti_disponibili_df[
                     notti_disponibili_df['Appartamento'] == immobili_selezionati
@@ -1204,179 +1220,190 @@ def dashboard_analisi_performance():
                 ]
         else:
             notti_disponibili_filtrate = notti_disponibili_df
-        
+
         # Salva i dati filtrati nel session state
         st.session_state['filtered_data'] = dati_filtrati
         st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
 
-    # Usa i dati filtrati se disponibili
     if 'filtered_data' in st.session_state:
         dati_filtrati = st.session_state['filtered_data']
     if 'filtered_notti_disponibili' in st.session_state:
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
 
+    # Se è attivo il confronto, elaboriamo e mostriamo i KPI dei due gruppi separatamente
+    if confronto_mode == "Confronto Immobili":
+        if immobili_selezionati and isinstance(immobili_selezionati, list) and len(immobili_selezionati) == 2:
+            imm1, imm2 = immobili_selezionati[0], immobili_selezionati[1]
+            dati1 = dati_filtrati[dati_filtrati['Nome Appartamento'] == imm1]
+            dati2 = dati_filtrati[dati_filtrati['Nome Appartamento'] == imm2]
+            notti1 = notti_disponibili_filtrate[notti_disponibili_filtrate['Appartamento'] == imm1]
+            notti2 = notti_disponibili_filtrate[notti_disponibili_filtrate['Appartamento'] == imm2]
+            kpis1 = calculate_kpis(dati1, notti1)
+            kpis2 = calculate_kpis(dati2, notti2)
+            st.subheader("Confronto Immobili")
+            colA, colB = st.columns(2)
+            with colA:
+                st.subheader(imm1)
+                st.metric("💰 Ricavi Totali (€)", f"{kpis1['ricavi_totali']:,.2f}")
+                st.metric("📈 Ricavi Locazione (€)", f"{kpis1['totale_ricavi_locazione']:,.2f}")
+                st.metric("🧹 Ricavi Pulizie (€)", f"{kpis1['totale_ricavi_pulizie']:,.2f}")
+                st.metric("📈 Totale Commissioni (€)", f"{kpis1['totale_commissioni']:,.2f}")
+                st.metric("🧹 Commissioni OTA (€)", f"{kpis1['commissioni_ota']:,.2f}")
+                st.metric("🧹 Commissioni Proprietari (€)", f"{kpis1['commissioni_proprietari']:,.2f}")
+                st.metric("🧹 Commissioni ITW (€)", f"{kpis1['commissioni_itw']:,.2f}")
+            with colB:
+                st.subheader(imm2)
+                st.metric("💰 Ricavi Totali (€)", f"{kpis2['ricavi_totali']:,.2f}")
+                st.metric("📈 Ricavi Locazione (€)", f"{kpis2['totale_ricavi_locazione']:,.2f}")
+                st.metric("🧹 Ricavi Pulizie (€)", f"{kpis2['totale_ricavi_pulizie']:,.2f}")
+                st.metric("📈 Totale Commissioni (€)", f"{kpis2['totale_commissioni']:,.2f}")
+                st.metric("🧹 Commissioni OTA (€)", f"{kpis2['commissioni_ota']:,.2f}")
+                st.metric("🧹 Commissioni Proprietari (€)", f"{kpis2['commissioni_proprietari']:,.2f}")
+                st.metric("🧹 Commissioni ITW (€)", f"{kpis2['commissioni_itw']:,.2f}")
+            return
+        else:
+            st.info("Seleziona esattamente due appartamenti per il confronto.")
+            return
 
-    # Calcolo dei KPI
+    elif confronto_mode == "Confronto Zone":
+        if zona_selezionata and isinstance(zona_selezionata, list) and len(zona_selezionata) == 2:
+            z1, z2 = zona_selezionata[0], zona_selezionata[1]
+            dati1 = dati_filtrati[dati_filtrati['zona'] == z1]
+            dati2 = dati_filtrati[dati_filtrati['zona'] == z2]
+            notti1 = notti_disponibili_filtrate[dati_filtrati['zona'] == z1]
+            notti2 = notti_disponibili_filtrate[dati_filtrati['zona'] == z2]
+            kpis1 = calculate_kpis(dati1, notti1)
+            kpis2 = calculate_kpis(dati2, notti2)
+            st.subheader("Confronto Zone")
+            colA, colB = st.columns(2)
+            with colA:
+                st.subheader(z1)
+                st.metric("💰 Ricavi Totali (€)", f"{kpis1['ricavi_totali']:,.2f}")
+                st.metric("📈 Ricavi Locazione (€)", f"{kpis1['totale_ricavi_locazione']:,.2f}")
+                st.metric("🧹 Ricavi Pulizie (€)", f"{kpis1['totale_ricavi_pulizie']:,.2f}")
+                st.metric("📈 Totale Commissioni (€)", f"{kpis1['totale_commissioni']:,.2f}")
+                st.metric("🧹 Commissioni OTA (€)", f"{kpis1['commissioni_ota']:,.2f}")
+                st.metric("🧹 Commissioni Proprietari (€)", f"{kpis1['commissioni_proprietari']:,.2f}")
+                st.metric("🧹 Commissioni ITW (€)", f"{kpis1['commissioni_itw']:,.2f}")
+            with colB:
+                st.subheader(z2)
+                st.metric("💰 Ricavi Totali (€)", f"{kpis2['ricavi_totali']:,.2f}")
+                st.metric("📈 Ricavi Locazione (€)", f"{kpis2['totale_ricavi_locazione']:,.2f}")
+                st.metric("🧹 Ricavi Pulizie (€)", f"{kpis2['totale_ricavi_pulizie']:,.2f}")
+                st.metric("📈 Totale Commissioni (€)", f"{kpis2['totale_commissioni']:,.2f}")
+                st.metric("🧹 Commissioni OTA (€)", f"{kpis2['commissioni_ota']:,.2f}")
+                st.metric("🧹 Commissioni Proprietari (€)", f"{kpis2['commissioni_proprietari']:,.2f}")
+                st.metric("🧹 Commissioni ITW (€)", f"{kpis2['commissioni_itw']:,.2f}")
+            return
+        else:
+            st.info("Seleziona esattamente due zone per il confronto.")
+            return
+
+    # Se non è attivo il confronto (confronto_mode == "Nessun Confronto"), prosegui con la dashboard originale
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
-    
 
-
-    
-    col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
-    
+    col1, col2 = st.columns([2,4])
     with col1:
-        
         with col1:
             st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
-                      
-        
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_locazione"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
             st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
-            
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_pulizie"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
-
-     
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_commissioni"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
             st.metric("📈 Totale Commissioni (€)", f"{kpis['totale_commissioni']:,.2f}")
-            
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_ota"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
             st.metric("🧹 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
-
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
-            st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}") 
-
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+            st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+        grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_itw"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
-            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}") 
-        
-
-
-
+            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
         st.plotly_chart(fig)
         st.divider()
-        
         col3, col4, col5 = st.columns([1,1,1])
-
         with col3:
-            #grafico ad anello 
-            # Sub-layout per centrare il grafico e il dato
             with col3:
                 totale = kpis["ricavi_totali"]
                 kpi = kpis["marginalità_totale"]
                 grafico_anello = create_donut_chart1(totale, kpi)
-                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+                st.plotly_chart(grafico_anello, use_container_width=False)
             with col3:
                 st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
-
         with col4:
-            #grafico ad anello 
-            # Sub-layout per centrare il grafico e il dato
             with col4:
                 totale = kpis["ricavi_totali"]
                 kpi = kpis["marginalità_locazioni"]
                 grafico_anello = create_donut_chart1(totale, kpi)
-                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+                st.plotly_chart(grafico_anello, use_container_width=False)
             with col4:
                 st.metric("📊 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
-
         with col5:
-            #grafico ad anello 
-            # Sub-layout per centrare il grafico e il dato
             with col5:
                 totale = kpis["ricavi_totali"]
                 kpi = kpis["marginalità_pulizie"]
                 grafico_anello = create_donut_chart1(totale, kpi)
-                st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+                st.plotly_chart(grafico_anello, use_container_width=False)
             with col5:
                 st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
-
     st.divider()
     st.title("📊 Analisi Prenotazioni ")
-
-    # Layout a colonne: il grafico occuperà una colonna di larghezza 1/3
-    col12, col13, col14 = st.columns([4.5,9,4.5])  
-    
+    col12, col13, col14 = st.columns([4.5,9,4.5])
     with col12:
-    
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
         st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
         st.metric("📈 M.S.V medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
         st.metric("📈 M.S.V pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
-        
-        
-        
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
         with col12:
             totale = 100
             kpi = kpis["tasso_di_occupazione"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False)
         with col12:
             st.write("📊 Tasso di occupazione (%)")
-
-  
     with col13:
-        # Integrazione nella dashboard
         fig = visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date)
         if fig:
             st.plotly_chart(fig, use_container_width=True)
-    
-
-
         col13_1, col13_2 = st.columns([2,2])
-        
         with col13_1:
             st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
             st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")
@@ -1384,24 +1411,14 @@ def dashboard_analisi_performance():
             st.metric("📈 Notti occupate ", f"{kpis['notti_occupate']:,.0f}")
             st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
             st.metric("📈 Numero prenotazioni ", f"{kpis['numero_prenotazioni']:,.0f}")
-            
-            
-        
     with col14:
-        
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 M.S.V medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-        
-
-##################################################################################################
-##################################################################################################
-##################################################################################################
-        ####################### MODFICARE ###############################
         st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo Pulizia (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo biancheria (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo scorte (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-         
+
 
 
     
