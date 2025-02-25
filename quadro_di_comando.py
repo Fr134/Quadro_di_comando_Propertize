@@ -33,7 +33,7 @@ def localizzatore(file_path, data):
     associa a ogni immobile la posizione.
     """
     # Legge il Foglio 2 del file Excel
-     file_posizioni= pd.read_excel(file_path, sheet_name=2)
+    file_posizioni= pd.read_excel(file_path, sheet_name=2)
     
     # Dizionario per salvare le notti disponibili per ogni appartamento
     posizione_immobili = []
