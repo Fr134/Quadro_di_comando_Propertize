@@ -1507,7 +1507,7 @@ def render_calcolatore():
                     tooltip="Appartamento"
                 ).add_to(mappa)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=700, height=800)
+        st_folium(mappa, width=1400, height=500)
 
 
 
