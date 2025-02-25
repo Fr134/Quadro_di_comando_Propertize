@@ -1368,36 +1368,41 @@ def render_calcolatore():
 
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     with col1:
-        # Dizionario con località e coordinate
-        localita = {
-            "Cagliari (CA)": (39.2238, 9.1217),
-            "Sassari (SS)": (40.7259, 8.5601),
-            "Olbia (OT)": (40.923, 9.497),
-            "Oristano (OR)": (39.9047, 8.588),
-            "Nuoro (NU)": (40.3202, 9.3347)
-    
-        }
+            
+        if localita_scelta != "Tutte le Zone":
+            # Filtra il DataFrame per le righe in cui 'zona' corrisponde alla località scelta
+            df_zona = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
+            if not df_zona.empty:
+                # Prende la prima occorrenza delle coordinate della zona
+                coord = df_zona['coordinate_zona'].iloc[0]
+                # Se le coordinate sono salvate come stringa (es. "(39.2238, 9.1217)"), convertila in tupla
+                if isinstance(coord, str):
+                    try:
+                        coord = ast.literal_eval(coord)
+                    except Exception as e:
+                        st.error("Errore nel parsing delle coordinate: " + str(e))
+                        coord = (0, 0)
+                lat, lon = coord
+            else:
+                st.error("Nessuna coordinata trovata per la zona selezionata.")
+                lat, lon = 0, 0
+        else:
+            st.error("Seleziona una zona valida.")
+            lat, lon = 0, 0
 
-        # Selectbox per scegliere la località
-        localita_scelta = st.selectbox("Seleziona una località:", list(localita.keys()))
-
-        # Recupera le coordinate della località selezionata
-        lat, lon = localita[localita_scelta]
-
-        # Creazione della mappa con Folium
+        # Creazione della mappa con Folium centrata sulle coordinate ottenute
         mappa = folium.Map(location=[lat, lon], zoom_start=12)
 
-        # Aggiunge un marcatore per evidenziare la località
+        # Aggiunge un marcatore per evidenziare la località selezionata
         folium.Marker(
-           [lat, lon], 
-           popup=f"<b>{localita_scelta}</b>", 
-           tooltip="Clicca per info"
-    
+            [lat, lon],
+            popup=f"<b>{localita_scelta}</b>",
+            tooltip="Clicca per info"
         ).add_to(mappa)
 
         # Mostra la mappa in Streamlit
         st_folium(mappa, width=700, height=500)
-
+    
 
 
 
