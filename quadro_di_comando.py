@@ -1393,7 +1393,7 @@ def render_calcolatore():
                 center_lat = sum(lat_list) / len(lat_list)
                 center_lon = sum(lon_list) / len(lon_list)
                 mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-                # Aggiungi un marker per ogni appartamento
+                # Aggiungi un marker per ogni appartamento nella zona specifica
                 for idx, row in df_zone.iterrows():
                     coord = row['coordinate_indirizzo']
                     if isinstance(coord, str):
@@ -1415,8 +1415,47 @@ def render_calcolatore():
                 st.error("Nessuna coordinata trovata per la zona selezionata.")
                 mappa = folium.Map(location=[0, 0], zoom_start=12)
         else:
-            st.error("Seleziona una zona specifica per visualizzare gli indirizzi degli immobili.")
-            mappa = folium.Map(location=[0, 0], zoom_start=12)
+            # Se "Tutte le Zone" è selezionato, visualizza un marker per ogni appartamento
+            if not dati_filtrati.empty:
+                lat_list = []
+                lon_list = []
+                # Estrai le coordinate di tutti gli immobili
+                for idx, row in dati_filtrati.iterrows():
+                    coord = row['coordinate_indirizzo']
+                    if isinstance(coord, str):
+                        try:
+                            coord = ast.literal_eval(coord)
+                        except Exception as e:
+                            st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
+                            coord = (0, 0)
+                    lat, lon = coord
+                    lat_list.append(lat)
+                    lon_list.append(lon)
+                # Calcola il centro della mappa come media delle coordinate
+                center_lat = sum(lat_list) / len(lat_list)
+                center_lon = sum(lon_list) / len(lon_list)
+                mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+                # Aggiungi un marker per ogni appartamento
+                for idx, row in dati_filtrati.iterrows():
+                    coord = row['coordinate_indirizzo']
+                    if isinstance(coord, str):
+                        try:
+                            coord = ast.literal_eval(coord)
+                        except Exception as e:
+                            st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
+                            coord = (0, 0)
+                    lat, lon = coord
+                    folium.CircleMarker(
+                        location=[lat, lon],
+                        radius=5,
+                        color='blue',
+                        fill=True,
+                        fill_color='blue',
+                        tooltip="Appartamento"
+                    ).add_to(mappa)
+            else:
+                st.error("Nessuna coordinata trovata per gli immobili.")
+                mappa = folium.Map(location=[0, 0], zoom_start=12)
         # Visualizza la mappa in Streamlit
         st_folium(mappa, width=700, height=500)
     
