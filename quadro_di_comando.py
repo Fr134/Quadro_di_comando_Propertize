@@ -942,11 +942,18 @@ def dashboard_proprietari():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
-            if st.button("Info Ricavi Totali", key="info_ricavi_totali"):
-
-                    st.info("I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall'immobile, calcolati combinando i ricavi da locazione e quelli derivanti dai servizi aggiuntivi. Questa metrica è fondamentale per valutare la performance economica complessiva dell'immobile.")
-
-     
+            # Creazione di una riga con due colonne: la prima per il bottone (più piccolo)
+            col_info, _ = st.columns([1, 5])
+            with col_info:
+                # Inizializza la variabile di stato se non esiste già
+                if "info_ricavi_totali_visible" not in st.session_state:
+                    st.session_state.info_ricavi_totali_visible = False
+                # Bottone che funge da toggle per mostrare/nascondere la spiegazione
+                if st.button("Info", key="toggle_info_ricavi_totali"):
+                    st.session_state.info_ricavi_totali_visible = not st.session_state.info_ricavi_totali_visible
+            # Se il toggle è attivo, mostra la casella informativa
+            if st.session_state.info_ricavi_totali_visible:
+                st.info("I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell'immobile.")
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
