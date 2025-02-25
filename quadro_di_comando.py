@@ -1384,7 +1384,7 @@ def render_calcolatore():
                         coord = (0, 0)
                 lat, lon = coord
                 # Crea la mappa centrata sulla zona selezionata
-                mappa = folium.Map(location=[lat, lon], zoom_start=12)
+                mappa = folium.Map(location=[lat, lon], zoom_start=11)
                 # Aggiunge il marker per la zona
                 folium.Marker(
                     [lat, lon],
@@ -1393,7 +1393,7 @@ def render_calcolatore():
                 ).add_to(mappa)
             else:
                 st.error("Nessuna coordinata trovata per la zona selezionata.")
-                mappa = folium.Map(location=[0, 0], zoom_start=12)
+                mappa = folium.Map(location=[0, 0], zoom_start=11)
         else:
             # Se "Tutte le Zone" è selezionato, visualizza un marker per ogni zona
             unique_zones = dati_filtrati['zona'].unique()
@@ -1429,7 +1429,7 @@ def render_calcolatore():
                     tooltip="Clicca per info"
                 ).add_to(mappa)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=700, height=500)
+        st_folium(mappa, width=1400, height=500)
     
 
 
