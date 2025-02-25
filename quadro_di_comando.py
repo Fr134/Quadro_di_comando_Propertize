@@ -1034,7 +1034,7 @@ def dashboard_analisi_performance():
     
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     
-    with col1:
+    with col1:  
         
         with col1:
             st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
@@ -1049,7 +1049,7 @@ def dashboard_analisi_performance():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
+            st.metric("📈 Ricavi immobile (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
             
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1060,7 +1060,7 @@ def dashboard_analisi_performance():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
+            st.metric("🧹 prezzo medio a notte  (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
 
      
         #grafico ad anello 
