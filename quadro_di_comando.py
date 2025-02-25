@@ -1401,27 +1401,34 @@ def render_calcolatore():
     st.write("Inserisci i dettagli dell'immobile:")
     
 
-    col1, col2 = st.columns([8,1])  # Tre colonne di uguale larghezza
-    localita_scelta = zona
+    col1, col2 = st.columns([8,1])  
+    """
+    Visualizza una mappa interattiva con un marker per ogni appartamento.
+    
+    Parametri:
+      - dati_filtrati: DataFrame contenente le colonne 'zona' e 'coordinate_indirizzo'
+      - zona_option: stringa che indica l'opzione scelta ("Tutte le Zone", "Singola Zona" o "Multipla Zona")
+      - zona_selezionata: se zona_option è "Singola Zona", una stringa; se "Multipla Zona", una lista di zone.
+    """
+
+    # Creazione della colonna per la mappa
+    col1, _ = st.columns([1, 1])
     with col1:
-        if localita_scelta != "Tutte le Zone":
-            # Filtra i dati in base alla zona selezionata
-            df_zone = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
+        if zona_option == "Tutte le Zone":
+            # Visualizza marker per ogni appartamento in tutti i dati filtrati
             lat_list = []
             lon_list = []
-            # Cicla su ogni riga per estrarre le coordinate degli immobili
-            for idx, row in df_zone.iterrows():
+            for idx, row in dati_filtrati.iterrows():
                 coord = row['coordinate_indirizzo']
-                # Se le coordinate sono vuote, salta la riga
                 if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
                     continue
                 if isinstance(coord, str):
                     try:
                         coord = ast.literal_eval(coord)
                     except Exception:
-                        continue  # Salta la riga se il parsing fallisce
+                        continue
                 if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
-                    continue  # Salta se il formato non è valido
+                    continue
                 lat, lon = coord
                 lat_list.append(lat)
                 lon_list.append(lon)
@@ -1431,8 +1438,7 @@ def render_calcolatore():
             else:
                 center_lat, center_lon = 0, 0
             mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-            # Aggiungi un marker per ogni appartamento
-            for idx, row in df_zone.iterrows():
+            for idx, row in dati_filtrati.iterrows():
                 coord = row['coordinate_indirizzo']
                 if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
                     continue
@@ -1453,10 +1459,14 @@ def render_calcolatore():
                     tooltip="Appartamento"
                 ).add_to(mappa)
         else:
-            # Se "Tutte le Zone" è selezionato, visualizza un marker per ogni appartamento
+            # Se è selezionata una o più zone
+            if zona_option == "Multipla Zona":
+                df_zone = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
+            else:  # "Singola Zona"
+                df_zone = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
             lat_list = []
             lon_list = []
-            for idx, row in dati_filtrati.iterrows():
+            for idx, row in df_zone.iterrows():
                 coord = row['coordinate_indirizzo']
                 if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
                     continue
@@ -1476,7 +1486,7 @@ def render_calcolatore():
             else:
                 center_lat, center_lon = 0, 0
             mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-            for idx, row in dati_filtrati.iterrows():
+            for idx, row in df_zone.iterrows():
                 coord = row['coordinate_indirizzo']
                 if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
                     continue
@@ -1497,7 +1507,7 @@ def render_calcolatore():
                     tooltip="Appartamento"
                 ).add_to(mappa)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=700, height=500)
+        st_folium(mappa, width=700, height=800)
 
 
 
