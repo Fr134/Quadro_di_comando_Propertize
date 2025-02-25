@@ -1367,7 +1367,7 @@ def render_calcolatore():
     st.write("Inserisci i dettagli dell'immobile:")
     
 
-    col1, col2 = st.columns([8,4])  # Tre colonne di uguale larghezza
+    col1, col2 = st.columns([8,1])  # Tre colonne di uguale larghezza
     localita_scelta = zona
     with col1:
         if localita_scelta != "Tutte le Zone":
