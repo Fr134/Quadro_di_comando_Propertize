@@ -299,7 +299,8 @@ def calculate_kpis(data, notti_disponibili_filtrate):
         'notti_occupate':notti_occupate,
         'tasso_di_occupazione':tasso_di_occupazione,
         'notti_disponibili': notti_disponibili,
-        'notti_libere': notti_libere
+        'notti_libere': notti_libere,
+        'numero_prenotazioni': numero_prenotazioni
     }
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
@@ -1063,6 +1064,7 @@ def dashboard_analisi_performance():
 
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
+    
 
 
     
@@ -1225,8 +1227,10 @@ def dashboard_analisi_performance():
             st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
             st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")
         with col13_2:
-            st.metric("📈 Notti occupate (€)", f"{kpis['notti_occupate']:,.0f}")
-            st.metric("📈 Soggiorno medio (€)", f"{kpis['soggiorno_medio']:,.0f}")
+            st.metric("📈 Notti occupate ", f"{kpis['notti_occupate']:,.0f}")
+            st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
+            st.metric("📈 Numero prenotazioni ", f"{kpis['numero_prenotazioni']:,.0f}")
+            
             
         
     with col14:
