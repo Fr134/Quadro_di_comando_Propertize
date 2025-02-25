@@ -942,6 +942,9 @@ def dashboard_proprietari():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
+            if st.button("Info Ricavi Totali", key="info_ricavi_totali"):
+
+                    st.info("I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall'immobile, calcolati combinando i ricavi da locazione e quelli derivanti dai servizi aggiuntivi. Questa metrica è fondamentale per valutare la performance economica complessiva dell'immobile.")
 
      
         #grafico ad anello 
@@ -1254,6 +1257,7 @@ def dashboard_analisi_performance():
             with colB:
                 st.subheader(imm2)
                 st.metric("💰 Ricavi Totali (€)", f"{kpis2['ricavi_totali']:,.2f}")
+                
                 st.metric("📈 Ricavi Locazione (€)", f"{kpis2['totale_ricavi_locazione']:,.2f}")
                 st.metric("🧹 Ricavi Pulizie (€)", f"{kpis2['totale_ricavi_pulizie']:,.2f}")
                 st.metric("📈 Totale Commissioni (€)", f"{kpis2['totale_commissioni']:,.2f}")
