@@ -1369,13 +1369,11 @@ def render_calcolatore():
 
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     with col1:
-        localita_scelta = zona
         if localita_scelta != "Tutte le Zone":
-            # Filtra il DataFrame per le righe in cui 'zona' corrisponde alla località scelta
-            df_zona = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
-            if not df_zona.empty:
-                # Prende la prima occorrenza delle coordinate della zona
-                coord = df_zona['coordinate_zona'].iloc[0]
+            # Filtra il DataFrame per la zona selezionata
+            df_zone = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
+            if not df_zone.empty:
+                coord = df_zone['coordinate_zona'].iloc[0]
                 # Se le coordinate sono salvate come stringa (es. "(39.2238, 9.1217)"), convertila in tupla
                 if isinstance(coord, str):
                     try:
@@ -1384,24 +1382,52 @@ def render_calcolatore():
                         st.error("Errore nel parsing delle coordinate: " + str(e))
                         coord = (0, 0)
                 lat, lon = coord
+                # Crea la mappa centrata sulla zona selezionata
+                mappa = folium.Map(location=[lat, lon], zoom_start=12)
+                # Aggiunge il marker per la zona
+                folium.Marker(
+                    [lat, lon],
+                    popup=f"<b>{localita_scelta}</b>",
+                    tooltip="Clicca per info"
+                ).add_to(mappa)
             else:
                 st.error("Nessuna coordinata trovata per la zona selezionata.")
-                lat, lon = 0, 0
+                mappa = folium.Map(location=[0, 0], zoom_start=12)
         else:
-            st.error("Seleziona una zona valida.")
-            lat, lon = 0, 0
-
-        # Creazione della mappa con Folium centrata sulle coordinate ottenute
-        mappa = folium.Map(location=[lat, lon], zoom_start=10)
-
-        # Aggiunge un marcatore per evidenziare la località selezionata
-        folium.Marker(
-            [lat, lon],
-            popup=f"<b>{localita_scelta}</b>",
-            tooltip="Clicca per info"
-        ).add_to(mappa)
-
-        # Mostra la mappa in Streamlit
+            # Se "Tutte le Zone" è selezionato, visualizza un marker per ogni zona
+            unique_zones = dati_filtrati['zona'].unique()
+            lat_list = []
+            lon_list = []
+            marker_data = []
+            for zone in unique_zones:
+                df_zone = dati_filtrati[dati_filtrati['zona'] == zone]
+                if not df_zone.empty:
+                    coord = df_zone['coordinate_zona'].iloc[0]
+                    if isinstance(coord, str):
+                        try:
+                            coord = ast.literal_eval(coord)
+                        except Exception as e:
+                            st.error("Errore nel parsing delle coordinate per la zona " + zone + ": " + str(e))
+                            coord = (0, 0)
+                    lat, lon = coord
+                    lat_list.append(lat)
+                    lon_list.append(lon)
+                    marker_data.append((zone, lat, lon))
+            # Calcola il centro della mappa come la media delle coordinate (se disponibili)
+            if lat_list and lon_list:
+                center_lat = sum(lat_list) / len(lat_list)
+                center_lon = sum(lon_list) / len(lon_list)
+            else:
+                center_lat, center_lon = 0, 0
+            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+            # Aggiungi un marker per ogni zona
+            for zone, lat, lon in marker_data:
+                folium.Marker(
+                    [lat, lon],
+                    popup=f"<b>{zone}</b>",
+                    tooltip="Clicca per info"
+                ).add_to(mappa)
+        # Visualizza la mappa in Streamlit
         st_folium(mappa, width=700, height=500)
     
 
