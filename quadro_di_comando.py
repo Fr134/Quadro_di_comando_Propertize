@@ -1369,6 +1369,7 @@ def render_calcolatore():
 
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     with col1:
+        localita_scelta = zona
         if localita_scelta != "Tutte le Zone":
             # Filtra il DataFrame per la zona selezionata
             df_zone = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
