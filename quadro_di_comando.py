@@ -1351,6 +1351,10 @@ def render_calcolatore():
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
 
 
+    st.write(dati_filtrati)
+
+
+
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
 
