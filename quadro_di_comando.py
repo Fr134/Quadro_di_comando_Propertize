@@ -1392,7 +1392,7 @@ def render_calcolatore():
             lat, lon = 0, 0
 
         # Creazione della mappa con Folium centrata sulle coordinate ottenute
-        mappa = folium.Map(location=[lat, lon], zoom_start=8)
+        mappa = folium.Map(location=[lat, lon], zoom_start=10)
 
         # Aggiunge un marcatore per evidenziare la località selezionata
         folium.Marker(
