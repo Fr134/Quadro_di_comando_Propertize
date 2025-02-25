@@ -28,6 +28,35 @@ def upload_file():
     return uploaded_file
 
 
+def localizzatore(file_path, data):
+    """
+    associa a ogni immobile la posizione.
+    """
+    # Legge il Foglio 2 del file Excel
+     file_posizioni= pd.read_excel(file_path, sheet_name=2)
+    
+    # Dizionario per salvare le notti disponibili per ogni appartamento
+    posizione_immobili = []
+
+    for index, row in file_posizioni.iterrows():
+        posizione_immobili['nome_immobile'] = row[0]  # Nome dell'appartamento nella prima colonna
+        posizione_immobili['id_immobile'] = row[1]  # id dell'appartamento nella seconda colonna
+        posizione_immobili['zona'] = row[2]  #  dell'appartamento nella seconda colonna
+        posizione_immobili['coordinate_zona'] = row[3]  # id dell'appartamento nella seconda colonna
+        posizione_immobili['indririzzo'] = row[4]  # id dell'appartamento nella seconda colonna
+        posizione_immobili['coordinate_indirizzo'] = row[5]  # id dell'appartamento nella seconda colonna
+
+    pd.DataFrame(posizione_immobili)
+
+
+    # Unione dei DataFrame specificando le colonne chiave diverse
+    data = data.merge(posizione_immobili, left_on='ID Appartamento', right_on='id_immobile', how='left')
+
+
+    # Converti il risultato in un DataFrame
+    return data
+
+
 
 
 
@@ -145,6 +174,7 @@ def load_and_preprocess_data(uploaded_file):
      
 
     data = data.fillna(0)
+    
     data['Mese'] = data['Data Check-In'].dt.to_period('M').astype(str)
     return data
 
@@ -1231,6 +1261,8 @@ def render_calcolatore():
 
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
+    data = localizzatore(file_path, data)
+    st.write(data)
 
     # Sezione Filtri
     with st.sidebar.expander("🔍 Filtro Dati"):
