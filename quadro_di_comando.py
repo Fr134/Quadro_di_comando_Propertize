@@ -1306,6 +1306,117 @@ def dashboard_analisi_performance():
     # Se non è attivo il confronto (confronto_mode == "Nessun Confronto"), prosegui con la dashboard originale
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
 
+
+
+    # Creazione della colonna per la mappa
+
+    #Visualizza una mappa interattiva con un marker per ogni appartamento.
+    
+    #Parametri:
+      #- dati_filtrati: DataFrame contenente le colonne 'zona' e 'coordinate_indirizzo'
+      #- zona_option: stringa che indica l'opzione scelta ("Tutte le Zone", "Singola Zona" o "Multipla Zona")
+      #- zona_selezionata: se zona_option è "Singola Zona", una stringa; se "Multipla Zona", una lista di zone.
+
+    
+    col0, _ = st.columns([8, 1])
+    with col0:
+        if zona_option == "Tutte le Zone":
+            # Visualizza marker per ogni appartamento in tutti i dati filtrati
+            lat_list = []
+            lon_list = []
+            for idx, row in dati_filtrati.iterrows():
+                coord = row['coordinate_indirizzo']
+                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
+                    continue
+                if isinstance(coord, str):
+                    try:
+                        coord = ast.literal_eval(coord)
+                    except Exception:
+                        continue
+                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                    continue
+                lat, lon = coord
+                lat_list.append(lat)
+                lon_list.append(lon)
+            if lat_list and lon_list:
+                center_lat = sum(lat_list) / len(lat_list)
+                center_lon = sum(lon_list) / len(lon_list)
+            else:
+                center_lat, center_lon = 0, 0
+            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+            for idx, row in dati_filtrati.iterrows():
+                coord = row['coordinate_indirizzo']
+                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
+                    continue
+                if isinstance(coord, str):
+                    try:
+                        coord = ast.literal_eval(coord)
+                    except Exception:
+                        continue
+                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                    continue
+                lat, lon = coord
+                folium.CircleMarker(
+                    location=[lat, lon],
+                    radius=5,
+                    color='blue',
+                    fill=True,
+                    fill_color='blue',
+                    tooltip="Appartamento"
+                ).add_to(mappa)
+        else:
+            # Se è selezionata una o più zone
+            if zona_option == "Multipla Zona":
+                df_zone = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
+            else:  # "Singola Zona"
+                df_zone = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
+            lat_list = []
+            lon_list = []
+            for idx, row in df_zone.iterrows():
+                coord = row['coordinate_indirizzo']
+                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
+                    continue
+                if isinstance(coord, str):
+                    try:
+                        coord = ast.literal_eval(coord)
+                    except Exception:
+                        continue
+                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                    continue
+                lat, lon = coord
+                lat_list.append(lat)
+                lon_list.append(lon)
+            if lat_list and lon_list:
+                center_lat = sum(lat_list) / len(lat_list)
+                center_lon = sum(lon_list) / len(lon_list)
+            else:
+                center_lat, center_lon = 0, 0
+            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+            for idx, row in df_zone.iterrows():
+                coord = row['coordinate_indirizzo']
+                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
+                    continue
+                if isinstance(coord, str):
+                    try:
+                        coord = ast.literal_eval(coord)
+                    except Exception:
+                        continue
+                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                    continue
+                lat, lon = coord
+                folium.CircleMarker(
+                    location=[lat, lon],
+                    radius=5,
+                    color='blue',
+                    fill=True,
+                    fill_color='blue',
+                    tooltip="Appartamento"
+                ).add_to(mappa)
+        # Visualizza la mappa in Streamlit
+        st_folium(mappa, width=1400, height=500)
+
+
+
     col1, col2 = st.columns([2,4])
     with col1:
         with col1:
@@ -1575,115 +1686,8 @@ def render_calcolatore():
     st.write("Inserisci i dettagli dell'immobile:")
     
 
-    col1, col2 = st.columns([8,1])  
-    """
-    Visualizza una mappa interattiva con un marker per ogni appartamento.
     
-    Parametri:
-      - dati_filtrati: DataFrame contenente le colonne 'zona' e 'coordinate_indirizzo'
-      - zona_option: stringa che indica l'opzione scelta ("Tutte le Zone", "Singola Zona" o "Multipla Zona")
-      - zona_selezionata: se zona_option è "Singola Zona", una stringa; se "Multipla Zona", una lista di zone.
-    """
-
-    # Creazione della colonna per la mappa
-    col1, _ = st.columns([1, 1])
-    with col1:
-        if zona_option == "Tutte le Zone":
-            # Visualizza marker per ogni appartamento in tutti i dati filtrati
-            lat_list = []
-            lon_list = []
-            for idx, row in dati_filtrati.iterrows():
-                coord = row['coordinate_indirizzo']
-                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
-                    continue
-                if isinstance(coord, str):
-                    try:
-                        coord = ast.literal_eval(coord)
-                    except Exception:
-                        continue
-                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
-                    continue
-                lat, lon = coord
-                lat_list.append(lat)
-                lon_list.append(lon)
-            if lat_list and lon_list:
-                center_lat = sum(lat_list) / len(lat_list)
-                center_lon = sum(lon_list) / len(lon_list)
-            else:
-                center_lat, center_lon = 0, 0
-            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-            for idx, row in dati_filtrati.iterrows():
-                coord = row['coordinate_indirizzo']
-                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
-                    continue
-                if isinstance(coord, str):
-                    try:
-                        coord = ast.literal_eval(coord)
-                    except Exception:
-                        continue
-                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
-                    continue
-                lat, lon = coord
-                folium.CircleMarker(
-                    location=[lat, lon],
-                    radius=5,
-                    color='blue',
-                    fill=True,
-                    fill_color='blue',
-                    tooltip="Appartamento"
-                ).add_to(mappa)
-        else:
-            # Se è selezionata una o più zone
-            if zona_option == "Multipla Zona":
-                df_zone = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
-            else:  # "Singola Zona"
-                df_zone = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
-            lat_list = []
-            lon_list = []
-            for idx, row in df_zone.iterrows():
-                coord = row['coordinate_indirizzo']
-                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
-                    continue
-                if isinstance(coord, str):
-                    try:
-                        coord = ast.literal_eval(coord)
-                    except Exception:
-                        continue
-                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
-                    continue
-                lat, lon = coord
-                lat_list.append(lat)
-                lon_list.append(lon)
-            if lat_list and lon_list:
-                center_lat = sum(lat_list) / len(lat_list)
-                center_lon = sum(lon_list) / len(lon_list)
-            else:
-                center_lat, center_lon = 0, 0
-            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-            for idx, row in df_zone.iterrows():
-                coord = row['coordinate_indirizzo']
-                if pd.isnull(coord) or (isinstance(coord, str) and coord.strip() == ""):
-                    continue
-                if isinstance(coord, str):
-                    try:
-                        coord = ast.literal_eval(coord)
-                    except Exception:
-                        continue
-                if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
-                    continue
-                lat, lon = coord
-                folium.CircleMarker(
-                    location=[lat, lon],
-                    radius=5,
-                    color='blue',
-                    fill=True,
-                    fill_color='blue',
-                    tooltip="Appartamento"
-                ).add_to(mappa)
-        # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=1400, height=500)
-
-
+    
 
 
    
