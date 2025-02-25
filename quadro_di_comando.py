@@ -372,8 +372,7 @@ def render_dashboard():
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
     data = localizzatore(file_path, data)
-    st.write(data)
-
+    
         # Sezione Filtri
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
