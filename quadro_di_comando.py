@@ -1413,7 +1413,7 @@ def dashboard_analisi_performance():
                     tooltip="Appartamento"
                 ).add_to(mappa)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=1400, height=500)
+        st_folium(mappa, width=1500, height=250)
 
 
 
