@@ -1386,6 +1386,10 @@ def render_calcolatore():
                         except Exception as e:
                             st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
                             coord = (0, 0)
+                    # Verifica che coord sia una sequenza di due elementi
+                    if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                        st.error("Il formato delle coordinate non è valido: " + str(coord))
+                        coord = (0, 0)
                     lat, lon = coord
                     lat_list.append(lat)
                     lon_list.append(lon)
@@ -1393,7 +1397,7 @@ def render_calcolatore():
                 center_lat = sum(lat_list) / len(lat_list)
                 center_lon = sum(lon_list) / len(lon_list)
                 mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-                # Aggiungi un marker per ogni appartamento nella zona specifica
+                # Aggiungi un marker per ogni appartamento
                 for idx, row in df_zone.iterrows():
                     coord = row['coordinate_indirizzo']
                     if isinstance(coord, str):
@@ -1402,6 +1406,9 @@ def render_calcolatore():
                         except Exception as e:
                             st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
                             coord = (0, 0)
+                    if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                        st.error("Il formato delle coordinate non è valido: " + str(coord))
+                        coord = (0, 0)
                     lat, lon = coord
                     folium.CircleMarker(
                         location=[lat, lon],
@@ -1428,6 +1435,9 @@ def render_calcolatore():
                         except Exception as e:
                             st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
                             coord = (0, 0)
+                    if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                        st.error("Il formato delle coordinate non è valido: " + str(coord))
+                        coord = (0, 0)
                     lat, lon = coord
                     lat_list.append(lat)
                     lon_list.append(lon)
@@ -1444,6 +1454,9 @@ def render_calcolatore():
                         except Exception as e:
                             st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
                             coord = (0, 0)
+                    if not (isinstance(coord, (tuple, list)) and len(coord) == 2):
+                        st.error("Il formato delle coordinate non è valido: " + str(coord))
+                        coord = (0, 0)
                     lat, lon = coord
                     folium.CircleMarker(
                         location=[lat, lon],
@@ -1458,7 +1471,6 @@ def render_calcolatore():
                 mappa = folium.Map(location=[0, 0], zoom_start=12)
         # Visualizza la mappa in Streamlit
         st_folium(mappa, width=700, height=500)
-    
 
 
 
