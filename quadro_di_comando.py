@@ -1368,68 +1368,57 @@ def render_calcolatore():
     
 
     col1, col2 = st.columns([8,4])  # Tre colonne di uguale larghezza
+    localita_scelta = zona
     with col1:
-        localita_scelta = zona
         if localita_scelta != "Tutte le Zone":
-            # Filtra il DataFrame per la zona selezionata
+            # Filtra i dati in base alla zona selezionata
             df_zone = dati_filtrati[dati_filtrati['zona'] == localita_scelta]
             if not df_zone.empty:
-                coord = df_zone['coordinate_zona'].iloc[0]
-                # Se le coordinate sono salvate come stringa (es. "(39.2238, 9.1217)"), convertila in tupla
-                if isinstance(coord, str):
-                    try:
-                        coord = ast.literal_eval(coord)
-                    except Exception as e:
-                        st.error("Errore nel parsing delle coordinate: " + str(e))
-                        coord = (0, 0)
-                lat, lon = coord
-                # Crea la mappa centrata sulla zona selezionata
-                mappa = folium.Map(location=[lat, lon], zoom_start=11)
-                # Aggiunge il marker per la zona
-                folium.Marker(
-                    [lat, lon],
-                    popup=f"<b>{localita_scelta}</b>",
-                    tooltip="Clicca per info"
-                ).add_to(mappa)
-            else:
-                st.error("Nessuna coordinata trovata per la zona selezionata.")
-                mappa = folium.Map(location=[0, 0], zoom_start=11)
-        else:
-            # Se "Tutte le Zone" è selezionato, visualizza un marker per ogni zona
-            unique_zones = dati_filtrati['zona'].unique()
-            lat_list = []
-            lon_list = []
-            marker_data = []
-            for zone in unique_zones:
-                df_zone = dati_filtrati[dati_filtrati['zona'] == zone]
-                if not df_zone.empty:
-                    coord = df_zone['coordinate_zona'].iloc[0]
+                lat_list = []
+                lon_list = []
+                # Cicla su ogni riga per estrarre le coordinate degli immobili
+                for idx, row in df_zone.iterrows():
+                    coord = row['coordinate_indirizzo']
+                    # Se le coordinate sono una stringa (es. "(39.2238, 9.1217)"), convertila in tupla
                     if isinstance(coord, str):
                         try:
                             coord = ast.literal_eval(coord)
                         except Exception as e:
-                            st.error("Errore nel parsing delle coordinate per la zona " + zone + ": " + str(e))
+                            st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
                             coord = (0, 0)
                     lat, lon = coord
                     lat_list.append(lat)
                     lon_list.append(lon)
-                    marker_data.append((zone, lat, lon))
-            # Calcola il centro della mappa come la media delle coordinate (se disponibili)
-            if lat_list and lon_list:
+                # Calcola il centro della mappa come media delle coordinate
                 center_lat = sum(lat_list) / len(lat_list)
                 center_lon = sum(lon_list) / len(lon_list)
+                mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
+                # Aggiungi un marker per ogni appartamento
+                for idx, row in df_zone.iterrows():
+                    coord = row['coordinate_indirizzo']
+                    if isinstance(coord, str):
+                        try:
+                            coord = ast.literal_eval(coord)
+                        except Exception as e:
+                            st.error("Errore nel parsing delle coordinate per un indirizzo: " + str(e))
+                            coord = (0, 0)
+                    lat, lon = coord
+                    folium.CircleMarker(
+                        location=[lat, lon],
+                        radius=5,
+                        color='blue',
+                        fill=True,
+                        fill_color='blue',
+                        tooltip="Appartamento"
+                    ).add_to(mappa)
             else:
-                center_lat, center_lon = 0, 0
-            mappa = folium.Map(location=[center_lat, center_lon], zoom_start=12)
-            # Aggiungi un marker per ogni zona
-            for zone, lat, lon in marker_data:
-                folium.Marker(
-                    [lat, lon],
-                    popup=f"<b>{zone}</b>",
-                    tooltip="Clicca per info"
-                ).add_to(mappa)
+                st.error("Nessuna coordinata trovata per la zona selezionata.")
+                mappa = folium.Map(location=[0, 0], zoom_start=12)
+        else:
+            st.error("Seleziona una zona specifica per visualizzare gli indirizzi degli immobili.")
+            mappa = folium.Map(location=[0, 0], zoom_start=12)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=2500, height=500)
+        st_folium(mappa, width=700, height=500)
     
 
 
