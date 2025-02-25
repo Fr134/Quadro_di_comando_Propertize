@@ -1429,7 +1429,7 @@ def render_calcolatore():
                     tooltip="Clicca per info"
                 ).add_to(mappa)
         # Visualizza la mappa in Streamlit
-        st_folium(mappa, width=1400, height=500)
+        st_folium(mappa, width=2500, height=500)
     
 
 
