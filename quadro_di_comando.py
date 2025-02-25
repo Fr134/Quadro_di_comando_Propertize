@@ -28,33 +28,37 @@ def upload_file():
     return uploaded_file
 
 
+
 def localizzatore(file_path, data):
     """
-    associa a ogni immobile la posizione.
+    Associa a ogni immobile la posizione.
     """
     # Legge il Foglio 2 del file Excel
-    file_posizioni= pd.read_excel(file_path, sheet_name=2)
+    file_posizioni = pd.read_excel(file_path, sheet_name=2)
     
-    # Dizionario per salvare le notti disponibili per ogni appartamento
-    posizione_immobili = []
+    # Lista per salvare le informazioni di ogni immobile
+    lista_posizione = []
 
+    # Itera sulle righe del file e crea un dizionario per ogni riga
     for index, row in file_posizioni.iterrows():
-        posizione_immobili['nome_immobile'] = row[0]  # Nome dell'appartamento nella prima colonna
-        posizione_immobili['id_immobile'] = row[1]  # id dell'appartamento nella seconda colonna
-        posizione_immobili['zona'] = row[2]  #  dell'appartamento nella seconda colonna
-        posizione_immobili['coordinate_zona'] = row[3]  # id dell'appartamento nella seconda colonna
-        posizione_immobili['indririzzo'] = row[4]  # id dell'appartamento nella seconda colonna
-        posizione_immobili['coordinate_indirizzo'] = row[5]  # id dell'appartamento nella seconda colonna
+        d = {
+            'nome_immobile': row[0],            # Nome dell'appartamento nella prima colonna
+            'id_immobile': row[1],              # ID dell'appartamento nella seconda colonna
+            'zona': row[2],                     # Zona nella terza colonna
+            'coordinate_zona': row[3],          # Coordinate della zona nella quarta colonna
+            'indirizzo': row[4],                # Indirizzo nella quinta colonna
+            'coordinate_indirizzo': row[5]      # Coordinate dell'indirizzo nella sesta colonna
+        }
+        lista_posizione.append(d)
+    
+    # Converti l'elenco di dizionari in un DataFrame
+    df_posizione = pd.DataFrame(lista_posizione)
 
-    pd.DataFrame(posizione_immobili)
+    # Unisci i DataFrame specificando le colonne chiave diverse
+    data = data.merge(df_posizione, left_on='ID Appartamento', right_on='id_immobile', how='left')
 
-
-    # Unione dei DataFrame specificando le colonne chiave diverse
-    data = data.merge(posizione_immobili, left_on='ID Appartamento', right_on='id_immobile', how='left')
-
-
-    # Converti il risultato in un DataFrame
     return data
+
 
 
 
