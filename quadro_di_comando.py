@@ -359,7 +359,7 @@ def inject_custom_css():
             cursor: pointer;
             margin-left: 4px;
         }
-        </style
+        </style>
         """,
         unsafe_allow_html=True
     )
