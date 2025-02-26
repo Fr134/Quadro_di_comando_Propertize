@@ -345,6 +345,25 @@ def inject_custom_css():
     </style>
     """
     st.markdown(custom_css, unsafe_allow_html=True)
+    
+    """Applica stili personalizzati alla dashboard."""
+    st.markdown(
+        """
+        <style>
+        /* Stili esistenti della dashboard (se presenti) */
+
+        /* Stile per l'icona info */
+        .info-icon {
+            font-size: 18px;
+            color: #007BFF;
+            cursor: pointer;
+            margin-left: 5px;
+        }
+        </style>
+        """,
+        unsafe_allow_html=True
+    )
+
 
 
 ############## Funzione per visualizzare i KPI e i grafici      #############   
@@ -942,7 +961,7 @@ def dashboard_proprietari():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
-            
+            # bottone info
             if st.button("Info", key="toggle_info_ricavi_totali"):
                 st.session_state.info_ricavi_totali_visible = not st.session_state.get("info_ricavi_totali_visible", False)
             if st.session_state.get("info_ricavi_totali_visible", False):
