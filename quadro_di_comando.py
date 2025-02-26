@@ -346,7 +346,7 @@ def inject_custom_css():
     """
     st.markdown(custom_css, unsafe_allow_html=True)
 
-    """Applica stili personalizzati alla dashboard."""
+    #Applica stili personalizzati alla dashboard.
     st.markdown(
         """
         <style>
