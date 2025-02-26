@@ -355,7 +355,7 @@ def inject_custom_css():
         /* Stile per l'icona info */
         .info-icon {
             font-size: 12px;
-            color: #007BFF;
+            color:rgb(51, 255, 0);
             cursor: pointer;
             margin-left: 4px;
         }
