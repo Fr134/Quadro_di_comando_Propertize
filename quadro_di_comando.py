@@ -354,10 +354,10 @@ def inject_custom_css():
 
         /* Stile per l'icona info */
         .info-icon {
-            font-size: 18px;
+            font-size: 8px;
             color: #007BFF;
             cursor: pointer;
-            margin-left: 5px;
+            margin-left: 3px;
         }
         </style>
         """,
