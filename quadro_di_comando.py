@@ -953,7 +953,7 @@ def dashboard_proprietari():
             
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col, info_col = st.columns([3, 5. 0,3])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col, info_col = st.columns([3, 5, 0,3])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_pulizie"]
