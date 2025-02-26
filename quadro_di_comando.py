@@ -345,7 +345,7 @@ def inject_custom_css():
     </style>
     """
     st.markdown(custom_css, unsafe_allow_html=True)
-    
+
     """Applica stili personalizzati alla dashboard."""
     st.markdown(
         """
@@ -953,7 +953,7 @@ def dashboard_proprietari():
             
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        grafico_col, metrica_col, info_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_pulizie"]
@@ -962,10 +962,13 @@ def dashboard_proprietari():
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
             # bottone info
-            if st.button("Info", key="toggle_info_ricavi_totali"):
-                st.session_state.info_ricavi_totali_visible = not st.session_state.get("info_ricavi_totali_visible", False)
-            if st.session_state.get("info_ricavi_totali_visible", False):
-                st.info("I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell'immobile.")
+        with info_col:
+            st.markdown(
+            '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
+             unsafe_allow_html=True
+        )
+            
+            
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
