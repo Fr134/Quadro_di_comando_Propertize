@@ -86,7 +86,7 @@ def carica_elaboara_spese(file_path):
     # Elimina le righe in cui:
     # - la colonna "X" è nulla
     # - E la colonna "Y" ha un codice diverso da "57.03.01"
-    file_spese = file_spese[~(file_spese['Importo'].isnull() & (file_spese['Codice'] != '57.03.01'))]
+    file_spese = file_spese[~(file_spese['Importo'].isnull() & (file_spese['Codice'] != '59.01.01'))]
 
     
 
