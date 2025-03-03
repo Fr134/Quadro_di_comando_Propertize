@@ -909,7 +909,8 @@ def dashboard_spese():
 
     # Usa i dati filtrati se disponibili
     if 'filtered_data' in st.session_state:
-        dati_filtrati = st.session_state['filtered_data']   
+        dati_filtrati = st.session_state['filtered_data']  
+        st.write(dati_filtrati) 
 
     
 
