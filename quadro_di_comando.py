@@ -67,11 +67,12 @@ def carica_elaboara_spese(file_path):
     file_spese = pd.read_excel(
         file_path, 
         sheet_name=3,
-        usecols="D,F,I,J,K",
+        usecols="B,D,F,I,J,K",
         dtype=str,
         engine="openpyxl"
     )
     file_spese.columns = [
+        'Codice',
         'Descrizione',
         'Importo',
         'data',
@@ -81,6 +82,12 @@ def carica_elaboara_spese(file_path):
     ]
     # Trasforma la colonna "data" in formato datetime
     file_spese['data'] = pd.to_datetime(file_spese['data'], errors='coerce')
+
+    # Elimina le righe in cui:
+    # - la colonna "X" è nulla
+    # - E la colonna "Y" ha un codice diverso da "57.03.01"
+    file_spese = file_spese[~(file_spese['Importo'].isnull() & (file_spese['Codice'] != '57.03.01'))]
+
     
 
     
