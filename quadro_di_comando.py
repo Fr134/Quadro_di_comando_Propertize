@@ -2272,7 +2272,7 @@ def crea_grafico_barre(df, ricavi_colonna, commissioni_colonna, marginalita_colo
 
 
 # Main
-menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari", "Calcolatore"])
+menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari", "Analisi spese", "Calcolatore"])
 
 if menu == "Carica File":
     upload_file()
@@ -2282,6 +2282,8 @@ elif menu == "Analisi Performance":
     dashboard_analisi_performance()
 elif menu == "Dashboard Propietari":
     dashboard_proprietari()
+elif menu == "Analisi spese":
+    dashboard_spese()
 elif menu == "Calcolatore":
     render_calcolatore()
 
