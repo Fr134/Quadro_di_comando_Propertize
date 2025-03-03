@@ -67,7 +67,7 @@ def carica_elaboara_spese(file_path):
     file_spese = pd.read_excel(
         file_path, 
         sheet_name=3,
-        usecols="B,D,F,I,J,K",
+        usecols="B,D,E,F,I,J,K",
         dtype=str,
         engine="openpyxl"
     )
@@ -75,6 +75,7 @@ def carica_elaboara_spese(file_path):
         'Codice',
         'Descrizione',
         'Importo',
+        'Importo Totale',
         'data',
         'Settore di spesa',
         'Immobile associato alla spesa'
