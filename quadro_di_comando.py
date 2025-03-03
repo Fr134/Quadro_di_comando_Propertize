@@ -26,6 +26,7 @@ def upload_file():
            # Salva i dati nel session state
             st.session_state['uploaded_file'] = uploaded_file
             st.session_state['data'] = load_and_preprocess_data(uploaded_file)
+            st.session_state['spese'] = carica_elaboara_spese(uploaded_file)
     return uploaded_file
 
 
@@ -59,6 +60,33 @@ def localizzatore(file_path, data):
     data = data.merge(df_posizione, left_on='ID Appartamento', right_on='id_immobile', how='left')
 
     return data
+
+def carica_elaboara_spese(file_path):
+    
+    # Legge il Foglio 4 del file Excel
+    file_spese = pd.read_excel(
+        file_path, 
+        sheet_name=3,
+        usecols="D,F,I,J,K",
+        dtype=str,
+        engine="openpyxl"
+    )
+    file_spese.columns = [
+        'Descrizione',
+        'Importo',
+        'data',
+        'Settore di spesa',
+        'Immobile associato alla spesa'
+        
+    ]
+    # Trasforma la colonna "data" in formato datetime
+    file_spese['data'] = pd.to_datetime(file_spese['data'], errors='coerce')
+    
+
+    
+    
+
+    return pd.DataFrame(file_spese)
 
 
 
@@ -204,6 +232,8 @@ def load_and_preprocess_input_data(uploaded_file):
 
     data = data.dropna(subset=['ID Appartamento'])
     return pd.DataFrame(data)
+
+
 
 
 ############## Calcolo dei KPI    #############   
@@ -366,7 +396,7 @@ def inject_custom_css():
 
 
 
-############## Funzione per visualizzare i KPI e i grafici      #############   
+############## Funzioni per visualizzare le dashboard    #############   
 
 
 def render_dashboard():
@@ -785,6 +815,154 @@ def render_dashboard():
     
     st.divider()
          
+    
+def dashboard_spese():
+    
+    inject_custom_css()
+    st.title("📊 Analisi delle spese")
+
+    
+
+    # Verifica se i dati principali sono disponibili
+    if 'data' not in st.session_state or st.session_state['data'] is None:
+        st.error("Nessun dato disponibile. Torna alla pagina di caricamento.")
+        return
+
+    # Verifica se il file è disponibile per il calcolo delle notti disponibili
+    if 'uploaded_file' not in st.session_state:
+        st.error("Nessun file caricato per il calcolo delle notti disponibili.")
+        return
+
+    # Verifica se il file è disponibile per il calcolo delle notti disponibili
+    if 'spese' not in st.session_state:
+        st.error("Nessun dato relativo alle spese caricato.")
+        return
+
+
+    file_path = st.session_state['uploaded_file']
+    data = st.session_state['data']
+    data = localizzatore(file_path, data)
+    spese = st.session_state['spese']
+    st.write(spese)
+
+    
+
+        # Sezione Filtri
+    with st.sidebar.expander("🔍 Filtro Dati"):
+        st.markdown("### Filtra i dati")
+        
+        # Filtro per intervallo di date
+        start_date = st.date_input(
+            "Data Inizio",
+            data['Data Check-In'].min().date(),
+            key="start_date_filter"
+        )
+        end_date = st.date_input(
+            "Data Fine",
+            data['Data Check-In'].max().date(),
+            key="end_date_filter"
+        )
+        
+        # Filtro per appartamento
+        view_option = st.radio(
+            "Visualizza Appartamenti",
+            ("Tutti gli Appartamenti", "Singolo Appartamento", "Multipli Appartamenti"),
+            key="view_option_filter"
+        )
+        immobili_selezionati = None
+        if view_option == "Singolo Appartamento":
+            immobili_selezionati = st.selectbox(
+                "Seleziona Appartamento",
+                data['Nome Appartamento'].unique(),
+                key="appartamento_filter"
+            )
+        elif view_option == "Multipli Appartamenti":
+            immobili_selezionati = st.multiselect(
+                "Seleziona uno o più Appartamenti",
+                data['Nome Appartamento'].unique(),
+                key="appartamento_filter_multi"
+            )
+        
+        # Filtro per zona
+        zona_option = st.radio(
+            "Visualizza Zone",
+            ("Tutte le Zone", "Singola Zona", "Multipla Zona"),
+            key="zona_option_filter"
+        )
+        zona_selezionata = None
+        if zona_option == "Singola Zona":
+            zona_selezionata = st.selectbox(
+                "Seleziona Zona",
+                list(data['zona'].unique()),
+                key="zona_filter"
+            )
+        elif zona_option == "Multipla Zona":
+            zona_selezionata = st.multiselect(
+                "Seleziona una o più Zone",
+                list(data['zona'].unique()),
+                key="zona_filter_multi"
+            )
+        
+        # Filtraggio dei dati principali in base alle date
+        dati_filtrati = data[
+            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
+            (data['Data Check-In'] <= pd.Timestamp(end_date))
+        ]
+        
+        # Filtra in base agli immobili
+        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
+            if view_option == "Singolo Appartamento":
+                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == immobili_selezionati]
+            else:  # Multipli Appartamenti
+                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'].isin(immobili_selezionati)]
+        
+        # Filtra in base alla zona
+        if zona_option != "Tutte le Zone" and zona_selezionata:
+            if zona_option == "Singola Zona":
+                dati_filtrati = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
+            else:  # Multipla Zona
+                dati_filtrati = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
+        
+        # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
+        if 'ricavi_totali' not in dati_filtrati.columns:
+            dati_filtrati['ricavi_totali'] = (
+                dati_filtrati['Ricavi Locazione'] -
+                dati_filtrati['IVA Provvigioni PM'] -
+                dati_filtrati['Commissioni OTA'] * 0.22 +
+                dati_filtrati['Ricavi Pulizie'] / 1.22
+            )
+        if 'commissioni_totali' not in dati_filtrati.columns:
+            dati_filtrati['commissioni_totali'] = (
+                dati_filtrati['Commissioni OTA'] / 1.22 +
+                dati_filtrati['Commissioni ITW Nette']
+            )
+        
+        # Calcola le notti disponibili
+        notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
+        
+        # Filtra le notti disponibili in base al filtro appartamento
+        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
+            if view_option == "Singolo Appartamento":
+                notti_disponibili_filtrate = notti_disponibili_df[
+                    notti_disponibili_df['Appartamento'] == immobili_selezionati
+                ]
+            else:
+                notti_disponibili_filtrate = notti_disponibili_df[
+                    notti_disponibili_df['Appartamento'].isin(immobili_selezionati)
+                ]
+        else:
+            notti_disponibili_filtrate = notti_disponibili_df
+        
+        # Salva i dati filtrati nel session state
+        st.session_state['filtered_data'] = dati_filtrati
+        st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
+
+    # Usa i dati filtrati se disponibili
+    if 'filtered_data' in st.session_state:
+        dati_filtrati = st.session_state['filtered_data']
+    if 'filtered_notti_disponibili' in st.session_state:
+        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
+
     
 
     
