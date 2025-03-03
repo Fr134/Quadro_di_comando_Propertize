@@ -855,123 +855,61 @@ def dashboard_spese():
 
     
 
-        # Sezione Filtri
+# Sezione Filtri
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
         
-        # Filtro per intervallo di date
+        # Filtro per intervallo di date (colonna "data" del dataframe spese)
         start_date = st.date_input(
             "Data Inizio",
-            data['Data Check-In'].min().date(),
+            spese['data'].min().date(),
             key="start_date_filter"
         )
         end_date = st.date_input(
             "Data Fine",
-            data['Data Check-In'].max().date(),
+            spese['data'].max().date(),
             key="end_date_filter"
         )
         
-        # Filtro per appartamento
-        view_option = st.radio(
-            "Visualizza Appartamenti",
-            ("Tutti gli Appartamenti", "Singolo Appartamento", "Multipli Appartamenti"),
-            key="view_option_filter"
+        # Filtro per Settore di Spesa
+        settore_option = st.radio(
+            "Visualizza Settori di Spesa",
+            ("Tutti i Settori", "Singolo Settore", "Multipli Settori"),
+            key="settore_option_filter"
         )
-        immobili_selezionati = None
-        if view_option == "Singolo Appartamento":
-            immobili_selezionati = st.selectbox(
-                "Seleziona Appartamento",
-                data['Nome Appartamento'].unique(),
-                key="appartamento_filter"
+        settore_selezionato = None
+        if settore_option == "Singolo Settore":
+            settore_selezionato = st.selectbox(
+                "Seleziona Settore di Spesa",
+                spese['Settore di spesa'].unique(),
+                key="settore_filter"
             )
-        elif view_option == "Multipli Appartamenti":
-            immobili_selezionati = st.multiselect(
-                "Seleziona uno o più Appartamenti",
-                data['Nome Appartamento'].unique(),
-                key="appartamento_filter_multi"
-            )
-        
-        # Filtro per zona
-        zona_option = st.radio(
-            "Visualizza Zone",
-            ("Tutte le Zone", "Singola Zona", "Multipla Zona"),
-            key="zona_option_filter"
-        )
-        zona_selezionata = None
-        if zona_option == "Singola Zona":
-            zona_selezionata = st.selectbox(
-                "Seleziona Zona",
-                list(data['zona'].unique()),
-                key="zona_filter"
-            )
-        elif zona_option == "Multipla Zona":
-            zona_selezionata = st.multiselect(
-                "Seleziona una o più Zone",
-                list(data['zona'].unique()),
-                key="zona_filter_multi"
+        elif settore_option == "Multipli Settori":
+            settore_selezionato = st.multiselect(
+                "Seleziona uno o più Settori di Spesa",
+                spese['Settore di spesa'].unique(),
+                key="settore_filter_multi"
             )
         
         # Filtraggio dei dati principali in base alle date
-        dati_filtrati = data[
-            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
-            (data['Data Check-In'] <= pd.Timestamp(end_date))
+        dati_filtrati = spese[
+            (spese['data'] >= pd.Timestamp(start_date)) &
+            (spese['data'] <= pd.Timestamp(end_date))
         ]
         
-        # Filtra in base agli immobili
-        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
-            if view_option == "Singolo Appartamento":
-                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'] == immobili_selezionati]
-            else:  # Multipli Appartamenti
-                dati_filtrati = dati_filtrati[dati_filtrati['Nome Appartamento'].isin(immobili_selezionati)]
-        
-        # Filtra in base alla zona
-        if zona_option != "Tutte le Zone" and zona_selezionata:
-            if zona_option == "Singola Zona":
-                dati_filtrati = dati_filtrati[dati_filtrati['zona'] == zona_selezionata]
-            else:  # Multipla Zona
-                dati_filtrati = dati_filtrati[dati_filtrati['zona'].isin(zona_selezionata)]
-        
-        # Assicurati che le colonne calcolate siano presenti nel DataFrame filtrato
-        if 'ricavi_totali' not in dati_filtrati.columns:
-            dati_filtrati['ricavi_totali'] = (
-                dati_filtrati['Ricavi Locazione'] -
-                dati_filtrati['IVA Provvigioni PM'] -
-                dati_filtrati['Commissioni OTA'] * 0.22 +
-                dati_filtrati['Ricavi Pulizie'] / 1.22
-            )
-        if 'commissioni_totali' not in dati_filtrati.columns:
-            dati_filtrati['commissioni_totali'] = (
-                dati_filtrati['Commissioni OTA'] / 1.22 +
-                dati_filtrati['Commissioni ITW Nette']
-            )
-        
-        # Calcola le notti disponibili
-        notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
-        
-        # Filtra le notti disponibili in base al filtro appartamento
-        if view_option != "Tutti gli Appartamenti" and immobili_selezionati:
-            if view_option == "Singolo Appartamento":
-                notti_disponibili_filtrate = notti_disponibili_df[
-                    notti_disponibili_df['Appartamento'] == immobili_selezionati
-                ]
-            else:
-                notti_disponibili_filtrate = notti_disponibili_df[
-                    notti_disponibili_df['Appartamento'].isin(immobili_selezionati)
-                ]
-        else:
-            notti_disponibili_filtrate = notti_disponibili_df
+        # Filtra in base al Settore di Spesa
+        if settore_option != "Tutti i Settori" and settore_selezionato:
+            if settore_option == "Singolo Settore":
+                dati_filtrati = dati_filtrati[dati_filtrati['Settore di spesa'] == settore_selezionato]
+            else:  # Multipli Settori
+                dati_filtrati = dati_filtrati[dati_filtrati['Settore di spesa'].isin(settore_selezionato)]
         
         # Salva i dati filtrati nel session state
         st.session_state['filtered_data'] = dati_filtrati
-        st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
 
     # Usa i dati filtrati se disponibili
     if 'filtered_data' in st.session_state:
-        dati_filtrati = st.session_state['filtered_data']
-    if 'filtered_notti_disponibili' in st.session_state:
-        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
-
-    
+        dati_filtrati = st.session_state['filtered_data']   
 
     
 
