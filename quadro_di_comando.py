@@ -853,9 +853,7 @@ def dashboard_spese():
     spese = st.session_state['spese']
     st.write(spese)
 
-    
-
-# Sezione Filtri
+    # Sezione Filtri
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
         
@@ -913,6 +911,33 @@ def dashboard_spese():
         st.write(dati_filtrati) 
 
     
+    
+    
+    col1, col2 = st.columns([2,4])
+    with col1:
+        #grafico ad anello + scritta + bottone info 
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["totale_ricavi_pulizie"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
+        # bottone info
+        with info_col:
+            st.markdown(
+            '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
+             unsafe_allow_html=True
+        )
+
+
+
+
+
+
+
 
 def dashboard_proprietari():
     inject_custom_css()
@@ -1086,7 +1111,7 @@ def dashboard_proprietari():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
-            # bottone info
+        # bottone info
         with info_col:
             st.markdown(
             '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
