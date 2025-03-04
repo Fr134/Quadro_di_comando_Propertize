@@ -384,8 +384,30 @@ def eleboratore_spese(df):
     # Assegna alla riga IVA il settore della spesa dalla riga precedente
     df.loc[vat_mask, 'Settore di spesa'] = df['Settore di spesa'].shift(1)
 
+    # Converti in numerico le colonne, in caso contengano stringhe o formati non numerici
+    df['Importo Totale'] = pd.to_numeric(df['Importo Totale'], errors='coerce')
+    df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
+
+    # Filtra le righe spesa (non IVA)
+    df_spesa = df[df['codice'] != "59.01.01"]
+    totali_spesa = df_spesa.groupby("Settore di spesa")['Importo Totale'].sum().reset_index()
+    totali_spesa.rename(columns={'Importo Totale': 'Totale Spese'}, inplace=True)
+
+    # Filtra le righe IVA
+    df_iva = df[df['codice'] == "59.01.01"]
+    totali_iva = df_iva.groupby("Settore di spesa")['Importo'].sum().reset_index()
+    totali_iva.rename(columns={'Importo': 'Totale IVA'}, inplace=True)
+
+    # Unisci i risultati per settore
+    totali = pd.merge(totali_spesa, totali_iva, on="Settore di spesa", how="outer").fillna(0)
+
+    # Calcola il totale IVA complessivo
+    totale_iva_complessivo = totali_iva['Totale IVA'].sum()
+
     
-    return df
+
+    
+    return df, totali, totale_iva_complessivo
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
@@ -956,8 +978,8 @@ def dashboard_spese():
         st.write(dati_filtrati) 
 
     
-    kpis_spese = eleboratore_spese(spese)
-    st.write(kpis_spese)
+    kpis_spese, totali_spese, totale_iva = eleboratore_spese(spese)
+    st.write(totali_spese)
     
     col1, col2 = st.columns([2,4])
     with col1:
