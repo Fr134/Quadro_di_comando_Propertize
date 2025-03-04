@@ -365,11 +365,18 @@ def eleboratore_spese(df):
     # Maschera per identificare le righe delle spese (non IVA)
     expense_mask = df['Codice'] != "59.01.01"
     
-    # Calcola l'importo netto per le righe delle spese
+    
+    
+
+
+    # Assicurati che le colonne siano di tipo numerico
+    df['Importo Totale'] = pd.to_numeric(df['Importo Totale'], errors='coerce')
+    df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
+
+    # Calcola l'importo netto per le spese (sottraendo l'importo IVA dalla spesa)
     # Si assume che la riga successiva contenga l'importo dell'IVA (colonna y)
-
-
     df.loc[expense_mask, 'importo_netto'] = df.loc[expense_mask, 'Importo Totale'] - df['Importo'].shift(-1)
+
     
     # Maschera per le righe IVA (codice "59.01.01")
     vat_mask = df['Codice'] == "59.01.01"
