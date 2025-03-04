@@ -950,6 +950,7 @@ def dashboard_spese():
 
     
     kpis_spese = eleboratore_spese(spese)
+    st.write(kpis_spese)
     
     col1, col2 = st.columns([2,4])
     with col1:
