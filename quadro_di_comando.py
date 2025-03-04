@@ -342,6 +342,44 @@ def calculate_kpis(data, notti_disponibili_filtrate):
         'numero_prenotazioni': numero_prenotazioni
     }
 
+
+
+
+def eleboratore_spese(df):
+    """
+    Per ogni spesa (riga in cui il codice non è "59.01.01"), calcola l'importo netto
+    sottraendo l'importo IVA (presumibilmente nella riga immediatamente successiva, 
+    colonna 'y') dall'importo (colonna 'x'). Inoltre, per ogni riga IVA (codice "59.01.01"),
+    assegna il settore di spesa della riga precedente nella nuova colonna 'settore_spesa'.
+    
+    Parametri:
+      - df: DataFrame contenente le colonne 'x', 'y', 'settore' e 'codice'.
+    
+    Ritorna:
+      - df: DataFrame aggiornato con la colonna 'importo_netto' per le spese e la colonna
+            'settore_spesa' assegnata per le righe IVA.
+    """
+
+
+
+    # Maschera per identificare le righe delle spese (non IVA)
+    expense_mask = df['Codice'] != "59.01.01"
+    
+    # Calcola l'importo netto per le righe delle spese
+    # Si assume che la riga successiva contenga l'importo dell'IVA (colonna y)
+
+
+    df.loc[expense_mask, 'importo_netto'] = df.loc[expense_mask, 'Importo Totale'] - df['Importo'].shift(-1)
+    
+    # Maschera per le righe IVA (codice "59.01.01")
+    vat_mask = df['Codice'] == "59.01.01"
+    
+    # Assegna alla riga IVA il settore della spesa dalla riga precedente
+    df.loc[vat_mask, 'Settore di spesa'] = df['Settore di spesa'].shift(1)
+
+    
+    return df
+
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
 def inject_custom_css():
@@ -911,7 +949,7 @@ def dashboard_spese():
         st.write(dati_filtrati) 
 
     
-    
+    kpis_spese = eleboratore_spese(spese)
     
     col1, col2 = st.columns([2,4])
     with col1:
