@@ -979,7 +979,7 @@ def dashboard_spese():
 
     
     kpis_spese, totali_spese, totale_iva = eleboratore_spese(spese)
-    st.write(totali_spese)
+    st.write(kpis_spese)
     
     col1, col2 = st.columns([2,4])
     with col1:
