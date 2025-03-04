@@ -401,6 +401,8 @@ def eleboratore_spese(df):
     # Unisci i risultati per settore
     totali = pd.merge(totali_spesa, totali_iva, on="Settore di spesa", how="outer").fillna(0)
 
+    
+
     # Calcola il totale IVA complessivo
     totale_iva_complessivo = totali_iva['Totale IVA'].sum()
 
@@ -980,7 +982,9 @@ def dashboard_spese():
     
     kpis_spese, totali_spese, totale_iva = eleboratore_spese(spese)
     st.write(kpis_spese)
-    
+    st.write(totali_spese)
+
+
     col1, col2 = st.columns([2,4])
     with col1:
         #grafico ad anello + scritta + bottone info 
