@@ -389,12 +389,12 @@ def eleboratore_spese(df):
     df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
 
     # Filtra le righe spesa (non IVA)
-    df_spesa = df[df['codice'] != "59.01.01"]
+    df_spesa = df[df['Codice'] != "59.01.01"]
     totali_spesa = df_spesa.groupby("Settore di spesa")['Importo Totale'].sum().reset_index()
     totali_spesa.rename(columns={'Importo Totale': 'Totale Spese'}, inplace=True)
 
     # Filtra le righe IVA
-    df_iva = df[df['codice'] == "59.01.01"]
+    df_iva = df[df['Codice'] == "59.01.01"]
     totali_iva = df_iva.groupby("Settore di spesa")['Importo'].sum().reset_index()
     totali_iva.rename(columns={'Importo': 'Totale IVA'}, inplace=True)
 
