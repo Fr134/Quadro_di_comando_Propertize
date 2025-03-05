@@ -248,16 +248,6 @@ def load_and_preprocess_input_data(uploaded_file):
 
 
 
-def calcolo_kpi_generali(data):
-    #   RICAVI   SENZA IVA   #
-    
-    
-    
-    totale_ricavi_locazione = data['Ricavi Locazione'].sum() - data['IVA Provvigioni PM'].sum() 
-    totale_ricavi_pulizie = data['Ricavi Pulizie'].sum() / 1.22
-    ricavi_totali = totale_ricavi_locazione + totale_ricavi_pulizie
-
-    return ricavi_totali
 
 
 
@@ -1011,9 +1001,9 @@ def dashboard_spese():
     
 
     
-    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(spese)
+    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati)
     st.write(dati_filtrati)
-    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
+    kpis = calculate_kpis(data, notti_disponibili_filtrate)
     
     st.write(kpis_spese)
     st.write(totali_spese_settore)
