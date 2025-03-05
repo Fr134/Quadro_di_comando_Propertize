@@ -986,6 +986,10 @@ def dashboard_spese():
         dati_filtrati = st.session_state['filtered_data']  
         
 
+    # Calcola le notti disponibili
+    notti_disponibili_df = calcola_notti_disponibili(file_path, start_date, end_date)
+    st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
+
     if 'filtered_notti_disponibili' in st.session_state:
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
     
