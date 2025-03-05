@@ -403,7 +403,7 @@ def eleboratore_spese(df):
     totale_iva_complessivo = totali_iva['Totale IVA'].sum()
 
     totale_spese_netto = totali['totale_netto'].sum()
-    totale_spese_lordo = totali['Totale spese'].sum()
+    totale_spese_lordo = totali['Totale Spese'].sum()
 
 
     # Crea un nuovo DataFrame con i totali ottenuti
