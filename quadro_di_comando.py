@@ -365,10 +365,6 @@ def eleboratore_spese(df):
     # Maschera per identificare le righe delle spese (non IVA)
     expense_mask = df['Codice'] != "59.01.01"
     
-    
-    
-
-
     # Assicurati che le colonne siano di tipo numerico
     df['Importo Totale'] = pd.to_numeric(df['Importo Totale'], errors='coerce')
     df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
@@ -406,10 +402,21 @@ def eleboratore_spese(df):
     # Calcola il totale IVA complessivo
     totale_iva_complessivo = totali_iva['Totale IVA'].sum()
 
+    totale_spese_netto = totali['totale_netto'].sum()
+    totale_spese_lordo = totali['Totale spese'].sum()
+
+
+    # Crea un nuovo DataFrame con i totali ottenuti
+    totali_df = pd.DataFrame({
+        'Totale_Spese_netto': [totale_spese_netto],
+        'Totale_Spese_lordo': [totale_spese_lordo]
+        'Totale_IVA': [totale_iva_complessivo]
+    })
+
     
 
     
-    return df, totali, totale_iva_complessivo
+    return df, totali, totali_df
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
@@ -977,12 +984,17 @@ def dashboard_spese():
     # Usa i dati filtrati se disponibili
     if 'filtered_data' in st.session_state:
         dati_filtrati = st.session_state['filtered_data']  
-        st.write(dati_filtrati) 
+        
+
+    if 'filtered_notti_disponibili' in st.session_state:
+        notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
+    
 
     
-    kpis_spese, totali_spese, totale_iva = eleboratore_spese(spese)
+    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(spese)
+    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
     st.write(kpis_spese)
-    st.write(totali_spese)
+    st.write(totali_spese_settore)
 
 
     col1, col2 = st.columns([2,4])
@@ -992,11 +1004,11 @@ def dashboard_spese():
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["totale_ricavi_pulizie"]
+            kpi = totale_spese['Totale_Spese_netto']
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
+            st.metric("🧹 Spese Totali (€)", f"{totale_spese['Totale_Spese_netto']:,.2f}") 
         # bottone info
         with info_col:
             st.markdown(
