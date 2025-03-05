@@ -1961,16 +1961,9 @@ def render_calcolatore():
 ############## Funzione per creare un grafico ad anello compatto    #############   
 
 def create_donut_chart(totale, kpi):
-    
-    
-
     """
     Crea un grafico ad anello compatto che mostra la percentuale del kpi passato sul totale
-    
-    
     """
-    
-    
     # Calcola la percentuale rispetto al totale
     percentuale = (kpi / totale) * 100
 
@@ -1985,30 +1978,30 @@ def create_donut_chart(totale, kpi):
             values=values,
             hole=0.6,
             textinfo='none',  # Rimuove le etichette standard
-            marker=dict(colors=['#1f77b4', '#d3d3d3'])  # Colori del grafico
+            marker=dict(colors=['#1f77b4', '#d3d3d3'])
         )]
     )
 
     # Personalizzazione del layout
     fig.update_layout(
-        annotations=[
-            {
-                "font": {"size": 20},
-                "showarrow": False,
-                "text": f"{float(percentuale):.0f}%",  # Converte percentuale in float prima della formattazione
-                "x": 0.1,
-                "y": 0.5
-            }
-        ],
-        showlegend=False,  # Nasconde la legenda
-        margin=dict(t=0, b=0, l=0, r=0),  # Rimuove i margini
-        height=40,  # Altezza compatta
-        width=40,   # Larghezza compatta
+        annotations=[{
+            "font": {"size": 20},
+            "showarrow": False,
+            "text": f"{float(percentuale):.0f}%",  # Converte percentuale in float prima della formattazione
+            "x": 0.1,
+            "y": 0.5
+        }],
+        showlegend=False,             # Nasconde la legenda
+        margin=dict(t=0, b=0, l=0, r=0),# Rimuove i margini
+        height=40,                    # Altezza compatta
+        width=40,                     # Larghezza compatta
     )
+    
     # Aggiungi la configurazione per rimuovere i pulsanti della modebar
     fig["config"] = {"modeBarButtonsToRemove": ["toImage", "toggleFullScreen"]}
-
+    
     return fig
+
 
 
 def create_donut_chart1(totale, kpi):
