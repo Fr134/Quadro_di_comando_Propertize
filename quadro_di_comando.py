@@ -2005,6 +2005,8 @@ def create_donut_chart(totale, kpi):
         height=40,  # Altezza compatta
         width=40,   # Larghezza compatta
     )
+    # Aggiungi la configurazione per rimuovere i pulsanti della modebar
+    fig["config"] = {"modeBarButtonsToRemove": ["toImage", "toggleFullScreen"]}
 
     return fig
 
