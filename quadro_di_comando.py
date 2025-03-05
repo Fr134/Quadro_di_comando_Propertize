@@ -1995,7 +1995,7 @@ def create_donut_chart(totale, kpi):
             {
                 "font": {"size": 20},
                 "showarrow": False,
-                "text": f"{percentuale:.0f}%",  # Mostra la percentuale al centro
+                "text": f"{float(percentuale):.0f}%",  # Converte percentuale in float prima della formattazione
                 "x": 0.1,
                 "y": 0.5
             }
