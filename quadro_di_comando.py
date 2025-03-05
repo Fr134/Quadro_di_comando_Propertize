@@ -365,8 +365,7 @@ def eleboratore_spese(df):
       - df: DataFrame aggiornato con la colonna 'importo_netto' per le spese e la colonna
             'settore_spesa' assegnata per le righe IVA.
     """
-
-
+    import pandas as pd
 
     # Maschera per identificare le righe delle spese (non IVA)
     expense_mask = df['Codice'] != "59.01.01"
@@ -377,8 +376,7 @@ def eleboratore_spese(df):
 
     # Calcola l'importo netto per le spese (sottraendo l'importo IVA dalla spesa)
     # Si assume che la riga successiva contenga l'importo dell'IVA (colonna y)
-    df.loc[expense_mask, 'importo_netto'] = df.loc[expense_mask, 'Importo Totale'] - df['Importo'].shift(-1)
-
+    df.loc[expense_mask, 'importo_netto'] = df.loc[expense_mask, 'Importo Totale'].astype(float) - df['Importo'].shift(-1).astype(float)
     
     # Maschera per le righe IVA (codice "59.01.01")
     vat_mask = df['Codice'] == "59.01.01"
@@ -403,14 +401,13 @@ def eleboratore_spese(df):
     # Unisci i risultati per settore
     totali = pd.merge(totali_spesa, totali_iva, on="Settore di spesa", how="outer").fillna(0)
 
-    totali['totale_netto'] = totali['Totale Spese']- totali['Totale IVA']
+    totali['totale_netto'] = totali['Totale Spese'] - totali['Totale IVA']
 
     # Calcola il totale IVA complessivo
     totale_iva_complessivo = totali_iva['Totale IVA'].sum()
 
     totale_spese_netto = totali['totale_netto'].sum()
     totale_spese_lordo = totali['Totale Spese'].sum()
-
 
     # Crea un nuovo DataFrame con i totali ottenuti
     totali_df = pd.DataFrame({
@@ -419,10 +416,8 @@ def eleboratore_spese(df):
         'Totale_IVA': [totale_iva_complessivo]
     })
 
-    
-
-    
     return df, totali, totali_df
+
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
