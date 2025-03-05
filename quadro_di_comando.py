@@ -1012,8 +1012,9 @@ def dashboard_spese():
 
     
     kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(spese)
-    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
     st.write(dati_filtrati)
+    kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
+    
     st.write(kpis_spese)
     st.write(totali_spese_settore)
 
