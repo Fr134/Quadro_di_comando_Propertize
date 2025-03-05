@@ -409,7 +409,7 @@ def eleboratore_spese(df):
     # Crea un nuovo DataFrame con i totali ottenuti
     totali_df = pd.DataFrame({
         'Totale_Spese_netto': [totale_spese_netto],
-        'Totale_Spese_lordo': [totale_spese_lordo]
+        'Totale_Spese_lordo': [totale_spese_lordo],
         'Totale_IVA': [totale_iva_complessivo]
     })
 
