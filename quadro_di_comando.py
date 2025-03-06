@@ -924,29 +924,30 @@ def dashboard_spese():
 
     # Sezione Filtri
 # Sezione Filtri
-with st.sidebar.expander("🔍 Filtro Dati"):
-    st.markdown("### Filtra i dati")
-    
-    # Filtro per intervallo di date (colonna "data" del dataframe spese)
-    start_date = st.date_input(
-        "Data Inizio",
-        spese['data'].min().date(),
-        key="start_date_filter"
-    )
-    end_date = st.date_input(
-        "Data Fine",
-        spese['data'].max().date(),
-        key="end_date_filter"
-    )
-    
-    # Filtraggio dei dati principali in base alle date
-    dati_filtrati = spese[
-        (spese['data'] >= pd.Timestamp(start_date)) &
-        (spese['data'] <= pd.Timestamp(end_date))
-    ]
-    
-    # Salva i dati filtrati nel session state
-    st.session_state['filtered_data'] = dati_filtrati
+# Sezione Filtri
+    with st.sidebar.expander("🔍 Filtro Dati"):
+        st.markdown("### Filtra i dati")
+        
+        # Filtro per intervallo di date (colonna "data" del dataframe spese)
+        start_date = st.date_input(
+            "Data Inizio",
+            spese['data'].min().date(),
+            key="start_date_filter"
+        )
+        end_date = st.date_input(
+            "Data Fine",
+            spese['data'].max().date(),
+            key="end_date_filter"
+        )
+        
+        # Filtraggio dei dati principali in base alle date
+        dati_filtrati = spese[
+            (spese['data'] >= pd.Timestamp(start_date)) &
+            (spese['data'] <= pd.Timestamp(end_date))
+        ]
+        
+        # Salva i dati filtrati nel session state
+        st.session_state['filtered_data'] = dati_filtrati
 
 
 
