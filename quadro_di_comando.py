@@ -1030,7 +1030,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = totale_spese['Totale_Spese_netto']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Spese Totali (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}") 
         # bottone info
@@ -1047,7 +1047,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = totale_spese['Totale_Spese_netto']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Spese Totali (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}") 
         # bottone info
