@@ -1037,7 +1037,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col01")  # Mantieni larghezza compatta
         with col01:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
     with col02:
@@ -1047,7 +1047,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col02")  # Mantieni larghezza compatta
         with col02:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
 
@@ -1059,7 +1059,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col03")  # Mantieni larghezza compatta
         with col03:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
 
@@ -1070,7 +1070,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_ota"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col04")  # Mantieni larghezza compatta
         with col04:
             st.metric("📊 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
 
@@ -1081,7 +1081,7 @@ def dashboard_spese():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_itw"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col05")  # Mantieni larghezza compatta
         with col05:
             st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
 
