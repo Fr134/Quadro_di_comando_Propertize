@@ -355,36 +355,45 @@ def eleboratore_spese(df):
     """
     Per ogni spesa (riga in cui il codice non è "59.01.01"), calcola l'importo netto
     sottraendo l'importo IVA (presumibilmente nella riga immediatamente successiva, 
-    colonna 'y') dall'importo (colonna 'x'). Inoltre, per ogni riga IVA (codice "59.01.01"),
-    assegna il settore di spesa della riga precedente nella nuova colonna 'settore_spesa'.
+    colonna 'Importo') dall'importo (colonna 'Importo Totale'). Inoltre, per ogni riga IVA 
+    (codice "59.01.01"), assegna il settore di spesa della riga precedente nella colonna 
+    "Settore di spesa". Converte anche la colonna "data" in formato datetime e, per le righe IVA,
+    assegna la data della riga precedente (cioè quella a cui si riferisce l'IVA).
     
     Parametri:
-      - df: DataFrame contenente le colonne 'x', 'y', 'settore' e 'codice'.
+      - df: DataFrame contenente le colonne 'Importo Totale', 'Importo', 'Settore di spesa',
+            'Codice' e 'data'.
     
     Ritorna:
-      - df: DataFrame aggiornato con la colonna 'importo_netto' per le spese e la colonna
-            'settore_spesa' assegnata per le righe IVA.
+      - df: DataFrame aggiornato
+      - totali: DataFrame con i totali per settore
+      - totali_df: DataFrame riepilogativo con i totali complessivi
     """
     import pandas as pd
+
+    # Converti la colonna "data" in formato datetime
+    df['data'] = pd.to_datetime(df['data'], errors='coerce')
+    
+    # Maschera per le righe IVA (Codice "59.01.01")
+    vat_mask = df['Codice'] == "59.01.01"
+    # Assegna la data della riga precedente alle righe IVA
+    df.loc[vat_mask, 'data'] = df['data'].shift(1)
 
     # Maschera per identificare le righe delle spese (non IVA)
     expense_mask = df['Codice'] != "59.01.01"
     
-    # Assicurati che le colonne siano di tipo numerico
+    # Assicura che le colonne siano di tipo numerico
     df['Importo Totale'] = pd.to_numeric(df['Importo Totale'], errors='coerce')
     df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
 
-    # Calcola l'importo netto per le spese (sottraendo l'importo IVA dalla spesa)
-    # Si assume che la riga successiva contenga l'importo dell'IVA (colonna y)
+    # Calcola l'importo netto per le spese
+    # Si assume che la riga successiva contenga l'importo dell'IVA (colonna 'Importo')
     df.loc[expense_mask, 'importo_netto'] = df.loc[expense_mask, 'Importo Totale'].astype(float) - df['Importo'].shift(-1).astype(float)
-    
-    # Maschera per le righe IVA (codice "59.01.01")
-    vat_mask = df['Codice'] == "59.01.01"
     
     # Assegna alla riga IVA il settore della spesa dalla riga precedente
     df.loc[vat_mask, 'Settore di spesa'] = df['Settore di spesa'].shift(1)
 
-    # Converti in numerico le colonne, in caso contengano stringhe o formati non numerici
+    # (Riconversione numerica, se necessaria)
     df['Importo Totale'] = pd.to_numeric(df['Importo Totale'], errors='coerce')
     df['Importo'] = pd.to_numeric(df['Importo'], errors='coerce')
 
@@ -400,12 +409,10 @@ def eleboratore_spese(df):
 
     # Unisci i risultati per settore
     totali = pd.merge(totali_spesa, totali_iva, on="Settore di spesa", how="outer").fillna(0)
-
     totali['totale_netto'] = totali['Totale Spese'] - totali['Totale IVA']
 
     # Calcola il totale IVA complessivo
     totale_iva_complessivo = totali_iva['Totale IVA'].sum()
-
     totale_spese_netto = totali['totale_netto'].sum()
     totale_spese_lordo = totali['Totale Spese'].sum()
 
@@ -417,6 +424,7 @@ def eleboratore_spese(df):
     })
 
     return df, totali, totali_df
+
 
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
