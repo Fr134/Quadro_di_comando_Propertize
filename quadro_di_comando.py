@@ -747,14 +747,6 @@ def render_dashboard():
 
         
         
-        
-        
-        
-            
-            
-                       
-    
-
     
            
 
@@ -972,13 +964,17 @@ def dashboard_spese():
             (spese['data'] <= pd.Timestamp(end_date))
         ]
         
-        # Filtra in base al Settore di Spesa
-        if settore_option != "Tutti i Settori" and settore_selezionato:
-            if settore_option == "Singolo Settore":
-                dati_filtrati = dati_filtrati[dati_filtrati['Settore di spesa'] == settore_selezionato]
-            else:  # Multipli Settori
-                dati_filtrati = dati_filtrati[dati_filtrati['Settore di spesa'].isin(settore_selezionato)]
-        
+        # Filtra in base al Settore di Spesa, mantenendo le righe IVA
+    if settore_option != "Tutti i Settori" and settore_selezionato:
+        if settore_option == "Singolo Settore":
+            dati_filtrati = dati_filtrati[
+                (dati_filtrati['Settore di spesa'] == settore_selezionato) | (dati_filtrati['Codice'] == "59.01.01")
+            ]  
+        else:  # Multipli Settori
+            dati_filtrati = dati_filtrati[
+                (dati_filtrati['Settore di spesa'].isin(settore_selezionato)) | (dati_filtrati['Codice'] == "59.01.01")
+            ]
+
         # Salva i dati filtrati nel session state
         st.session_state['filtered_data'] = dati_filtrati
 
@@ -1119,8 +1115,10 @@ def dashboard_spese():
         with col05:
             st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
 
-
-       
+    col001, col002 = st.columns([4,2])
+    with col001:
+        fig = create_horizontal_bar_chart(totali_spese_settore, "Settore di spesa", "totale_netto")
+        st.plotly_chart(fig)
 
 
 
@@ -2430,6 +2428,58 @@ def crea_grafico_barre(df, ricavi_colonna, commissioni_colonna, marginalita_colo
     # Visualizza il grafico nella dashboard
     st.plotly_chart(fig, use_container_width=True)
 
+##################    grafico a barre orizzontali    ##################
+def create_horizontal_bar_chart(df, category_col, value_col):
+    """
+    Crea un grafico a barre orizzontali in cui per ogni riga del DataFrame viene disegnata una barra.
+    Sul lato sinistro della barra viene visualizzato il valore corrispondente.
+
+    Parametri:
+      - df: DataFrame contenente i dati.
+      - category_col: nome della colonna che contiene le etichette (categorie) per l'asse y.
+      - value_col: nome della colonna che contiene i valori da visualizzare (lunghezza delle barre).
+      
+    Ritorna:
+      - fig: oggetto Figure di Plotly.
+    """
+    import plotly.graph_objects as go
+
+    # Calcola il massimo valore per definire un offset e per impostare il range dell'asse x
+    max_val = df[value_col].max()
+    # Calcola un offset per posizionare le annotazioni a sinistra (5% del massimo)
+    x_offset = -0.05 * max_val  
+
+    fig = go.Figure()
+    
+    # Aggiunge la traccia a barre orizzontali
+    fig.add_trace(go.Bar(
+        x=df[value_col],
+        y=df[category_col],
+        orientation='h',
+        marker=dict(color='blue'),
+        text="",  # Non usiamo il testo integrato nella traccia
+    ))
+    
+    # Aggiungi annotazioni per mostrare il valore a sinistra della barra
+    for i, row in df.iterrows():
+        fig.add_annotation(
+            x=x_offset,
+            y=row[category_col],
+            text=f"{row[value_col]:,.2f}",
+            showarrow=False,
+            xanchor="right",
+            yanchor="middle",
+        )
+    
+    # Imposta il layout per includere l'offset nell'asse x
+    fig.update_layout(
+        xaxis_title=value_col,
+        yaxis_title=category_col,
+        margin=dict(l=150, r=20, t=20, b=20),
+        xaxis=dict(range=[x_offset, max_val * 1.1])
+    )
+    
+    return fig
 
 
 
