@@ -923,60 +923,61 @@ def dashboard_spese():
     st.write(spese)
 
     # Sezione Filtri
-    with st.sidebar.expander("🔍 Filtro Dati"):
-        st.markdown("### Filtra i dati")
-        
-        # Filtro per intervallo di date (colonna "data" del dataframe spese)
-        start_date = st.date_input(
-            "Data Inizio",
-            spese['data'].min().date(),
-            key="start_date_filter"
+with st.sidebar.expander("🔍 Filtro Dati"):
+    st.markdown("### Filtra i dati")
+    
+    # Filtro per intervallo di date (colonna "data" del dataframe spese)
+    start_date = st.date_input(
+        "Data Inizio",
+        spese['data'].min().date(),
+        key="start_date_filter"
+    )
+    end_date = st.date_input(
+        "Data Fine",
+        spese['data'].max().date(),
+        key="end_date_filter"
+    )
+    
+    # Filtro per Settore di Spesa
+    settore_option = st.radio(
+        "Visualizza Settori di Spesa",
+        ("Tutti i Settori", "Singolo Settore", "Multipli Settori"),
+        key="settore_option_filter"
+    )
+    settore_selezionato = None
+    if settore_option == "Singolo Settore":
+        settore_selezionato = st.selectbox(
+            "Seleziona Settore di Spesa",
+            spese['Settore di spesa'].unique(),
+            key="settore_filter"
         )
-        end_date = st.date_input(
-            "Data Fine",
-            spese['data'].max().date(),
-            key="end_date_filter"
+    elif settore_option == "Multipli Settori":
+        settore_selezionato = st.multiselect(
+            "Seleziona uno o più Settori di Spesa",
+            spese['Settore di spesa'].unique(),
+            key="settore_filter_multi"
         )
-        
-        # Filtro per Settore di Spesa
-        settore_option = st.radio(
-            "Visualizza Settori di Spesa",
-            ("Tutti i Settori", "Singolo Settore", "Multipli Settori"),
-            key="settore_option_filter"
-        )
-        settore_selezionato = None
-        if settore_option == "Singolo Settore":
-            settore_selezionato = st.selectbox(
-                "Seleziona Settore di Spesa",
-                spese['Settore di spesa'].unique(),
-                key="settore_filter"
-            )
-        elif settore_option == "Multipli Settori":
-            settore_selezionato = st.multiselect(
-                "Seleziona uno o più Settori di Spesa",
-                spese['Settore di spesa'].unique(),
-                key="settore_filter_multi"
-            )
-        
-        # Filtraggio dei dati principali in base alle date
-        dati_filtrati = spese[
-            (spese['data'] >= pd.Timestamp(start_date)) &
-            (spese['data'] <= pd.Timestamp(end_date))
-        ]
-        
-        # Filtra in base al Settore di Spesa, mantenendo le righe IVA
+    
+    # Filtraggio dei dati principali in base alle date
+    dati_filtrati = spese[
+        (spese['data'] >= pd.Timestamp(start_date)) &
+        (spese['data'] <= pd.Timestamp(end_date))
+    ]
+    
+    # Filtra in base al Settore di Spesa, mantenendo le righe IVA (Codice "59.01.01")
     if settore_option != "Tutti i Settori" and settore_selezionato:
         if settore_option == "Singolo Settore":
             dati_filtrati = dati_filtrati[
                 (dati_filtrati['Settore di spesa'] == settore_selezionato) | (dati_filtrati['Codice'] == "59.01.01")
-            ]  
+            ]
         else:  # Multipli Settori
             dati_filtrati = dati_filtrati[
                 (dati_filtrati['Settore di spesa'].isin(settore_selezionato)) | (dati_filtrati['Codice'] == "59.01.01")
             ]
+    
+    # Salva i dati filtrati nel session state
+    st.session_state['filtered_data'] = dati_filtrati
 
-        # Salva i dati filtrati nel session state
-        st.session_state['filtered_data'] = dati_filtrati
 
     # Usa i dati filtrati se disponibili
     if 'filtered_data' in st.session_state:
