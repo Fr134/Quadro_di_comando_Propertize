@@ -1025,7 +1025,7 @@ def dashboard_spese():
 
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
-        fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
+        fig = visualizza_andamento_ricavi(data, colonne)
         st.plotly_chart(fig)
         st.divider()
 
