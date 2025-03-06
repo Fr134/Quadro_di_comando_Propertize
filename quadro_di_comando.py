@@ -1033,22 +1033,22 @@ def dashboard_spese():
     with col01:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
-        with col03:
+        with col01:
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col03:
+        with col01:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
     with col02:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
-        with col03:
+        with col02:
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with col03:
+        with col02:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
 
 
