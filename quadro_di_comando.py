@@ -1023,6 +1023,70 @@ def dashboard_spese():
              unsafe_allow_html=True
         )
 
+    with col2:
+        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
+        fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
+        st.plotly_chart(fig)
+        st.divider()
+
+    col01, col02, col03, col04, col05 = st.columns([1,1,1,1,1])
+    with col01:
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        with col03:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_proprietari"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col03:
+            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+    with col02:
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        with col03:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_proprietari"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col03:
+            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+
+
+    with col03:
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        with col03:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_proprietari"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col03:
+            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+
+    with col04:
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        with col04:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_ota"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col04:
+            st.metric("📊 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
+
+    with col05:
+        #grafico ad anello 
+        # Sub-layout per centrare il grafico e il dato
+        with col05:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["commissioni_itw"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with col05:
+            st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
+
+
+       
 
 
 
