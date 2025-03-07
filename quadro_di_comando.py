@@ -2432,12 +2432,13 @@ def render_metric_with_info(metric_label, metric_value, info_text, value_format=
     """
     col_value, col_info = st.columns(col_ratio)
     with col_value:
-        st.metric(metric_label, f"{metric_value:{value_format}}")
+        st.metric(metric_label, f"{float(metric_value):{value_format}}")
     with col_info:
         st.markdown(
             f'<span class="info-icon" title="{info_text}">ℹ️</span>',
             unsafe_allow_html=True
         )
+
 
 ################### Main  ####################
 menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari", "Analisi spese", "Calcolatore"])
