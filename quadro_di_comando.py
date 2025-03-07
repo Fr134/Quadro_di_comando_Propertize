@@ -258,6 +258,10 @@ def load_and_preprocess_input_data(uploaded_file):
 def somme_IVA(df, df1):
     # calcolo dei totali iva a credito, debito
 
+    # Converte le colonne in formato numerico
+    totale_IVA = pd.to_numeric(df['Totale_IVA'], errors='coerce')
+    IVA_Totale_credito = pd.to_numeric(df1['IVA_Totale_credito'], errors='coerce')
+    IVA_Totale_debito = pd.to_numeric(df1['IVA_Totale_Debito'], errors='coerce')
 
     IVA_a_credito = df['Totale_IVA'] + df1['IVA_Totale_credito']
     IVA_a_debito = df1['IVA_Totale_Debito'] 
