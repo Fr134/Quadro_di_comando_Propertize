@@ -985,7 +985,7 @@ def dashboard_spese():
     kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
     
     st.write(kpis_spese)
-    st.write(totali_spese_settore)
+    st.write(totale_spese)
 
 
     col1, col2 = st.columns([2,4])
