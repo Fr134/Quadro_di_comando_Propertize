@@ -1023,7 +1023,7 @@ def dashboard_spese():
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(data, colonne)
         st.plotly_chart(fig)
-        st.divider()
+    st.divider()
     col01, col02, col03, col04, col05 = st.columns([1,1,1,1,1])
     with col01:
         #grafico ad anello 
@@ -1034,7 +1034,11 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col01")  # Mantieni larghezza compatta
         with col01:
-            st.metric("📊 Costi di gestione (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+            render_metric_with_info(
+                metric_label="📊 Costi di gestione (€)",
+                metric_value=kpis['commissioni_proprietari'],
+                info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
+            )
     with col02:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -2413,6 +2417,27 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     )
     
     return fig
+
+#######  Bottone info ###########
+def render_metric_with_info(metric_label, metric_value, info_text, value_format=":,.2f", col_ratio=(5, 0.3)):
+    """
+    Visualizza una metrica con un bottone info associato.
+    
+    Parametri:
+      - metric_label (str): l'etichetta della metrica (es. "Costi di gestione (€)")
+      - metric_value (float): il valore della metrica (es. kpis['commissioni_proprietari'])
+      - info_text (str): il testo da mostrare al passaggio del mouse sull'icona info.
+      - value_format (str): formato da utilizzare per il valore (default ":,.2f").
+      - col_ratio (tuple): rapporto delle colonne per il valore e il bottone info (default (5, 0.3)).
+    """
+    col_value, col_info = st.columns(col_ratio)
+    with col_value:
+        st.metric(metric_label, f"{metric_value:{value_format}}")
+    with col_info:
+        st.markdown(
+            f'<span class="info-icon" title="{info_text}">ℹ️</span>',
+            unsafe_allow_html=True
+        )
 
 ################### Main  ####################
 menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari", "Analisi spese", "Calcolatore"])
