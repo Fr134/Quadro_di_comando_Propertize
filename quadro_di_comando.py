@@ -87,15 +87,17 @@ def carica_elaboara_spese(file_path):
 
     # Trasforma la colonna "data" in formato datetime
     file_spese['data'] = pd.to_datetime(file_spese['data'], errors='coerce')
+
+    # Elimina le righe in cui:
+    # - la colonna "Importo Totale" è nulla
+    # - e la colonna "Codice" ha un valore diverso da "59.01.01"
+    file_spese = file_spese[~(file_spese['Importo Totale'].isnull() & (file_spese['Codice'] != '59.01.01'))]
     
     # Per le righe IVA (Codice "59.01.01") che non hanno una data, assegna la data della riga precedente
     iva_mask = (file_spese['Codice'] == '59.01.01') & (file_spese['data'].isnull())
     file_spese.loc[iva_mask, 'data'] = file_spese['data'].shift(1)
     
-    # Elimina le righe in cui:
-    # - la colonna "Importo Totale" è nulla
-    # - e la colonna "Codice" ha un valore diverso da "59.01.01"
-    file_spese = file_spese[~(file_spese['Importo Totale'].isnull() & (file_spese['Codice'] != '59.01.01'))]
+    
 
     return pd.DataFrame(file_spese)
 
