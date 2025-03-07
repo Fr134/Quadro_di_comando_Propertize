@@ -2366,8 +2366,6 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     Crea un grafico a barre orizzontali in cui per ogni riga del DataFrame viene disegnata una barra.
     Sul lato sinistro della barra viene visualizzato il valore corrispondente.
     """
-    import plotly.graph_objects as go
-    import plotly.express as px
 
     # Calcola il massimo valore per impostare il range dell'asse x
     max_val = df[value_col].max()
@@ -2415,7 +2413,7 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     
     # Imposta il layout, eliminando il titolo dell'asse verticale
     fig.update_layout(
-        xaxis_title=value_col,
+        xaxis_title="",
         yaxis_title="",
         margin=dict(l=left_margin + 50, r=20, t=20, b=20),
         xaxis=dict(range=[0, max_val * 1.1]),
@@ -2439,7 +2437,3 @@ elif menu == "Analisi spese":
     dashboard_spese()
 elif menu == "Calcolatore":
     render_calcolatore()
-
-    
-
-
