@@ -662,11 +662,11 @@ def render_dashboard():
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_totale"]
+            kpi = kpis["ricavi_totali"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 MOL (€)", f"{kpis['marginalità_totale']:,.2f}")
+            st.metric("📈 MOL (€)", f"{kpis['ricavi_totali']:,.2f}")
         
               
     with col2:
