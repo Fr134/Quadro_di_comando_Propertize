@@ -62,7 +62,7 @@ def localizzatore(file_path, data):
     return data
 
 def carica_elaboara_spese(file_path):
-    import pandas as pd
+    
 
     # Legge il Foglio 4 del file Excel
     file_spese = pd.read_excel(
@@ -96,7 +96,10 @@ def carica_elaboara_spese(file_path):
     # Per le righe IVA (Codice "59.01.01") che non hanno una data, assegna la data della riga precedente
     iva_mask = (file_spese['Codice'] == '59.01.01') & (file_spese['data'].isnull())
     file_spese.loc[iva_mask, 'data'] = file_spese['data'].shift(1)
-
+    
+    # Per le righe IVA (Codice "59.01.01"), assegna il Settore di spesa della riga precedente
+    file_spese.loc[file_spese['Codice'] == '59.01.01', 'Settore di spesa'] = file_spese['Settore di spesa'].shift(1)
+    
     return pd.DataFrame(file_spese)
 
 
