@@ -2412,30 +2412,30 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     """
     Crea un grafico a barre orizzontali in cui per ogni riga del DataFrame viene disegnata una barra.
     Sul lato sinistro della barra viene visualizzato il valore corrispondente.
-
-    Parametri:
-      - df: DataFrame contenente i dati.
-      - category_col: nome della colonna che contiene le etichette (categorie) per l'asse y.
-      - value_col: nome della colonna che contiene i valori da visualizzare (lunghezza delle barre).
-      
-    Ritorna:
-      - fig: oggetto Figure di Plotly.
     """
     import plotly.graph_objects as go
+    import plotly.express as px
 
     # Calcola il massimo valore per definire un offset e per impostare il range dell'asse x
     max_val = df[value_col].max()
-    # Calcola un offset per posizionare le annotazioni a sinistra (5% del massimo)
     x_offset = -0.05 * max_val  
+
+    # Calcola il margine sinistro dinamicamente in base alla lunghezza massima delle etichette
+    max_label_length = df[category_col].astype(str).str.len().max()
+    left_margin = max(150, max_label_length * 10)  # Approssimativamente 10px per carattere
+
+    # Differenzia ogni barra con un colore diverso
+    colors = px.colors.qualitative.Plotly
+    bar_colors = [colors[i % len(colors)] for i in range(len(df))]
 
     fig = go.Figure()
     
-    # Aggiunge la traccia a barre orizzontali
+    # Aggiunge la traccia a barre orizzontali con colori diversi per ogni barra
     fig.add_trace(go.Bar(
         x=df[value_col],
         y=df[category_col],
         orientation='h',
-        marker=dict(color='blue'),
+        marker=dict(color=bar_colors),
         text="",  # Non usiamo il testo integrato nella traccia
     ))
     
@@ -2450,16 +2450,16 @@ def create_horizontal_bar_chart(df, category_col, value_col):
             yanchor="middle",
         )
     
-    # Imposta il layout per includere l'offset nell'asse x
+    # Imposta il layout, adattandosi alle dimensioni del container e lasciando spazio per le scritte
     fig.update_layout(
         xaxis_title=value_col,
         yaxis_title=category_col,
-        margin=dict(l=150, r=20, t=20, b=20),
-        xaxis=dict(range=[x_offset, max_val * 1.1])
+        margin=dict(l=left_margin, r=20, t=20, b=20),
+        xaxis=dict(range=[x_offset, max_val * 1.1]),
+        autosize=True
     )
     
     return fig
-
 
 
 # Main
