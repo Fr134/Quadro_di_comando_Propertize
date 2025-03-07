@@ -62,7 +62,7 @@ def localizzatore(file_path, data):
     return data
 
 def carica_elaboara_spese(file_path):
-    import pandas as pd
+    
 
     # Legge il Foglio 4 del file Excel
     file_spese = pd.read_excel(
