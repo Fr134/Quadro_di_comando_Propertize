@@ -81,6 +81,10 @@ def carica_elaboara_spese(file_path):
         'Settore di spesa',
         'Immobile associato alla spesa'
     ]
+    
+    # Resetta l'indice per garantire che shift(1) funzioni correttamente
+    file_spese.reset_index(drop=True, inplace=True)
+
     # Trasforma la colonna "data" in formato datetime
     file_spese['data'] = pd.to_datetime(file_spese['data'], errors='coerce')
     
@@ -94,7 +98,6 @@ def carica_elaboara_spese(file_path):
     file_spese = file_spese[~(file_spese['Importo Totale'].isnull() & (file_spese['Codice'] != '59.01.01'))]
 
     return pd.DataFrame(file_spese)
-
 
 
 
