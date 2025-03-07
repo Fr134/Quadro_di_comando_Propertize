@@ -2439,7 +2439,3 @@ elif menu == "Analisi spese":
     dashboard_spese()
 elif menu == "Calcolatore":
     render_calcolatore()
-
-    
-
-
