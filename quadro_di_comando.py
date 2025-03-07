@@ -255,7 +255,18 @@ def load_and_preprocess_input_data(uploaded_file):
 
 
 
+def somme_IVA(df, df1):
+    # calcolo dei totali iva a credito, debito
 
+
+    IVA_a_credito = df['Totale_IVA'] + df1['IVA_Totale_credito']
+    IVA_a_debito = df1['IVA_Totale_Debito'] 
+    saldo_IVA = IVA_a_debito - IVA_a_credito
+    return {
+        "IVA_a_credito": IVA_a_credito,
+        "IVA_a_debito": IVA_a_debito,
+        "saldo_IVA": saldo_IVA
+    }
 
 
 
@@ -983,7 +994,7 @@ def dashboard_spese():
     kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati_spese)
     
     kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
-    
+    dati_IVA = somme_IVA(totale_spese, kpis)
     st.write(kpis_spese)
     st.write(totale_spese)
 
@@ -1109,9 +1120,9 @@ def dashboard_spese():
         st.plotly_chart(fig)
 
     with col002:
-        st.metric("📊 Saldo IVA (€)", f"{kpis['commissioni_proprietari']:,.2f}")
-        st.metric("📊 Saldo a Credito (€)", f"{kpis['commissioni_proprietari']:,.2f}")
-        st.metric("📊 IVA a Debito (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+        st.metric("📊 Saldo IVA (€)", f"{dati_IVA['saldo_IVA']:,.2f}")
+        st.metric("📊 Saldo a Credito (€)", f"{dati_IVA['IVA_a_credito']:,.2f}")
+        st.metric("📊 IVA a Debito (€)", f"{dati_IVA['IVA_a_debito']:,.2f}")
 
 
 
