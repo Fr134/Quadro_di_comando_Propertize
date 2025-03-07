@@ -629,15 +629,10 @@ def render_dashboard():
     
     st.divider()
     
-   ############ Layout a 3 colonne per dividere lo schermo in tre sezioni uguali    ###########
-   
-        
-            
+   ############ Layout a 3 colonne per dividere lo schermo in tre sezioni uguali    ###########     
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
-
     # Colonna 1: Grafico ad anello + KPI
-    
-    
+      
     with col1:
         
         
@@ -661,10 +656,19 @@ def render_dashboard():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 Margine sul venduto (€)", f"{kpis['marginalità_totale']:,.2f}")
-         
+            st.metric("📈 EBITDA (€)", f"{kpis['marginalità_totale']:,.2f}")
+
+        # Sub-layout per centrare il grafico e il dato
+        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        with grafico_col:
+            totale = kpis["ricavi_totali"]
+            kpi = kpis["marginalità_totale"]
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+        with metrica_col:
+            st.metric("📈 MOL (€)", f"{kpis['marginalità_totale']:,.2f}")
         
-      
+              
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
@@ -740,15 +744,7 @@ def render_dashboard():
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col05:
                 st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
-
-
-        
-        
-    
-           
-
-
-    
+  
     with col4_1:
         # Visualizza il grafico nella dashboard
         
