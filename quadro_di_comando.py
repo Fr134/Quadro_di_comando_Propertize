@@ -6,7 +6,6 @@ import folium
 import ast
 from streamlit_folium import st_folium
 
-
 # Configurazione della pagina
 st.set_page_config(
     page_title="Dashboard Dati Immobiliari",
@@ -28,8 +27,6 @@ def upload_file():
             st.session_state['data'] = load_and_preprocess_data(uploaded_file)
             st.session_state['spese'] = carica_elaboara_spese(uploaded_file)
     return uploaded_file
-
-
 
 def localizzatore(file_path, data):
     """
@@ -102,12 +99,6 @@ def carica_elaboara_spese(file_path):
     
     return pd.DataFrame(file_spese)
 
-
-
-
-
-
-
 ############### Funzione per calcolare le notti disponibili   ############# 
 
 def calcola_notti_disponibili(file_path, start_date, end_date):
@@ -147,8 +138,6 @@ def calcola_notti_disponibili(file_path, start_date, end_date):
 
     # Converti il risultato in un DataFrame
     return pd.DataFrame(notti_disponibili)
-
-
 
 ############### Funzione per caricare e preprocessare i dati    #############   
 
@@ -248,13 +237,7 @@ def load_and_preprocess_input_data(uploaded_file):
     data = data.dropna(subset=['ID Appartamento'])
     return pd.DataFrame(data)
 
-
-
-
 ############## Calcolo dei KPI    #############  
-
-
-
 
 def somme_IVA(df, kpsi):
     import pandas as pd
@@ -273,10 +256,6 @@ def somme_IVA(df, kpsi):
         "IVA_a_debito": IVA_a_debito,
         "saldo_IVA": saldo_IVA
     }
-
-
-
-
 
 def calculate_kpis(data, notti_disponibili_filtrate):
     
@@ -373,9 +352,6 @@ def calculate_kpis(data, notti_disponibili_filtrate):
         'numero_prenotazioni': numero_prenotazioni
     }
 
-
-
-
 def eleboratore_spese(df):
     """
     Per ogni spesa (riga in cui il codice non è "59.01.01"), calcola l'importo netto
@@ -443,7 +419,6 @@ def eleboratore_spese(df):
 
     return df, totali, totali_df
 
-
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
 def inject_custom_css():
@@ -504,10 +479,7 @@ def inject_custom_css():
         unsafe_allow_html=True
     )
 
-
-
 ############## Funzioni per visualizzare le dashboard    #############   
-
 
 def render_dashboard():
     """
@@ -916,8 +888,7 @@ def render_dashboard():
         
     
     st.divider()
-         
-    
+            
 def dashboard_spese():
     
     inject_custom_css()
@@ -987,8 +958,6 @@ def dashboard_spese():
     if 'filtered_data_data' in st.session_state:
         dati_filtrati_data = st.session_state['filtered_data_data']  
         
-        
-
     # Calcola le notti disponibili
     notti_disponibili_filtrate = calcola_notti_disponibili(file_path, start_date, end_date)
     st.session_state['filtered_notti_disponibili'] = notti_disponibili_filtrate
@@ -1058,13 +1027,11 @@ def dashboard_spese():
             '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
              unsafe_allow_html=True
         )
-
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(data, colonne)
         st.plotly_chart(fig)
         st.divider()
-
     col01, col02, col03, col04, col05 = st.columns([1,1,1,1,1])
     with col01:
         #grafico ad anello 
@@ -1075,7 +1042,7 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col01")  # Mantieni larghezza compatta
         with col01:
-            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+            st.metric("📊 Costi di gestione (€)", f"{kpis['commissioni_proprietari']:,.2f}")
     with col02:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1085,9 +1052,7 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col02")  # Mantieni larghezza compatta
         with col02:
-            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
-
-
+            st.metric("📊 Costo Pulizie (€)", f"{kpis['commissioni_proprietari']:,.2f}")
     with col03:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1098,7 +1063,6 @@ def dashboard_spese():
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col03")  # Mantieni larghezza compatta
         with col03:
             st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
-
     with col04:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1109,7 +1073,6 @@ def dashboard_spese():
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col04")  # Mantieni larghezza compatta
         with col04:
             st.metric("📊 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
-
     with col05:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1120,23 +1083,14 @@ def dashboard_spese():
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col05")  # Mantieni larghezza compatta
         with col05:
             st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
-
     col001, col002 = st.columns([4,2])
     with col001:
         fig = create_horizontal_bar_chart(totali_spese_settore, "Settore di spesa", "totale_netto")
         st.plotly_chart(fig)
-
     with col002:
         st.metric("📊 Saldo IVA (€)", f"{dati_IVA['saldo_IVA']:,.2f}")
         st.metric("📊 Saldo a Credito (€)", f"{dati_IVA['IVA_a_credito']:,.2f}")
         st.metric("📊 IVA a Debito (€)", f"{dati_IVA['IVA_a_debito']:,.2f}")
-
-
-
-
-
-
-
 
 def dashboard_proprietari():
     inject_custom_css()
@@ -1440,17 +1394,7 @@ def dashboard_proprietari():
         
         st.metric("📈 Margine medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
         st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
-        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-         
-
-
-    
-
-
-
-   
-    
-    
+        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")   
     
 def dashboard_analisi_performance():
     inject_custom_css()
@@ -1904,9 +1848,6 @@ def dashboard_analisi_performance():
         st.metric("📈 Costo Pulizia (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo biancheria (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Costo scorte (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-
-
-
     
 def render_calcolatore():
     inject_custom_css()
@@ -2056,16 +1997,6 @@ def render_calcolatore():
 
     st.write("Inserisci i dettagli dell'immobile:")
     
-
-    
-    
-
-
-   
-    
-    
-   
-
 ############## Funzione per creare un grafico ad anello compatto    #############   
 
 def create_donut_chart(totale, kpi):
@@ -2166,9 +2097,6 @@ def create_donut_chart1(totale, kpi):
 
     return fig
 
-
-
-
 def create_donut_chart2(totale, kpi):
     
     
@@ -2216,9 +2144,6 @@ def create_donut_chart2(totale, kpi):
     )
 
     return fig
-
-
-
 
 def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date):
     """
@@ -2302,11 +2227,7 @@ def visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, sta
 
     return fig
 
-
-
 ####################  grafico andamento dei ricavi ####################
-
-
 
 def visualizza_andamento_ricavi(dati_filtrati, colonne_da_visualizzare):
     """
@@ -2358,7 +2279,6 @@ def visualizza_andamento_ricavi(dati_filtrati, colonne_da_visualizzare):
     )
 
     return fig
-
 
 ####################  grafico a barre ricavi/commissioni   ####################
 
@@ -2504,10 +2424,7 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     
     return fig
 
-
-
-
-# Main
+################### Main  ####################
 menu = st.sidebar.selectbox("Menù", ["Carica File", "Dashboard", "Analisi Performance", "Dashboard Propietari", "Analisi spese", "Calcolatore"])
 
 if menu == "Carica File":
