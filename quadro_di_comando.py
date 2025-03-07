@@ -2432,7 +2432,7 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
     fig = go.Figure()
     
-    # Aggiungi la traccia a barre orizzontali
+    # Aggiunge la traccia a barre orizzontali
     fig.add_trace(go.Bar(
         x=df[value_col],
         y=df[category_col],
@@ -2442,7 +2442,7 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     ))
     
     # Aggiungi annotazioni per mostrare il valore a sinistra di ogni barra
-    # Le annotazioni sono posizionate usando xref="paper" per fissarle rispetto all'area del grafico.
+    # Utilizziamo xref="paper" per fissare il testo rispetto all'area del grafico.
     for i, row in df.iterrows():
         fig.add_annotation(
             x=x_offset,
@@ -2460,17 +2460,17 @@ def create_horizontal_bar_chart(df, category_col, value_col):
             opacity=0.8
         )
     
-    # Imposta il layout in modo che il grafico si adatti alle dimensioni della colonna e
-    # che il margine sinistro sia sufficiente per visualizzare le annotazioni senza sovrapposizioni.
+    # Imposta il layout, eliminando il titolo dell'asse verticale
     fig.update_layout(
         xaxis_title=value_col,
-        yaxis_title=category_col,
+        yaxis_title="",
         margin=dict(l=left_margin + 50, r=20, t=20, b=20),
         xaxis=dict(range=[0, max_val * 1.1]),
         autosize=True
     )
     
     return fig
+
 
 
 
