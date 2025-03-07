@@ -2412,13 +2412,21 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     """
     Crea un grafico a barre orizzontali in cui per ogni riga del DataFrame viene disegnata una barra.
     Sul lato sinistro della barra viene visualizzato il valore corrispondente.
+    
+    Parametri:
+      - df: DataFrame contenente i dati.
+      - category_col: nome della colonna che contiene le etichette (categorie) per l'asse y.
+      - value_col: nome della colonna che contiene i valori da visualizzare (lunghezza delle barre).
+      
+    Ritorna:
+      - fig: oggetto Figure di Plotly.
     """
     import plotly.graph_objects as go
     import plotly.express as px
 
     # Calcola il massimo valore per impostare il range dell'asse x
     max_val = df[value_col].max()
-
+    
     # Calcola il margine sinistro dinamicamente in base alla lunghezza massima delle etichette
     max_label_length = df[category_col].astype(str).str.len().max()
     left_margin = max(150, max_label_length * 10)  # Approssimativamente 10px per carattere
@@ -2439,20 +2447,21 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     ))
     
     # Aggiungi annotazioni per mostrare il valore a sinistra della barra.
-    # Utilizziamo xref="paper" per posizionare il testo rispetto all'area del grafico.
+    # Utilizziamo xref="paper" per posizionare il testo in maniera fissa rispetto all'area del grafico.
     for i, row in df.iterrows():
         fig.add_annotation(
-            x=-0.02,             # Posiziona l'annotazione leggermente a sinistra del grafico
+            x=-0.1,             # Sposta ulteriormente l'annotazione a sinistra
             xref="paper",
             y=row[category_col],
             text=f"{row[value_col]:,.2f}",
             showarrow=False,
             xanchor="right",
             yanchor="middle",
-            font=dict(size=12)
+            font=dict(size=12),
+            align="right"
         )
     
-    # Imposta il layout per adattarsi allo spazio disponibile
+    # Imposta il layout per includere il margine sinistro dinamico e il range dell'asse x
     fig.update_layout(
         xaxis_title=value_col,
         yaxis_title=category_col,
