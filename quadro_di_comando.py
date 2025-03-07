@@ -970,9 +970,9 @@ def dashboard_spese():
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
     
 
-    
-    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati)
     st.write(dati_filtrati)
+    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati)
+    
     kpis = calculate_kpis(data, notti_disponibili_filtrate)
     
     st.write(kpis_spese)
