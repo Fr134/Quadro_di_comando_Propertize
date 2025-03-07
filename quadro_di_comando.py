@@ -1108,6 +1108,12 @@ def dashboard_spese():
         fig = create_horizontal_bar_chart(totali_spese_settore, "Settore di spesa", "totale_netto")
         st.plotly_chart(fig)
 
+    with col002:
+        st.metric("📊 Saldo IVA (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+        st.metric("📊 Saldo a Credito (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+        st.metric("📊 IVA a Debito (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+
+
 
 
 
