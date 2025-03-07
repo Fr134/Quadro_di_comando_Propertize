@@ -934,7 +934,7 @@ def dashboard_spese():
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
         
-        # Filtro per intervallo di date (colonna "data" del dataframe spese)
+        # Filtro per intervallo di date (usando il dataframe spese per determinare i limiti)
         start_date = st.date_input(
             "Data Inizio",
             spese['data'].min().date(),
@@ -946,20 +946,29 @@ def dashboard_spese():
             key="end_date_filter"
         )
         
-        # Filtraggio dei dati principali in base alle date
-        dati_filtrati = spese[
+        # Filtra il dataframe spese in base alle date
+        dati_filtrati_spese = spese[
             (spese['data'] >= pd.Timestamp(start_date)) &
             (spese['data'] <= pd.Timestamp(end_date))
         ]
         
+        # Filtra il dataframe data in base allo stesso intervallo (colonna "Data Check-In")
+        dati_filtrati_data = data[
+            (data['Data Check-In'] >= pd.Timestamp(start_date)) &
+            (data['Data Check-In'] <= pd.Timestamp(end_date))
+        ]
+        
         # Salva i dati filtrati nel session state
-        st.session_state['filtered_data'] = dati_filtrati
-
-
+        st.session_state['filtered_data_spese'] = dati_filtrati_spese
+        st.session_state['filtered_data_data'] = dati_filtrati_data
 
     # Usa i dati filtrati se disponibili
-    if 'filtered_data' in st.session_state:
-        dati_filtrati = st.session_state['filtered_data']  
+    if 'filtered_data_spese' in st.session_state:
+        dati_filtrati_spese = st.session_state['filtered_data_spese']  
+    # Usa i dati filtrati se disponibili
+    if 'filtered_data_data' in st.session_state:
+        dati_filtrati_data = st.session_state['filtered_data_data']  
+        
         
 
     # Calcola le notti disponibili
@@ -970,10 +979,10 @@ def dashboard_spese():
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
     
 
-    st.write(dati_filtrati)
-    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati)
+    st.write(dati_filtrati_spese)
+    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati_spese)
     
-    kpis = calculate_kpis(data, notti_disponibili_filtrate)
+    kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
     
     st.write(kpis_spese)
     st.write(totali_spese_settore)
