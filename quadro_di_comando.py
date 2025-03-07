@@ -1052,7 +1052,7 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col02")  # Mantieni larghezza compatta
         with col02:
-            st.metric("📊 Costo Pulizie (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+            st.metric("📊 Costi Pulizie (€)", f"{kpis['commissioni_proprietari']:,.2f}")
     with col03:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
