@@ -262,7 +262,7 @@ def somme_IVA(df, kpsi):
     # kpsi è un dizionario (non un DataFrame) che contiene i valori di IVA_Totale_credito e IVA_Totale_debito
     totale_IVA_value = pd.to_numeric(df['Totale_IVA'].iloc[0], errors='coerce')
     IVA_Totale_credito = float(kpsi.get('IVA_Totale_credito', 0))
-    IVA_Totale_debito = float(kpsi.get('IVA_Totale_debito', 0))
+    IVA_Totale_debito = float(kpsi.get('IVA_Totale_Debito', 0))
     
     IVA_a_credito = totale_IVA_value + IVA_Totale_credito
     IVA_a_debito = IVA_Totale_debito
