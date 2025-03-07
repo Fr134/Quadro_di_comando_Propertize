@@ -365,7 +365,7 @@ def eleboratore_spese(df):
       - df: DataFrame aggiornato con la colonna 'importo_netto' per le spese e la colonna
             'settore_spesa' assegnata per le righe IVA.
     """
-    import pandas as pd
+    
 
     # Maschera per identificare le righe delle spese (non IVA)
     expense_mask = df['Codice'] != "59.01.01"
@@ -923,8 +923,7 @@ def dashboard_spese():
     st.write(spese)
 
     # Sezione Filtri
-# Sezione Filtri
-# Sezione Filtri
+    # Sezione Filtri
     with st.sidebar.expander("🔍 Filtro Dati"):
         st.markdown("### Filtra i dati")
         
