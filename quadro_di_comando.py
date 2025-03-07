@@ -2412,14 +2412,6 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     """
     Crea un grafico a barre orizzontali in cui per ogni riga del DataFrame viene disegnata una barra.
     Sul lato sinistro della barra viene visualizzato il valore corrispondente.
-    
-    Parametri:
-      - df: DataFrame contenente i dati.
-      - category_col: nome della colonna che contiene le etichette (categorie) per l'asse y.
-      - value_col: nome della colonna che contiene i valori da visualizzare (lunghezza delle barre).
-      
-    Ritorna:
-      - fig: oggetto Figure di Plotly.
     """
     import plotly.graph_objects as go
     import plotly.express as px
@@ -2427,45 +2419,53 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     # Calcola il massimo valore per impostare il range dell'asse x
     max_val = df[value_col].max()
     
-    # Calcola il margine sinistro dinamicamente in base alla lunghezza massima delle etichette
+    # Imposta un offset negativo fisso per le annotazioni
+    x_offset = -0.2  # Più a sinistra rispetto a prima
+    
+    # Calcola il margine sinistro in base alla lunghezza massima delle etichette
     max_label_length = df[category_col].astype(str).str.len().max()
-    left_margin = max(150, max_label_length * 10)  # Approssimativamente 10px per carattere
-
-    # Differenzia ogni barra con un colore diverso usando una palette
+    left_margin = max(150, max_label_length * 10)
+    
+    # Genera un colore diverso per ogni barra utilizzando la palette Plotly
     colors = px.colors.qualitative.Plotly
     bar_colors = [colors[i % len(colors)] for i in range(len(df))]
 
     fig = go.Figure()
     
-    # Aggiunge la traccia a barre orizzontali
+    # Aggiungi la traccia a barre orizzontali
     fig.add_trace(go.Bar(
         x=df[value_col],
         y=df[category_col],
         orientation='h',
         marker=dict(color=bar_colors),
-        text="",  # Non usiamo il testo integrato nella traccia
+        text="",
     ))
     
-    # Aggiungi annotazioni per mostrare il valore a sinistra della barra.
-    # Utilizziamo xref="paper" per posizionare il testo in maniera fissa rispetto all'area del grafico.
+    # Aggiungi annotazioni per mostrare il valore a sinistra di ogni barra
+    # Le annotazioni sono posizionate usando xref="paper" per fissarle rispetto all'area del grafico.
     for i, row in df.iterrows():
         fig.add_annotation(
-            x=-0.1,             # Sposta ulteriormente l'annotazione a sinistra
+            x=x_offset,
             xref="paper",
             y=row[category_col],
             text=f"{row[value_col]:,.2f}",
             showarrow=False,
             xanchor="right",
             yanchor="middle",
-            font=dict(size=12),
-            align="right"
+            font=dict(size=10, color="black"),
+            align="right",
+            bordercolor="white",
+            borderpad=4,
+            bgcolor="white",
+            opacity=0.8
         )
     
-    # Imposta il layout per includere il margine sinistro dinamico e il range dell'asse x
+    # Imposta il layout in modo che il grafico si adatti alle dimensioni della colonna e
+    # che il margine sinistro sia sufficiente per visualizzare le annotazioni senza sovrapposizioni.
     fig.update_layout(
         xaxis_title=value_col,
         yaxis_title=category_col,
-        margin=dict(l=left_margin, r=20, t=20, b=20),
+        margin=dict(l=left_margin + 50, r=20, t=20, b=20),
         xaxis=dict(range=[0, max_val * 1.1]),
         autosize=True
     )
