@@ -256,18 +256,21 @@ def load_and_preprocess_input_data(uploaded_file):
 
 
 
-def somme_IVA(df, df1):
+def somme_IVA(df, kpsi):
     import pandas as pd
-    # df è il DataFrame totale_spese (con una sola riga) e contiene la colonna 'Totale_IVA'
-    # df1 è il dizionario dei KPI, che contiene le chiavi 'IVA_Totale_credito' e 'IVA_Totale_Debito'
+    # df è il DataFrame con i totali (che contiene la colonna 'Totale_IVA')
+    # kpsi è un dizionario (non un DataFrame) che contiene i valori di IVA_Totale_credito e IVA_Totale_debito
     totale_IVA_value = pd.to_numeric(df['Totale_IVA'].iloc[0], errors='coerce')
-    IVA_Totale_credito_value = float(df1.get('IVA_Totale_credito', 0))
-    IVA_Totale_debito_value = float(df1.get('IVA_Totale_Debito', 0))
-    saldo_IVA = IVA_Totale_debito_value - (totale_IVA_value + IVA_Totale_credito_value)
+    IVA_Totale_credito = float(kpsi.get('IVA_Totale_credito', 0))
+    IVA_Totale_debito = float(kpsi.get('IVA_Totale_debito', 0))
     
+    IVA_a_credito = totale_IVA_value + IVA_Totale_credito
+    IVA_a_debito = IVA_Totale_debito
+    saldo_IVA = IVA_a_debito - IVA_a_credito
+
     return {
-        "IVA_a_credito": totale_IVA_value + IVA_Totale_credito_value,
-        "IVA_a_debito": IVA_Totale_debito_value,
+        "IVA_a_credito": IVA_a_credito,
+        "IVA_a_debito": IVA_a_debito,
         "saldo_IVA": saldo_IVA
     }
 
