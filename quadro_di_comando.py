@@ -1017,14 +1017,14 @@ def dashboard_spese():
         # Secondo blocco
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis['totale_commissioni']
+            totale = riassunto_spese["costi_totali"]
+            kpi = riassunto_spese['costi_variabili']
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")
         with metrica_col:
-            st.metric("🧹 Costi Variabili (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}")
+            st.metric("🧹 Costi Variabili (€)", f"{riassunto_spese['costi_variabili'].iloc[0]:,.2f}")
         with info_col:
-            st.markdown(
+            st.markdown( 
                 '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
                 unsafe_allow_html=True
             )
@@ -1034,7 +1034,7 @@ def dashboard_spese():
         # Terzo blocco
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
-            totale = riassunto_spese["ricavi_totali"]
+            totale = riassunto_spese["costi_totali"]
             kpi = riassunto_spese['costi_fissi']
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
@@ -1046,8 +1046,8 @@ def dashboard_spese():
                 unsafe_allow_html=True
             )
     with col2:
-        colonne = ['costi_totali', 'costi_variabili', 'costi_fissi']
-        fig = visualizza_andamento_ricavi(riassunto_spese, colonne)
+        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
+        fig = visualizza_andamento_ricavi(data, colonne)
         st.plotly_chart(fig)
     st.divider()
     col01, col02, col03, col04, col05 = st.columns([1,1,1,1,1])
