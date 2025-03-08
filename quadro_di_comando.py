@@ -2435,7 +2435,7 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     return fig
 
 #######  Bottone info ###########
-def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(5, 0.3)):
+def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(0.3, 5)):
     """
     Visualizza una metrica con un bottone info associato.
     
@@ -2446,7 +2446,7 @@ def render_metric_with_info(metric_label, metric_value, info_text, value_format=
       - value_format (str): formato da utilizzare per il valore (default ",.2f").
       - col_ratio (tuple): rapporto delle colonne per il valore e il bottone info (default (5, 0.3)).
     """
-    col_value, col_info = st.columns(col_ratio)
+    col_info, col_value = st.columns(col_ratio)
     with col_value:
         st.metric(metric_label, f"{float(metric_value):{value_format}}")
     with col_info:
