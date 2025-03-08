@@ -430,13 +430,15 @@ def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
     else:
         costi_pulizie = 0.0
     costi_gestione = costi_fissi - costi_pulizie
+    ricavi_totali = float(ricavi["ricavi_totali"])
 
     df_costi = pd.DataFrame({
         'costi_totali': [costi_totali],
         'costi_variabili': [costi_variabili],
         'costi_fissi': [costi_fissi],
         'costi_pulizie': [costi_pulizie],
-        'costi_gestione': [costi_gestione]
+        'costi_gestione': [costi_gestione],
+        'ricavi_totali': [ricavi_totali]
     })
 
     return df_costi
@@ -1032,7 +1034,7 @@ def dashboard_spese():
         # Terzo blocco
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
-            totale = kpis["ricavi_totali"]
+            totale = totale_spese["ricavi_totali"]
             kpi = totale_spese['Totale_Spese_netto']
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
@@ -1044,8 +1046,8 @@ def dashboard_spese():
                 unsafe_allow_html=True
             )
     with col2:
-        colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
-        fig = visualizza_andamento_ricavi(data, colonne)
+        colonne = ['costi_totali', 'costi_variabili', 'costi_fissi']
+        fig = visualizza_andamento_ricavi(riassunto_spese, colonne)
         st.plotly_chart(fig)
     st.divider()
     col01, col02, col03, col04, col05 = st.columns([1,1,1,1,1])
