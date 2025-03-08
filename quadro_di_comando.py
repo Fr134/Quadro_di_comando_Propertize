@@ -1913,12 +1913,11 @@ def dashboard_analisi_performance():
             st.plotly_chart(fig, use_container_width=True)
         col13_1, col13_2 = st.columns([2,2])
         with col13_1:
-            st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
-            st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")
+            st.metric("📈 Notti diponibili ", f"{kpis['notti_disponibili']:,.0f}")
+            st.metric("📈 Numero prenotazion (€)", f"{kpis['numero_prenotazioni']:,.0f}")
         with col13_2:
             st.metric("📈 Notti occupate ", f"{kpis['notti_occupate']:,.0f}")
             st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
-            st.metric("📈 Numero prenotazioni ", f"{kpis['numero_prenotazioni']:,.0f}")
     with col14:
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 M.S.V medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
