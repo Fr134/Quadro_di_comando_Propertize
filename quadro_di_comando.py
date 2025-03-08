@@ -1923,6 +1923,7 @@ def dashboard_analisi_performance():
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 M.S.V medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+        st.divider()
         st.metric("📈 Costo Pulizia (€)", f"{kpis['costo_pulizie_ps']:,.0f}")
         st.metric("📈 Costo Scorte (€)", f"{kpis['costo_scorte_ps']:,.0f}")
         st.metric("📈 Costo Manutenzioni (€)", f"{kpis['costo_manutenzioni_ps']:,.0f}")
