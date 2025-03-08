@@ -419,6 +419,23 @@ def eleboratore_spese(df):
 
     return df, totali, totali_df
 
+def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
+
+    costi_totali = spese_totali['totale_spese_netto'] + ricavi['totale_commissioni']
+    costi_variabili = ricavi['totale_commissioni']
+    costi_fissi = spese_totali['totale_spese_netto']
+    costi_pulizie = 
+
+
+
+    df_costi = pd.DataFrame({
+        'costi_totali': [costi_totali],
+        'costi_variabili': [costi_variabili],
+        'costi_fissi': [costi_fissi]
+    })
+
+    return df_costi
+
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
 def inject_custom_css():
@@ -964,7 +981,9 @@ def dashboard_spese():
     kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
     dati_IVA = somme_IVA(totale_spese, kpis)
     st.write(kpis_spese)
+    st.write(totali_spese_settore)
     st.write(totale_spese)
+
 
 
     col1, col2 = st.columns([2,4])
@@ -974,9 +993,9 @@ def dashboard_spese():
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = totale_spese['Totale_Spese_netto'] 
+            kpi = totale_spese['Totale_Spese_netto'] + kpis['totale_commissioni']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico1")  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("🧹 Costi Totali (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}") 
         # bottone info
