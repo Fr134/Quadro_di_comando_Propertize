@@ -1317,7 +1317,7 @@ def dashboard_proprietari():
     with col1:
         
         with col1:
-            st.metric("💰 Ricavi Totali (€)", f"{kpis['ricavi_totali']:,.2f}")
+            st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
                       
         
         #grafico ad anello 
@@ -1329,7 +1329,7 @@ def dashboard_proprietari():
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
+            st.metric("📈 Ricavi (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
             
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1443,9 +1443,15 @@ def dashboard_proprietari():
     col12, col13, col14 = st.columns([4.5,9,4.5])  
     
     with col12:
-    
+        with col12:
+            st.write("📊 Tasso di occupazione (%)")
+        with col12:
+            totale = 100
+            kpi = kpis["tasso_di_occupazione"]
+            grafico_anello = create_donut_chart1(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False)    
+        st.divider()    
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
-        st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
         
