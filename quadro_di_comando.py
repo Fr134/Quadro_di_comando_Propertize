@@ -424,7 +424,7 @@ def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
     costi_totali = spese_totali['totale_spese_netto'] + ricavi['totale_commissioni']
     costi_variabili = ricavi['totale_commissioni']
     costi_fissi = spese_totali['totale_spese_netto']
-    costi_pulizie = 
+    #costi_pulizie = 
 
 
 
