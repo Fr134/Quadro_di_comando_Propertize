@@ -420,10 +420,9 @@ def eleboratore_spese(df):
     return df, totali, totali_df
 
 def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
-
-    costi_totali = spese_totali['totale_spese_netto'] + ricavi['totale_commissioni']
-    costi_variabili = ricavi['totale_commissioni']
-    costi_fissi = spese_totali['totale_spese_netto']
+    costi_totali = spese_totali["Totale_Spese_netto"] + ricavi["totale_commissioni"]
+    costi_variabili = ricavi["totale_commissioni"]
+    costi_fissi = spese_totali["Totale_Spese_netto"]
     if "PULIZIE" in spese_totali_settore["Settore di spesa"].unique():
         costi_pulizie = spese_totali_settore[spese_totali_settore["Settore di spesa"] == "PULIZIE"]
     else:
@@ -439,6 +438,7 @@ def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
     })
 
     return df_costi
+
 
 ############## Funzione per Modificare la grafica della pagina     ############# 
 
