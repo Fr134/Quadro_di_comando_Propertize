@@ -1902,7 +1902,8 @@ def dashboard_analisi_performance():
             totale = 100
             kpi = kpis["tasso_di_occupazione"]
             grafico_anello = create_donut_chart1(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)        
+            st.plotly_chart(grafico_anello, use_container_width=False)    
+        st.divider()    
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
         st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
         st.metric("📈 M.S.V medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
