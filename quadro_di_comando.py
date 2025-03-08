@@ -1062,13 +1062,11 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col03")  # Mantieni larghezza compatta
         with col03:
-            st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
             render_metric_with_info(
                 metric_label="📊 Commissioni Proprietari (€)",
                 metric_value=kpis['commissioni_proprietari'],
                 info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
-            )
-            
+            )         
     with col04:
         #grafico ad anello 
         # Sub-layout per centrare il grafico e il dato
@@ -1078,7 +1076,6 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col04")  # Mantieni larghezza compatta
         with col04:
-            st.metric("📊 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
             render_metric_with_info(
                 metric_label="📊 Commissioni Proprietari (€)",
                 metric_value=kpis['commissioni_proprietari'],
@@ -1093,7 +1090,6 @@ def dashboard_spese():
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col05")  # Mantieni larghezza compatta
         with col05:
-            st.metric("📊 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
             render_metric_with_info(
                 metric_label="📊 Commissioni ITW (€)",
                 metric_value=kpis['commissioni_proprietari'],
