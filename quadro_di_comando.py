@@ -1084,13 +1084,13 @@ def dashboard_spese():
         # Sub-layout per centrare il grafico e il dato
         with col03:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_OTA"]
+            kpi = kpis["commissioni_ota"]
             grafico_anello = create_donut_chart1(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col03")  # Mantieni larghezza compatta
         with col03:
             render_metric_with_info(
                 metric_label="📊 Commissioni OTA (€)",
-                metric_value=kpis['commissioni_OTA'],
+                metric_value=kpis['commissioni_ota'],
                 info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
             )         
     with col04:
