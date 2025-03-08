@@ -1815,7 +1815,7 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_locazione"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g1")
         with metrica_col:
             st.metric("📈 Ricavi Locazione (€)", f"{kpis['totale_ricavi_locazione']:,.2f}")
         grafico_col, metrica_col = st.columns([3, 5])
@@ -1823,7 +1823,7 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["totale_ricavi_pulizie"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g2")
         with metrica_col:
             st.metric("🧹 Ricavi Pulizie (€)", f"{kpis['totale_ricavi_pulizie']:,.2f}") 
         grafico_col, metrica_col = st.columns([3, 5])
@@ -1831,7 +1831,7 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g3")
         with metrica_col:
             st.metric("📈 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
         grafico_col, metrica_col = st.columns([3, 5])
@@ -1839,7 +1839,7 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_ota"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g4")
         with metrica_col:
             st.metric("🧹 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
         grafico_col, metrica_col = st.columns([3, 5])
@@ -1847,7 +1847,7 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g5")
         with metrica_col:
             st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
         grafico_col, metrica_col = st.columns([3, 5])
@@ -1855,9 +1855,9 @@ def dashboard_analisi_performance():
             totale = kpis["ricavi_totali"]
             kpi = kpis["altri_costi"]
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="g6")
         with metrica_col:
-            st.metric("🧹 Altri Costi  (€)", f"{kpis['altri_costi']:,.2f}")
+            st.metric("🧹 Altri Costi (€)", f"{kpis['altri_costi']:,.2f}")
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
