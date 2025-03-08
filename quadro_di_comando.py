@@ -1100,9 +1100,21 @@ def dashboard_spese():
         fig = create_horizontal_bar_chart(totali_spese_settore, "Settore di spesa", "totale_netto")
         st.plotly_chart(fig)
     with col002:
-        st.metric("📊 Saldo IVA (€)", f"{dati_IVA['saldo_IVA']:,.2f}")
-        st.metric("📊 Saldo a Credito (€)", f"{dati_IVA['IVA_a_credito']:,.2f}")
-        st.metric("📊 IVA a Debito (€)", f"{dati_IVA['IVA_a_debito']:,.2f}")
+        render_metric_with_info(
+            metric_label="📊 Saldo IVA (€)",
+            metric_value=dati_IVA['saldo_IVA'],
+            info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
+        )
+        render_metric_with_info(
+            metric_label="📊 Saldo a Credito (€)",
+            metric_value=dati_IVA['IVA_a_credito'],
+            info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
+        )
+        render_metric_with_info(
+            metric_label="📊 IVA a Debito (€)",
+            metric_value=dati_IVA['IVA_a_debito'],
+            info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
+        )
 
 def dashboard_proprietari():
     inject_custom_css()
