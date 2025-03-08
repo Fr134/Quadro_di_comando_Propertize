@@ -1892,10 +1892,6 @@ def dashboard_analisi_performance():
     st.title("📊 Analisi Prenotazioni ")
     col12, col13, col14 = st.columns([4.5,9,4.5])
     with col12:
-        st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
-        st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
-        st.metric("📈 M.S.V medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
-        st.metric("📈 M.S.V pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
         with col12:
             totale = 100
             kpi = kpis["tasso_di_occupazione"]
@@ -1903,6 +1899,10 @@ def dashboard_analisi_performance():
             st.plotly_chart(grafico_anello, use_container_width=False)
         with col12:
             st.write("📊 Tasso di occupazione (%)")
+        st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
+        st.metric("📈 Prezzo pulizie (€)", f"{kpis['prezzo_pulizie']:,.0f}")
+        st.metric("📈 M.S.V medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
+        st.metric("📈 M.S.V pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
     with col13:
         fig = visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date)
         if fig:
@@ -1919,9 +1919,9 @@ def dashboard_analisi_performance():
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
         st.metric("📈 M.S.V medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
         st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-        st.metric("📈 Costo Pulizia (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-        st.metric("📈 Costo biancheria (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-        st.metric("📈 Costo scorte (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+        st.metric("📈 Costo Pulizia (€)", f"{kpis['costo_pulizie_ps']:,.0f}")
+        st.metric("📈 Costo Scorte (€)", f"{kpis['costo_scorte_ps']:,.0f}")
+        st.metric("📈 Costo Manutenzioni (€)", f"{kpis['costo_manutenzioni_ps']:,.0f}")
     
 def render_calcolatore():
     inject_custom_css()
