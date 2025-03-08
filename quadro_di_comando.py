@@ -294,7 +294,20 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     IVA_Totale_Debito = data['IVA Provvigioni PM'].sum()
     Saldo_IVA = IVA_Totale_Debito - IVA_Totale_credito
     
+    #CALCOLO COSTI DI PULIZIE SCORTE E MANUTENZIONE PER SOGGIORNO E TOTALI
+    costo_pulizie_ps = data['costo_pulizie_ps'].mean()
+    costo_scorte_ps = data['costo_scorte_ps'].mean()
+    costo_manutenzioni_ps = data['costo_manutenzioni_ps'].mean()
+
+    costo_pulizie_ps_totali = data['costo_pulizie_ps'].sum()
+    costo_scorte_ps_totali = data['costo_scorte_ps'].sum()
+    costo_manutenzioni_ps_totali = data['costo_manutenzioni_ps'].sum()
+    altri_costi = costo_scorte_ps_totali + costo_manutenzioni_ps_totali
+
     
+    
+
+
     
     #  CALCOLO NOTTI, PRENOTAZIONI ECC...   #
         
@@ -352,7 +365,14 @@ def calculate_kpis(data, notti_disponibili_filtrate):
         'tasso_di_occupazione':tasso_di_occupazione,
         'notti_disponibili': notti_disponibili,
         'notti_libere': notti_libere,
-        'numero_prenotazioni': numero_prenotazioni
+        'numero_prenotazioni': numero_prenotazioni,
+        'costo_pulizie_ps':  costo_pulizie_ps,
+        'costo_scorte_ps':costo_scorte_ps,
+        'costo_manutenzioni_ps':costo_manutenzioni_ps,
+        'costo_pulizie_ps_totali':costo_pulizie_ps_totali,
+        'costo_scorte_ps_totali':costo_scorte_ps_totali,
+        'costo_manutenzioni_ps_totali':costo_manutenzioni_ps_totali,
+        'altri_costi':altri_costi
     }
 
 def eleboratore_spese(df):
@@ -1466,7 +1486,7 @@ def dashboard_analisi_performance():
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
     data = localizzatore(file_path, data)
-    st.write(data)
+    
 
     # SEZIONE FILTRI (in sidebar)
     with st.sidebar.expander("🔍 Filtro Dati"):
@@ -1809,11 +1829,11 @@ def dashboard_analisi_performance():
         grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["totale_commissioni"]
+            kpi = kpis["commissioni_proprietari"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
-            st.metric("📈 Totale Commissioni (€)", f"{kpis['totale_commissioni']:,.2f}")
+            st.metric("📈 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
         grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
@@ -1833,11 +1853,11 @@ def dashboard_analisi_performance():
         grafico_col, metrica_col = st.columns([3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_itw"]
+            kpi = kpis["altri_costi"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)
         with metrica_col:
-            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}")
+            st.metric("🧹 Altri Costi  (€)", f"{kpis['altri_costi']:,.2f}")
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
