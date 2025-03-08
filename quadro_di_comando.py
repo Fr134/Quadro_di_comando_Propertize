@@ -30,7 +30,7 @@ def upload_file():
 
 def localizzatore(file_path, data):
     """
-    Associa a ogni immobile la posizione.
+    Associa a ogni immobile la posizione e i costi per ogni soggiorno.
     """
     # Legge il Foglio 2 del file Excel
     file_posizioni = pd.read_excel(file_path, sheet_name=2)
@@ -46,7 +46,10 @@ def localizzatore(file_path, data):
             'zona': row[2],                     # Zona nella terza colonna
             'coordinate_zona': row[3],          # Coordinate della zona nella quarta colonna
             'indirizzo': row[4],                # Indirizzo nella quinta colonna
-            'coordinate_indirizzo': row[5]      # Coordinate dell'indirizzo nella sesta colonna
+            'coordinate_indirizzo': row[5],     # Coordinate dell'indirizzo nella sesta colonna
+            'costo_pulizie_ps': row[6],         # Coordinate dell'indirizzo nella sesta colonna
+            'costo_scorte_ps': row[7],          # Coordinate dell'indirizzo nella sesta colonna
+            'costo_manutenzioni_ps': row[8]     # Coordinate dell'indirizzo nella sesta colonna
         }
         lista_posizione.append(d)
     
@@ -1463,6 +1466,7 @@ def dashboard_analisi_performance():
     file_path = st.session_state['uploaded_file']
     data = st.session_state['data']
     data = localizzatore(file_path, data)
+    st.write(data)
 
     # SEZIONE FILTRI (in sidebar)
     with st.sidebar.expander("🔍 Filtro Dati"):
