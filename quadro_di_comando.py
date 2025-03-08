@@ -420,13 +420,15 @@ def eleboratore_spese(df):
     return df, totali, totali_df
 
 def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
-    costi_totali = spese_totali["Totale_Spese_netto"] + ricavi["totale_commissioni"]
-    costi_variabili = ricavi["totale_commissioni"]
-    costi_fissi = spese_totali["Totale_Spese_netto"]
+    costi_totali = float(spese_totali["Totale_Spese_netto"].iloc[0]) + float(ricavi["totale_commissioni"])
+    costi_variabili = float(ricavi["totale_commissioni"])
+    costi_fissi = float(spese_totali["Totale_Spese_netto"].iloc[0])
     if "PULIZIE" in spese_totali_settore["Settore di spesa"].unique():
-        costi_pulizie = spese_totali_settore[spese_totali_settore["Settore di spesa"] == "PULIZIE"]
+        df_pulizie = spese_totali_settore[spese_totali_settore["Settore di spesa"] == "PULIZIE"]
+        # Supponendo che il valore numerico da usare sia nella colonna "totale_netto"
+        costi_pulizie = float(df_pulizie["totale_netto"].iloc[0])
     else:
-        costi_pulizie = 0
+        costi_pulizie = 0.0
     costi_gestione = costi_fissi - costi_pulizie
 
     df_costi = pd.DataFrame({
