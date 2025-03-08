@@ -295,6 +295,7 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     Saldo_IVA = IVA_Totale_Debito - IVA_Totale_credito
     
     #CALCOLO COSTI DI PULIZIE SCORTE E MANUTENZIONE PER SOGGIORNO E TOTALI
+
     costo_pulizie_ps = data['costo_pulizie_ps'].mean()
     costo_scorte_ps = data['costo_scorte_ps'].mean()
     costo_manutenzioni_ps = data['costo_manutenzioni_ps'].mean()
@@ -302,7 +303,7 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     costo_pulizie_ps_totali = data['costo_pulizie_ps'].sum()
     costo_scorte_ps_totali = data['costo_scorte_ps'].sum()
     costo_manutenzioni_ps_totali = data['costo_manutenzioni_ps'].sum()
-    altri_costi = costo_scorte_ps_totali + costo_manutenzioni_ps_totali
+    altri_costi = costo_scorte_ps_totali + costo_manutenzioni_ps_totali 
 
     
     
@@ -338,7 +339,9 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     prezzo_pulizie = totale_ricavi_pulizie/numero_prenotazioni
     margine_medio_pulizie = marginalità_pulizie/numero_prenotazioni
     
-    
+    #    Utile   #
+
+    marginalità_immobile = marginalità_totale - costo_pulizie_ps_totali - altri_costi
     
     return {
         "totale_ricavi_locazione": totale_ricavi_locazione,
@@ -372,7 +375,8 @@ def calculate_kpis(data, notti_disponibili_filtrate):
         'costo_pulizie_ps_totali':costo_pulizie_ps_totali,
         'costo_scorte_ps_totali':costo_scorte_ps_totali,
         'costo_manutenzioni_ps_totali':costo_manutenzioni_ps_totali,
-        'altri_costi':altri_costi
+        'altri_costi':altri_costi,
+        'marginalità_immobile':marginalità_immobile
     }
 
 def eleboratore_spese(df):
@@ -1867,11 +1871,11 @@ def dashboard_analisi_performance():
         with col3:
             with col3:
                 totale = kpis["ricavi_totali"]
-                kpi = kpis["marginalità_totale"]
+                kpi = kpis["marginalità_immobile"]
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)
             with col3:
-                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
+                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_immobile']:,.2f}")
         with col4:
             with col4:
                 totale = kpis["ricavi_totali"]
