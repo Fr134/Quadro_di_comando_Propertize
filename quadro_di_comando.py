@@ -995,56 +995,54 @@ def dashboard_spese():
 
     col1, col2 = st.columns([2,4])
     with col1:
-        #grafico ad anello + scritta + bottone info 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+        # Primo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = riassunto_spese['costi_totali']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico1")  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico1")
         with metrica_col:
-            st.metric("🧹 Costi Totali (€)", f"{riassunto_spese['costi_totali'].iloc[0]:,.2f}") 
-        # bottone info
+            st.metric("🧹 Costi Totali (€)", f"{riassunto_spese['costi_totali'].iloc[0]:,.2f}")
         with info_col:
             st.markdown(
-            '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
-             unsafe_allow_html=True
-        )
-
-        #grafico ad anello + scritta + bottone info 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+                '<span class="info-icon" title="I Costi Totali rappresentano il totale dei costi fissi, compresi quelli relativi alle spese di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
+    
+        st.write("")  # Spazio verticale per separare i blocchi
+    
+        # Secondo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = kpis['totale_commissioni']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")
         with metrica_col:
-            st.metric("🧹 Costi Variabili (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}") 
-        # bottone info
+            st.metric("🧹 Costi Variabili (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}")
         with info_col:
             st.markdown(
-            '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
-             unsafe_allow_html=True
-        )
-
-        #grafico ad anello + scritta + bottone info 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
+                '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
+    
+        st.write("")  # Spazio verticale
+    
+        # Terzo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
             totale = kpis["ricavi_totali"]
             kpi = totale_spese['Totale_Spese_netto']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")  # Mantieni larghezza compatta
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
         with metrica_col:
-            st.metric("🧹 Costi Fissi (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}") 
-        # bottone info
+            st.metric("🧹 Costi Fissi (€)", f"{totale_spese['Totale_Spese_netto'].iloc[0]:,.2f}")
         with info_col:
             st.markdown(
-            '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
-             unsafe_allow_html=True
-        )
+                '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(data, colonne)
