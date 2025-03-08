@@ -2100,22 +2100,19 @@ def create_donut_chart(totale, kpi):
 
 
 def create_donut_chart1(totale, kpi):
-    
-    
-
     """
     Crea un grafico ad anello compatto che mostra la percentuale del kpi passato sul totale
-    
-    
     """
-    
-    
+    # Assicuriamoci che 'totale' e 'kpi' siano numeri scalari
+    totale_scalar = float(totale) if not isinstance(totale, (int, float)) else totale
+    kpi_scalar = float(kpi) if not isinstance(kpi, (int, float)) else kpi
+
     # Calcola la percentuale rispetto al totale
-    percentuale = (kpi / totale) * 100
+    percentuale = (kpi_scalar / totale_scalar) * 100
 
     # Dati per il grafico
     labels = ['Kpi', 'Altro']
-    values = [kpi, totale - kpi]
+    values = [kpi_scalar, totale_scalar - kpi_scalar]
 
     # Creazione del grafico
     fig = go.Figure(
@@ -2146,6 +2143,7 @@ def create_donut_chart1(totale, kpi):
     )
 
     return fig
+
 
 def create_donut_chart2(totale, kpi):
     
