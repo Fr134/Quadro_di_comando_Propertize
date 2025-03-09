@@ -1405,32 +1405,21 @@ def dashboard_proprietari():
         st.divider()    
         st.metric("📈 Prezzo medio a notte (€)", f"{kpis['prezzo_medio_notte']:,.0f}")
         st.metric("📈 Valore medio prenotazione (€)", f"{kpis['valore_medio_prenotazione']:,.0f}")
-        st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
+        
         
     with col13:
         # Integrazione nella dashboard
         fig = visualizza_andamento_metriche(dati_filtrati, notti_disponibili_filtrate, start_date, end_date)
         if fig:
             st.plotly_chart(fig, use_container_width=True)
-    
-
-
-        col13_1, col13_2 = st.columns([2,2])
-        
-        with col13_1:
-            st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
-            
-        with col13_2:
-            st.metric("📈 Notti occupate (€)", f"{kpis['notti_occupate']:,.0f}")
-            
-            
-        
+  
     with col14:
-        
         st.metric("📈 Margine medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
-        st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
         st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
-        st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")   
+        st.divider()
+        st.metric("📈 Notti occupate (€)", f"{kpis['notti_occupate']:,.0f}")  
+        st.metric("📈 Soggiorno medio ", f"{kpis['soggiorno_medio']:,.0f}")
+        
     
 def dashboard_analisi_performance():
     inject_custom_css()
