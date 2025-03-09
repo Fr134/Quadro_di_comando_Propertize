@@ -1144,8 +1144,8 @@ def dashboard_spese():
             st.plotly_chart(grafico_anello, use_container_width=False, key="plotly_chart_col05")  # Mantieni larghezza compatta
         with col05:
             render_metric_with_info(
-                metric_label="📊 Commissioni Gestionale (€)",
-                metric_value=kpis['commissioni_proprietari'],
+                metric_label="📊 Local Manager (€)",
+                metric_value=kpis['commissioni_itw'],
                 info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
             )
     col001, col002 = st.columns([4,2])
