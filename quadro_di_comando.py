@@ -737,7 +737,7 @@ def render_dashboard():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col3:
-                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
+                st.metric("📊 M.S.V. (€)", f"{kpis['marginalità_totale']:,.2f}")
 
         with col4:
             #grafico ad anello 
