@@ -458,6 +458,9 @@ def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
         costi_pulizie = 0.0
     costi_gestione = costi_fissi - costi_pulizie
     ricavi_totali = float(ricavi["ricavi_totali"])
+    ammortamenti = 15000
+    EBITDA = ricavi_totali - costi_totali
+    MOL = EBITDA - ammortamenti
 
     df_costi = pd.DataFrame({
         'costi_totali': [costi_totali],
@@ -465,7 +468,10 @@ def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
         'costi_fissi': [costi_fissi],
         'costi_pulizie': [costi_pulizie],
         'costi_gestione': [costi_gestione],
-        'ricavi_totali': [ricavi_totali]
+        'ricavi_totali': [ricavi_totali],
+        'ammortamenti': [ammortamenti],
+        'EBITDA': [EBITDA],
+        'MOL': [MOL]
     })
 
     return df_costi
@@ -703,22 +709,22 @@ def render_dashboard():
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["marginalità_totale"]
+            totale = riassunto_spese["ricavi_totali"]
+            kpi = riassunto_spese["EBITDA"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 EBITDA (€)", f"{kpis['marginalità_totale']:,.2f}")
+            st.metric("📈 EBITDA (€)", f"{riassunto_spese['EBITDA']:,.2f}")
 
         # Sub-layout per centrare il grafico e il dato
         grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
         with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["ricavi_totali"]
+            totale = riassunto_spese["ricavi_totali"]
+            kpi = riassunto_spese["MOL"]
             grafico_anello = create_donut_chart(totale, kpi)
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
-            st.metric("📈 MOL (€)", f"{kpis['ricavi_totali']:,.2f}")
+            st.metric("📈 MOL (€)", f"{riassunto_spese['MOL']:,.2f}")
 
         st.divider()
 
