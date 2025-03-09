@@ -753,6 +753,20 @@ def render_dashboard():
                 '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
                 unsafe_allow_html=True
             )
+        # Terzo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
+        with grafico_col:
+            totale = riassunto_spese["costi_totali"]
+            kpi = riassunto_spese['costi_fissi']
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
+        with metrica_col:
+            st.metric(" Ammortamenti (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
+        with info_col:
+            st.markdown(
+                '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
         
 
     with col2:
