@@ -706,25 +706,6 @@ def render_dashboard():
         with metrica_col:
             st.metric("📈 Costi (€)", f"{kpis['totale_commissioni']:,.2f}")
 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = riassunto_spese["ricavi_totali"]
-            kpi = riassunto_spese["EBITDA"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("📈 EBITDA (€)", f"{riassunto_spese['EBITDA']:,.2f}")
-
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = riassunto_spese["ricavi_totali"]
-            kpi = riassunto_spese["MOL"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("📈 MOL (€)", f"{riassunto_spese['MOL']:,.2f}")
 
         st.divider()
 
@@ -742,6 +723,8 @@ def render_dashboard():
                 '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
                 unsafe_allow_html=True
             )
+
+        
     
         st.write("")  # Spazio verticale
     
