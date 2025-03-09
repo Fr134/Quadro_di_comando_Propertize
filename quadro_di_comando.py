@@ -722,7 +722,6 @@ def render_dashboard():
                 unsafe_allow_html=True
             )
 
-        st.divider()
         # Terzo blocco
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
@@ -737,7 +736,8 @@ def render_dashboard():
                 '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
                 unsafe_allow_html=True
             )
-    
+        
+        st.divider()
         st.write("")  # Spazio verticale
 
         # Secondo blocco
