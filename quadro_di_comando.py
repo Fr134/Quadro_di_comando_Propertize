@@ -828,7 +828,6 @@ def dashboard_spese():
     data = st.session_state['data']
     data = localizzatore(file_path, data)
     spese = st.session_state['spese']
-    st.write(spese)
 
     # Sezione Filtri
     # Sezione Filtri
@@ -877,18 +876,12 @@ def dashboard_spese():
     if 'filtered_notti_disponibili' in st.session_state:
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
     
-
     st.write(dati_filtrati_spese)
     kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati_spese)
     
     kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
     dati_IVA = somme_IVA(totale_spese, kpis)
     riassunto_spese = elabora_spese_ricavi(kpis_spese, totale_spese, totali_spese_settore, kpis)
-    st.write(kpis_spese)
-    st.write(totali_spese_settore)
-    st.write(totale_spese)
-
-
 
     col1, col2 = st.columns([2,4])
     with col1:
