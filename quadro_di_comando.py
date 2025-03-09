@@ -1365,7 +1365,7 @@ def dashboard_proprietari():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col3:
-                st.metric("📊 Guadagno (€)", f"{kpis['marginalità_totale']:,.2f}")
+                st.metric("📊 Profitto (€)", f"{kpis['marginalità_totale']:,.2f}")
 
         with col4:
             #grafico ad anello 
@@ -1387,7 +1387,7 @@ def dashboard_proprietari():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col5:
-                st.metric("📊 Guadagno Netto (€)", f"{kpis['marginalità_pulizie']:,.2f}")
+                st.metric("📊 Profitto Netto (€)", f"{kpis['marginalità_pulizie']:,.2f}")
 
     st.divider()
 
@@ -1419,17 +1419,18 @@ def dashboard_proprietari():
         
         with col13_1:
             st.metric("📈 Notti diponibili (€)", f"{kpis['notti_disponibili']:,.0f}")
-            st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")
+            
         with col13_2:
             st.metric("📈 Notti occupate (€)", f"{kpis['notti_occupate']:,.0f}")
-            st.metric("📈 Tasso di occupazione (€)", f"{kpis['tasso_di_occupazione']:,.0f}")
+            
             
         
     with col14:
         
         st.metric("📈 Margine medio a notte (€)", f"{kpis['margine_medio_notte']:,.0f}")
         st.metric("📈 Margine pulizie per soggiorno (€)", f"{kpis['margine_medio_pulizie']:,.0f}")
-        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")   
+        st.metric("📈 Margine medio per prenotazione (€)", f"{kpis['margine_medio_prenotazione']:,.0f}")
+        st.metric("📈 Notti libere (€)", f"{kpis['notti_libere']:,.0f}")   
     
 def dashboard_analisi_performance():
     inject_custom_css()
