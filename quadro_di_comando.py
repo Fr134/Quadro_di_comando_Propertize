@@ -1347,54 +1347,6 @@ def dashboard_proprietari():
             '<span class="info-icon" title="I Ricavi Totali rappresentano la somma complessiva dei ricavi generati dall\'immobile, ottenuti sommando i ricavi da locazione e quelli da servizi aggiuntivi. Questa metrica consente di valutare la performance economica globale dell\'immobile.">ℹ️</span>',
              unsafe_allow_html=True
         )
-            
-            
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["totale_commissioni"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("📈 Totale Commissioni (€)", f"{kpis['totale_commissioni']:,.2f}")
-            
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_ota"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("🧹 Commissioni OTA (€)", f"{kpis['commissioni_ota']:,.2f}")
-
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_proprietari"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("🧹 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}") 
-
-        #grafico ad anello 
-        # Sub-layout per centrare il grafico e il dato
-        grafico_col, metrica_col = st.columns([3, 5])  # Due sotto-colonne: 2/3 per il grafico, 1/3 per il dato
-        with grafico_col:
-            totale = kpis["ricavi_totali"]
-            kpi = kpis["commissioni_itw"]
-            grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
-        with metrica_col:
-            st.metric("🧹 Commissioni ITW (€)", f"{kpis['commissioni_itw']:,.2f}") 
-        
-
-
 
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
@@ -1413,7 +1365,7 @@ def dashboard_proprietari():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col3:
-                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_totale']:,.2f}")
+                st.metric("📊 Guadagno (€)", f"{kpis['marginalità_totale']:,.2f}")
 
         with col4:
             #grafico ad anello 
@@ -1424,7 +1376,7 @@ def dashboard_proprietari():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col4:
-                st.metric("📊 Marginalità Locazioni (€)", f"{kpis['marginalità_locazioni']:,.2f}")
+                st.metric("📊 Cedolare Secca (€)", f"{kpis['marginalità_locazioni']:,.2f}")
 
         with col5:
             #grafico ad anello 
@@ -1435,7 +1387,7 @@ def dashboard_proprietari():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col5:
-                st.metric("📊 Marginalità Pulizie (€)", f"{kpis['marginalità_pulizie']:,.2f}")
+                st.metric("📊 Guadagno Netto (€)", f"{kpis['marginalità_pulizie']:,.2f}")
 
     st.divider()
 
