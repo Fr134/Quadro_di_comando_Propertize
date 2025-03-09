@@ -715,16 +715,43 @@ def render_dashboard():
             totale = riassunto_spese["costi_totali"]
             kpi = riassunto_spese['costi_variabili']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")
+            st.plotly_chart(grafico_anello, use_container_width=False, key="gr2")
         with metrica_col:
-            st.metric("🧹 Costi Variabili (€)", f"{riassunto_spese['costi_variabili'].iloc[0]:,.2f}")
+            st.metric(" Costi Variabili (€)", f"{riassunto_spese['costi_variabili'].iloc[0]:,.2f}")
         with info_col:
             st.markdown( 
                 '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
                 unsafe_allow_html=True
             )
 
-        
+        # Terzo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
+        with grafico_col:
+            totale = riassunto_spese["ricavi_totali"]
+            kpi = riassunto_spese['EBITDA']
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="gr31")
+        with metrica_col:
+            st.metric(" Costi Fissi (€)", f"{riassunto_spese['EBITDA'].iloc[0]:,.2f}")
+        with info_col:
+            st.markdown(
+                '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
+        # Terzo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
+        with grafico_col:
+            totale = riassunto_spese["ricavi_totali"]
+            kpi = riassunto_spese['MOL']
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="gr41")
+        with metrica_col:
+            st.metric("  Ammortamenti (€)", f"{riassunto_spese['MOL'].iloc[0]:,.2f}")
+        with info_col:
+            st.markdown(
+                '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
     
         st.write("")  # Spazio verticale
     
@@ -734,9 +761,9 @@ def render_dashboard():
             totale = riassunto_spese["costi_totali"]
             kpi = riassunto_spese['costi_fissi']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
+            st.plotly_chart(grafico_anello, use_container_width=False, key="gr3")
         with metrica_col:
-            st.metric("🧹 Costi Fissi (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
+            st.metric(" Costi Fissi (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
         with info_col:
             st.markdown(
                 '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
@@ -748,9 +775,9 @@ def render_dashboard():
             totale = riassunto_spese["costi_totali"]
             kpi = riassunto_spese['costi_fissi']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico4")
+            st.plotly_chart(grafico_anello, use_container_width=False, key="gr4")
         with metrica_col:
-            st.metric(" Ammortamenti (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
+            st.metric("  Ammortamenti (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
         with info_col:
             st.markdown(
                 '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
