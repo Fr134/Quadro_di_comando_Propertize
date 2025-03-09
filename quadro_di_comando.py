@@ -674,10 +674,10 @@ def render_dashboard():
     
     # Calcolo dei KPI
     kpis = calculate_kpis(dati_filtrati, notti_disponibili_filtrate)
-    
-
-
-    
+    spese = st.session_state['spese']
+    kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(spese)
+    dati_IVA = somme_IVA(totale_spese, kpis)
+    riassunto_spese = elabora_spese_ricavi(kpis_spese, totale_spese, totali_spese_settore, kpis)
     
     st.divider()
     
@@ -719,7 +719,42 @@ def render_dashboard():
             st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
         with metrica_col:
             st.metric("📈 MOL (€)", f"{kpis['ricavi_totali']:,.2f}")
-                     
+
+        st.divider()
+
+        # Secondo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
+        with grafico_col:
+            totale = riassunto_spese["costi_totali"]
+            kpi = riassunto_spese['costi_variabili']
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico2")
+        with metrica_col:
+            st.metric("🧹 Costi Variabili (€)", f"{riassunto_spese['costi_variabili'].iloc[0]:,.2f}")
+        with info_col:
+            st.markdown( 
+                '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
+    
+        st.write("")  # Spazio verticale
+    
+        # Terzo blocco
+        grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
+        with grafico_col:
+            totale = riassunto_spese["costi_totali"]
+            kpi = riassunto_spese['costi_fissi']
+            grafico_anello = create_donut_chart(totale, kpi)
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
+        with metrica_col:
+            st.metric("🧹 Costi Fissi (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
+        with info_col:
+            st.markdown(
+                '<span class="info-icon" title="I Costi Fissi rappresentano la parte fissa dei costi di gestione.">ℹ️</span>',
+                unsafe_allow_html=True
+            )
+
+
     with col2:
         colonne = ['ricavi_totali', 'commissioni_totali', 'marginalità_totale']
         fig = visualizza_andamento_ricavi(dati_filtrati, colonne)
