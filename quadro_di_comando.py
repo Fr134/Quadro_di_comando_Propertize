@@ -876,7 +876,6 @@ def dashboard_spese():
     if 'filtered_notti_disponibili' in st.session_state:
         notti_disponibili_filtrate = st.session_state['filtered_notti_disponibili']
     
-    st.write(dati_filtrati_spese)
     kpis_spese, totali_spese_settore, totale_spese = eleboratore_spese(dati_filtrati_spese)
     
     kpis = calculate_kpis(dati_filtrati_data, notti_disponibili_filtrate)
@@ -1020,12 +1019,12 @@ def dashboard_spese():
             info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
         )
         render_metric_with_info(
-            metric_label="📊 Saldo a Credito (€)",
+            metric_label="📊 Saldo a Debito (€)",
             metric_value=dati_IVA['IVA_a_credito'],
             info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
         )
         render_metric_with_info(
-            metric_label="📊 IVA a Debito (€)",
+            metric_label="📊 IVA a Credito (€)",
             metric_value=dati_IVA['IVA_a_debito'],
             info_text="I Costi di gestione rappresentano il totale delle commissioni per i proprietari, indicatore dei costi di gestione dell'immobile."
         )
