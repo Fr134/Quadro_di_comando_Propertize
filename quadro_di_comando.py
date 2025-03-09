@@ -748,7 +748,7 @@ def render_dashboard():
             totale = riassunto_spese["costi_totali"]
             kpi = riassunto_spese['costi_fissi']
             grafico_anello = create_donut_chart(totale, kpi)
-            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico3")
+            st.plotly_chart(grafico_anello, use_container_width=False, key="grafico4")
         with metrica_col:
             st.metric(" Ammortamenti (€)", f"{riassunto_spese['costi_fissi'].iloc[0]:,.2f}")
         with info_col:
