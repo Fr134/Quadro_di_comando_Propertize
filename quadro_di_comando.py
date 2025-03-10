@@ -690,7 +690,7 @@ def render_dashboard():
    ############ Layout a 3 colonne per dividere lo schermo in tre sezioni uguali    ###########     
     col1, col2 = st.columns([2,4])  # Tre colonne di uguale larghezza
     # Colonna 1: Grafico ad anello + KPI
-      
+        
     with col1:
         
         
@@ -1752,7 +1752,7 @@ def dashboard_analisi_performance():
                 grafico_anello = create_donut_chart1(totale, kpi)
                 st.plotly_chart(grafico_anello, use_container_width=False)
             with col3:
-                st.metric("📊 Marginalità Totale (€)", f"{kpis['marginalità_immobile']:,.2f}")
+                st.metric("📊 Marginalità Operativa (€)", f"{kpis['marginalità_immobile']:,.2f}")
         with col4:
             with col4:
                 totale = kpis["ricavi_totali"]
