@@ -739,7 +739,7 @@ def render_dashboard():
         
     with col1:
         
-        
+        st.markdown('<div class="kpi-card"> ... </div>', unsafe_allow_html=True)
         st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
 
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
