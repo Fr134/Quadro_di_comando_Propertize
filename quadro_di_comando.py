@@ -585,16 +585,19 @@ def inject_custom_css():
 
 
 
-def render_kpi_card():
+def render_kpi_card(kpis, riassunto_spese):
     with st.container():
-        st.markdown('<div class="kpi-card" style="padding: 20px; background-color: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px;">', unsafe_allow_html=True)
+        st.markdown(
+            '<div class="kpi-card" style="padding: 20px; background-color: #f7f7f7; border: 1px solid #ddd; border-radius: 8px; margin-bottom: 20px;">',
+            unsafe_allow_html=True
+        )
         st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
 
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
         with grafico_col:
             totale = riassunto_spese["ricavi_totali"]
-            kpi = riassunto_spese['costi_totali']
-            grafico_anello = create_donut_chart(totale, kpi)
+            kpi_val = riassunto_spese['costi_totali']
+            grafico_anello = create_donut_chart(totale, kpi_val)
             st.plotly_chart(grafico_anello, use_container_width=False, key="gr21")
         with metrica_col:
             st.metric(" Costi (€)", f"{riassunto_spese['costi_totali'].iloc[0]:,.2f}")
@@ -761,7 +764,7 @@ def render_dashboard():
     # Colonna 1: Grafico ad anello + KPI
         
     with col1:
-        render_kpi_card()
+        render_kpi_card(kpis, riassunto_spese)
         # Apre il contenitore della card
         st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
         st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
