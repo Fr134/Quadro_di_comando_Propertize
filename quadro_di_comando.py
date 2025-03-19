@@ -515,27 +515,73 @@ def inject_custom_css():
         .stColumn {
             margin-bottom: 20px; /* Spazio tra colonne */
         }
-    </style>
-    """
-    st.markdown(custom_css, unsafe_allow_html=True)
-
-    #Applica stili personalizzati alla dashboard.
-    st.markdown(
-        """
-        <style>
-        /* Stili esistenti della dashboard (se presenti) */
 
         /* Stile per l'icona info */
         .info-icon {
             font-size: 12px;
-            color:rgb(51, 255, 0);
+            color: rgb(51, 255, 0);
             cursor: pointer;
             margin-left: 4px;
         }
+
+        /* Esempio di stile per il contenitore "card" dedicato ai KPI */
+        .kpi-card {
+            background-color: #2A2D3E; /* sfondo scuro, per un look professionale */
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #3C3F51;
+        }
+        .kpi-card h3, .kpi-card p {
+            color: #ffffff;
+        }
+        /* Layout orizzontale/verticale dei KPI */
+        .kpi-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px; /* distanza tra i kpi */
+        }
+        .kpi-item {
+            flex: 1;
+            min-width: 120px;
+        }
+
+        /* Esempio di stile per il contenitore "card" dedicato ai grafici */
+        .chart-card {
+            background-color: #2A2D3E;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+            border: 1px solid #3C3F51;
+        }
+        .chart-card h3 {
+            color: #ffffff;
+        }
+        /* Layout dei grafici */
+        .chart-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+        }
+        .chart-item {
+            flex: 1;
+            min-width: 300px;
+        }
+    </style>
+    """
+    st.markdown(custom_css, unsafe_allow_html=True)
+
+    # Applica stili personalizzati alla dashboard (già esistente)
+    st.markdown(
+        """
+        <style>
+        /* Stili esistenti della dashboard (se presenti) */
+        /* (Lasciato vuoto per evitare conflitti) */
         </style>
         """,
         unsafe_allow_html=True
     )
+
 
 ############## Funzioni per visualizzare le dashboard    #############   
 
