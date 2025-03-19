@@ -738,7 +738,7 @@ def render_dashboard():
     # Colonna 1: Grafico ad anello + KPI
         
     with col1:
-        
+        # Apre il contenitore della card
         st.markdown('<div class="kpi-card"> ... </div>', unsafe_allow_html=True)
         st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
 
@@ -755,6 +755,9 @@ def render_dashboard():
                 '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
                 unsafe_allow_html=True
             )
+            
+        # Chiude il contenitore della card
+        st.markdown('</div>', unsafe_allow_html=True)
 
 
         # Terzo blocco
