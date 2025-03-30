@@ -523,52 +523,9 @@ def inject_custom_css():
             cursor: pointer;
             margin-left: 4px;
         }
-
-        /* Esempio di stile per il contenitore "card" dedicato ai KPI */
-        .kpi-card {
-            background-color: #2A2D3E; /* sfondo scuro, per un look professionale */
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #3C3F51;
-        }
-        .kpi-card h3, .kpi-card p {
-            color: #ffffff;
-        }
-        /* Layout orizzontale/verticale dei KPI */
-        .kpi-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px; /* distanza tra i kpi */
-        }
-        .kpi-item {
-            flex: 1;
-            min-width: 120px;
-        }
-
-        /* Esempio di stile per il contenitore "card" dedicato ai grafici */
-        .chart-card {
-            background-color: #2A2D3E;
-            border-radius: 10px;
-            padding: 20px;
-            margin-bottom: 20px;
-            border: 1px solid #3C3F51;
-        }
-        .chart-card h3 {
-            color: #ffffff;
-        }
-        /* Layout dei grafici */
-        .chart-row {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 20px;
-        }
-        .chart-item {
-            flex: 1;
-            min-width: 300px;
-        }
     </style>
     """
+    
     st.markdown(custom_css, unsafe_allow_html=True)
 
     # Applica stili personalizzati alla dashboard (già esistente)
@@ -740,7 +697,6 @@ def render_dashboard():
         
     with col1:
         # Apre il contenitore della card
-        st.markdown('<div class="kpi-card">', unsafe_allow_html=True)
         st.metric("💰 Fatturato (€)", f"{kpis['ricavi_totali']:,.2f}")
 
         grafico_col, info_col, metrica_col = st.columns([3, 0.3, 5])
@@ -756,9 +712,6 @@ def render_dashboard():
                 '<span class="info-icon" title="I Costi Variabili rappresentano le commissioni variabili.">ℹ️</span>',
                 unsafe_allow_html=True
             )
-
-        # Chiude il contenitore della card
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
         # Terzo blocco
