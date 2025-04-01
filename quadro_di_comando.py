@@ -2395,22 +2395,22 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 def create_tachometer(kpi, reference, title="Performance KPI"):
     """
     Crea un tachimetro a 180° suddiviso in 3 zone (verde, arancione, rossa).
-    Visualizza un indicatore a freccia (needle) che punta al valore percentuale
-    (kpi/reference*100). Il tachimetro è impostato per avere una gauge trasparente
-    e l'indicatore è realizzato con un'annotazione.
+    Visualizza un indicatore a freccia che parte dal centro del semicerchio e punta al valore percentuale
+    (kpi/reference * 100). Il grafico è impostato per essere trasparente nelle aree colorate.
+    La dimensione del valore percentuale al centro è ridotta.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea l'indicatore gauge di base con la barra trasparente
+    # Crea il gauge di base con la barra trasparente e il numero al centro con font più piccolo
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 20}},
+        number={'suffix': "%", 'font': {'size': 12}},  # Font ridotto per il valore
         title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},  # rende trasparente la barra
+            'bar': {'color': "rgba(0,0,0,0)"},  # Rende trasparente la barra
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
@@ -2424,31 +2424,21 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     # Imposta le dimensioni del grafico
     fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), width=500, height=300)
     
-    # Definisce il centro in coordinate "paper"
+    # Definisce il centro del tachimetro in coordinate "paper"
     center_x, center_y = 0.5, 0.5
 
-    # Calcola l'angolo (in radianti) in modo che 0% corrisponda a 180° (sinistra)
-    # e 100% a 0° (destra)
+    # Calcola la posizione del "needle tip" in base alla percentuale
     angle = math.radians(180 * (1 - percentage/100))
-    
-    # Imposta la lunghezza della freccia (in coordinate paper)
     needle_length = 0.4  
-    # Calcola le coordinate di destinazione (needle tip)
     needle_x = center_x + needle_length * math.cos(angle)
     needle_y = center_y + needle_length * math.sin(angle)
     
-    # Converti la differenza in coordinate paper in pixel (usando la larghezza e l'altezza)
-    # per impostare l'offset dell'arrow in modo che punti dal centro al needle tip.
-    arrow_dx = (center_x - needle_x) * 500
-    arrow_dy = (center_y - needle_y) * 300
-
-    # Aggiunge un'annotazione con freccia (needle) che parte dal needle tip e punta al centro.
-    # Il testo viene visualizzato al needle tip (anche se non serve mostrarlo, serve per la freccia).
+    # Aggiunge l'annotazione con la freccia che parte dal centro e punta al "needle tip"
     fig.add_annotation(
         x=needle_x, 
         y=needle_y,
-        ax=arrow_dx,
-        ay=arrow_dy,
+        ax=center_x,
+        ay=center_y,
         xref="paper", 
         yref="paper",
         showarrow=True,
@@ -2459,7 +2449,6 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     )
     
     return fig
-
 #######  Bottone info ###########
 def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(0.3, 5)):
     """
