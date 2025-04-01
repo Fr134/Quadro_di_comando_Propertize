@@ -2394,8 +2394,8 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
 def create_tachometer(kpi, reference, title="Performance KPI"):
     """
-    Crea un tachimetro a 180° con suddivisione in 3 zone (verde, arancione, rossa) trasparenti.
-    Visualizza un indicatore a freccia (needle) e il valore percentuale al centro (con font più piccolo).
+    Crea un tachimetro a 180° con suddivisione in 3 zone (verde, arancione, rossa).
+    Visualizza un indicatore a freccia (needle) che punta al valore percentuale calcolato.
     
     Parametri:
       - kpi (float): valore del KPI
@@ -2408,15 +2408,15 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea l'indicatore gauge di base (con la barra resa trasparente)
+    # Crea l'indicatore gauge di base con la barra resa trasparente
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 20}},  # font ridotto per il numero
+        number={'suffix': "%", 'font': {'size': 20}},
         title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},
+            'bar': {'color': "rgba(0,0,0,0)"},  # Barra trasparente
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
@@ -2427,15 +2427,14 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
         }
     ))
     
-    # Calcola l'angolo (in radianti) per la freccia:
-    # 0% corrisponde a 180° (a sinistra), 100% a 0° (a destra)
+    # Calcola l'angolo (in radianti) per la freccia (0% = 180°, 100% = 0°)
     angle = math.radians(180 * (1 - percentage/100))
     center_x, center_y = 0.5, 0.5
     needle_length = 0.4  # lunghezza relativa della freccia
     needle_x = center_x + needle_length * math.cos(angle)
     needle_y = center_y + needle_length * math.sin(angle)
     
-    # Aggiunge un'annotazione con freccia per simulare la "needle"
+    # Aggiunge un'annotazione con freccia che parte dal centro e punta al valore calcolato
     fig.add_annotation(
         x=needle_x, y=needle_y,
         ax=center_x, ay=center_y,
@@ -2445,19 +2444,10 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
         arrowsize=2,
         arrowwidth=3,
         arrowcolor="black",
-        arrow_standoff=5
+        arrow_standoff=0
     )
     
-    # Aggiunge una forma circolare semitrasparente dietro il gauge per un effetto ombreggiato
-    fig.add_shape(
-        type="circle",
-        xref="paper", yref="paper",
-        x0=0.05, y0=0.05, x1=0.95, y1=0.95,
-        fillcolor="rgba(0,0,0,0.05)",
-        line=dict(width=0),
-        layer="below"
-    )
-    
+    # Imposta il layout senza alcuna forma di ombreggiatura in background
     fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=300, width=500)
     return fig
 
