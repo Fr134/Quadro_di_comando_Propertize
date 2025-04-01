@@ -4,6 +4,7 @@ import plotly.express as px
 import plotly.graph_objects as go
 import folium
 import ast
+import math
 from streamlit_folium import st_folium
 
 # Configurazione della pagina
@@ -2394,14 +2395,17 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 def create_tachometer(kpi, reference, title="Tachimetro KPI"):
     """
     Crea un tachimetro (gauge a 180°) che mostra la percentuale (KPI / riferimento * 100)
-    suddiviso in tre zone: 
-      - 0 - 33.33%: verde
-      - 33.33 - 66.66%: arancione
-      - 66.66 - 100%: rossa
+    suddiviso in 3 zone equidistanti:
+      - 0 - 33.33%: verde trasparente
+      - 33.33 - 66.66%: arancione trasparente
+      - 66.66 - 100%: rossa trasparente
 
+    Il grafico è realizzato con un indicatore a freccia (invece della barra predefinita),
+    include ombreggiature, linee morbide e il valore percentuale al centro ha dimensione ridotta.
+    
     Parametri:
-      - kpi (float): il valore del KPI.
-      - reference (float): il valore di riferimento.
+      - kpi (float): valore del KPI.
+      - reference (float): valore di riferimento per il confronto.
       - title (str): titolo del tachimetro (default "Tachimetro KPI").
 
     Ritorna:
@@ -2410,30 +2414,67 @@ def create_tachometer(kpi, reference, title="Tachimetro KPI"):
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea il tachimetro utilizzando l'indicatore di Plotly
+    # Crea l'indicatore gauge di base ma con il "bar" invisibile
     fig = go.Figure(go.Indicator(
-        mode = "gauge+number",
-        value = percentage,
-        number = {'suffix': "%", 'font': {'size': 48}},
-        title = {'text': title, 'font': {'size': 24}},
-        gauge = {
-            'shape': 'angular',
-            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
-            'bar': {'color': "darkblue"},
+        mode="gauge+number",
+        value=percentage,
+        number={'suffix': "%", 'font': {'size': 24}},  # valore con font più piccolo
+        title={'text': title, 'font': {'size': 20}},
+        gauge={
+            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
+            'bar': {'color': "rgba(0,0,0,0)"},  # nasconde la barra predefinita
             'bgcolor': "white",
-            'borderwidth': 2,
-            'bordercolor': "gray",
+            'borderwidth': 0,
             'steps': [
-                {'range': [0, 33.33], 'color': "green"},
-                {'range': [33.33, 66.66], 'color': "orange"},
-                {'range': [66.66, 100], 'color': "red"}
+                {'range': [0, 33.33], 'color': "rgba(0,128,0,0.3)"},    # verde trasparente
+                {'range': [33.33, 66.66], 'color': "rgba(255,165,0,0.3)"},# arancione trasparente
+                {'range': [66.66, 100], 'color': "rgba(255,0,0,0.3)"}     # rossa trasparente
             ]
         }
     ))
-    # Imposta dimensioni e margini per ottenere un gauge a 180°
-    fig.update_layout(height=250, width=500, margin={'t':0, 'b':0, 'l':0, 'r':0})
+    
+    # Calcola l'angolo (in radianti) per il puntatore: 0% corrisponde a 180° e 100% a 0°
+    angle = math.radians(180 * (1 - (percentage / 100)))
+    center_x, center_y = 0.5, 0.5  # Centro del gauge (in coordinate "paper")
+    arrow_length = 0.35            # Lunghezza relativa della freccia
+    end_x = center_x + arrow_length * math.cos(angle)
+    end_y = center_y + arrow_length * math.sin(angle)
+    
+    # Aggiungi un'annotazione con freccia che funge da puntatore
+    fig.add_annotation(
+        x=end_x, y=end_y,
+        ax=center_x, ay=center_y,
+        xref="paper", yref="paper",
+        axref="paper", ayref="paper",
+        showarrow=True,
+        arrowhead=3,
+        arrowsize=1,
+        arrowwidth=3,
+        arrowcolor="black",
+        standoff=10
+    )
+    
+    # Aggiungi una leggera ombreggiatura (shape) dietro il gauge per un effetto più accattivante
+    fig.update_layout(
+        shapes=[
+            {
+                'type': 'circle',
+                'xref': 'paper',
+                'yref': 'paper',
+                'x0': 0.05,
+                'y0': 0.05,
+                'x1': 0.95,
+                'y1': 0.95,
+                'fillcolor': 'rgba(0, 0, 0, 0.05)',
+                'line': {'width': 0},
+                'layer': 'below'
+            }
+        ],
+        margin=dict(t=0, b=0, l=0, r=0),
+        # Dimensioni del grafico: puoi regolare in base alle tue necessità
+        height=300, width=500
+    )
     return fig
-
 
 #######  Bottone info ###########
 def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(0.3, 5)):
