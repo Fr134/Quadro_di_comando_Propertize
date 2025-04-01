@@ -2394,21 +2394,15 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
 def create_tachometer(kpi, reference, title="Performance KPI"):
     """
-    Crea un tachimetro a 180° con suddivisione in 3 zone (verde, arancione, rossa).
-    Visualizza un indicatore a freccia (needle) che punta al valore percentuale calcolato.
-    
-    Parametri:
-      - kpi (float): valore del KPI
-      - reference (float): valore di riferimento per il confronto
-      - title (str): titolo del tachimetro (default "Performance KPI")
-    
-    Ritorna:
-      - fig: oggetto Plotly Figure contenente il tachimetro.
+    Crea un tachimetro a 180° suddiviso in 3 zone (verde, arancione, rossa).
+    Visualizza un indicatore a freccia (needle) che punta al valore percentuale
+    (kpi/reference*100). Il tachimetro è impostato per avere una gauge trasparente
+    e l'indicatore è realizzato con un'annotazione.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea l'indicatore gauge di base con la barra resa trasparente
+    # Crea l'indicatore gauge di base con la barra trasparente
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
@@ -2416,7 +2410,7 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
         title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},  # Barra trasparente
+            'bar': {'color': "rgba(0,0,0,0)"},  # rende trasparente la barra
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
@@ -2427,28 +2421,43 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
         }
     ))
     
-    # Calcola l'angolo (in radianti) per la freccia (0% = 180°, 100% = 0°)
-    angle = math.radians(180 * (1 - percentage/100))
+    # Imposta le dimensioni del grafico
+    fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), width=500, height=300)
+    
+    # Definisce il centro in coordinate "paper"
     center_x, center_y = 0.5, 0.5
-    needle_length = 0.4  # lunghezza relativa della freccia
+
+    # Calcola l'angolo (in radianti) in modo che 0% corrisponda a 180° (sinistra)
+    # e 100% a 0° (destra)
+    angle = math.radians(180 * (1 - percentage/100))
+    
+    # Imposta la lunghezza della freccia (in coordinate paper)
+    needle_length = 0.4  
+    # Calcola le coordinate di destinazione (needle tip)
     needle_x = center_x + needle_length * math.cos(angle)
     needle_y = center_y + needle_length * math.sin(angle)
     
-    # Aggiunge un'annotazione con freccia che parte dal centro e punta al valore calcolato
+    # Converti la differenza in coordinate paper in pixel (usando la larghezza e l'altezza)
+    # per impostare l'offset dell'arrow in modo che punti dal centro al needle tip.
+    arrow_dx = (center_x - needle_x) * 500
+    arrow_dy = (center_y - needle_y) * 300
+
+    # Aggiunge un'annotazione con freccia (needle) che parte dal needle tip e punta al centro.
+    # Il testo viene visualizzato al needle tip (anche se non serve mostrarlo, serve per la freccia).
     fig.add_annotation(
-        x=needle_x, y=needle_y,
-        ax=center_x, ay=center_y,
-        xref="paper", yref="paper",
+        x=needle_x, 
+        y=needle_y,
+        ax=arrow_dx,
+        ay=arrow_dy,
+        xref="paper", 
+        yref="paper",
         showarrow=True,
         arrowhead=2,
         arrowsize=2,
         arrowwidth=3,
-        arrowcolor="black",
-        arrow_standoff=0
+        arrowcolor="black"
     )
     
-    # Imposta il layout senza alcuna forma di ombreggiatura in background
-    fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=300, width=500)
     return fig
 
 #######  Bottone info ###########
