@@ -2394,16 +2394,14 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
 def create_tachometer(kpi, reference, title="Performance KPI"):
     """
-    Crea un tachimetro a 180° suddiviso in tre zone (verde, arancione, rossa) 
-    e con un indicatore a freccia.
+    Crea un tachimetro a 180° diviso in tre zone (verde, arancione, rossa) e con un indicatore a freccia.
     
-    Il grafico mostra un gauge (semicerchio) con la scala percentuale da 0 a 100.
-    L’indicatore a freccia (needle) punta verso il valore (kpi/reference * 100) e la sua origine
-    (la parte opposta con la freccia) viene fissata al centro del semicerchio.
+    Il grafico mostra un gauge (semicerchio) con scala percentuale da 0 a 100. 
+    L’indicatore (freccia) parte dal centro del semicerchio (0.5,0.5 in coordinate paper)
+    e punta verso il valore percentuale (kpi/reference*100).
     
-    Le zone del gauge sono divise equidistantemente in verde, arancione e rossa.
-    La barra del gauge è resa trasparente, mentre le aree sono colorate con trasparenza.
-    La dimensione del valore percentuale al centro è ridotta.
+    Le tre zone sono equidistanti e colorate (verde, arancione, rossa) con trasparenza.
+    Il valore percentuale al centro viene mostrato con un font ridotto.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
@@ -2412,11 +2410,11 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 12}},  # valore con font piccolo
+        number={'suffix': "%", 'font': {'size': 12}},
         title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},  # barra trasparente
+            'bar': {'color': "rgba(0,0,0,0)"},  # rende trasparente la barra
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
@@ -2430,32 +2428,29 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     # Imposta dimensioni e margini del grafico
     fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), width=500, height=300)
     
-    # Coordinate del centro del gauge in "paper" (sempre 0.5, 0.5)
+    # In coordinate paper, il centro del gauge è sempre (0.5, 0.5)
     center_x, center_y = 0.5, 0.5
     
-    # Calcola l'angolo (in radianti) che corrisponde al valore percentuale;
-    # l'angolo 180° (pi) corrisponde al 0% e 0° corrisponde al 100%.
+    # Calcola l'angolo (in radianti) corrispondente al valore percentuale:
+    # 0% -> angolo = π (180°) e 100% -> angolo = 0
     angle = math.radians(180 * (1 - percentage/100))
     
-    # Lunghezza della freccia (needle) in unità relative (su scala paper, da 0 a 1)
+    # Lunghezza della freccia (needle) in unità relative (paper coordinates)
     needle_length = 0.4  
-    # Calcola la posizione del "needle tip" in coordinate paper
+    # Calcola le coordinate del "tip" della freccia
     needle_x = center_x + needle_length * math.cos(angle)
     needle_y = center_y + needle_length * math.sin(angle)
     
-    # Converti le coordinate del centro in pixel, usando la larghezza e altezza del grafico
+    # Otteniamo le dimensioni in pixel (questo serve solo per il calcolo dell'offset)
     width = fig.layout.width
     height = fig.layout.height
-    center_pixel_x = width * center_x
-    center_pixel_y = height * center_y
-    # Calcola la posizione in pixel del "needle tip"
-    tip_pixel_x = needle_x * width
-    tip_pixel_y = needle_y * height
-    # L'offset in pixel (ax, ay) deve essere tale che: (tip_pixel_x - ax) == center_pixel_x, cioè:
-    ax_val = tip_pixel_x - center_pixel_x
-    ay_val = tip_pixel_y - center_pixel_y
 
-    # Aggiunge l'annotazione con la freccia; "xref" e "yref" rimangono "paper" per mantenere le coordinate relative.
+    # Calcola l'offset (in pixel) affinché la base della freccia sia esattamente il centro (0.5, 0.5)
+    # La formula è: offset_x = (center_x - needle_x) * width
+    ax_val = (center_x - needle_x) * width
+    ay_val = (center_y - needle_y) * height
+
+    # Aggiungi l'annotazione con freccia che parte dal centro (0.5, 0.5) e punta al tip (needle_x, needle_y)
     fig.add_annotation(
         x=needle_x,
         y=needle_y,
