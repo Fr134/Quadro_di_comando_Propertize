@@ -2392,35 +2392,28 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
 #################    Tachimetro    #####################
 
-def create_tachometer(kpi, reference, title="Tachimetro KPI"):
+def create_tachometer(kpi, reference, title="Performance KPI"):
     """
-    Crea un tachimetro (gauge a 180°) che mostra la percentuale (KPI / riferimento * 100)
-    suddiviso in 3 zone equidistanti:
-      - 0 - 33.33%: verde trasparente
-      - 33.33 - 66.66%: arancione trasparente
-      - 66.66 - 100%: rossa trasparente
-
-    Il grafico usa un indicatore a freccia (invece della barra predefinita),
-    aggiunge ombreggiature, trasparenze e linee morbide, e il valore percentuale al centro
-    viene visualizzato con font più piccolo.
-
+    Crea un tachimetro a 180° con suddivisione in 3 zone (verde, arancione, rossa) trasparenti.
+    Visualizza un indicatore a freccia (needle) e il valore percentuale al centro (con font più piccolo).
+    
     Parametri:
-      - kpi (float): il valore del KPI.
-      - reference (float): il valore di riferimento per il confronto.
-      - title (str): titolo del tachimetro (default "Tachimetro KPI").
-
+      - kpi (float): valore del KPI
+      - reference (float): valore di riferimento per il confronto
+      - title (str): titolo del tachimetro (default "Performance KPI")
+    
     Ritorna:
       - fig: oggetto Plotly Figure contenente il tachimetro.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea l'indicatore gauge base con la barra invisibile
+    # Crea l'indicatore gauge di base (con la barra resa trasparente)
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 24}},
-        title={'text': title, 'font': {'size': 20}},
+        number={'suffix': "%", 'font': {'size': 20}},  # font ridotto per il numero
+        title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
             'bar': {'color': "rgba(0,0,0,0)"},
@@ -2434,45 +2427,38 @@ def create_tachometer(kpi, reference, title="Tachimetro KPI"):
         }
     ))
     
-    # Calcola l'angolo (in radianti) per il puntatore: il 0% corrisponde a 180° e il 100% a 0°
-    angle = math.radians(180 * (1 - (percentage / 100)))
+    # Calcola l'angolo (in radianti) per la freccia:
+    # 0% corrisponde a 180° (a sinistra), 100% a 0° (a destra)
+    angle = math.radians(180 * (1 - percentage/100))
     center_x, center_y = 0.5, 0.5
-    arrow_length = 0.35
-    end_x = center_x + arrow_length * math.cos(angle)
-    end_y = center_y + arrow_length * math.sin(angle)
+    needle_length = 0.4  # lunghezza relativa della freccia
+    needle_x = center_x + needle_length * math.cos(angle)
+    needle_y = center_y + needle_length * math.sin(angle)
     
-    # Aggiungi l'annotazione con freccia (lasciando che axref e ayref usino il valore predefinito "pixel")
+    # Aggiunge un'annotazione con freccia per simulare la "needle"
     fig.add_annotation(
-        x=end_x, y=end_y,
+        x=needle_x, y=needle_y,
         ax=center_x, ay=center_y,
         xref="paper", yref="paper",
         showarrow=True,
-        arrowhead=3,
-        arrowsize=1,
+        arrowhead=2,
+        arrowsize=2,
         arrowwidth=3,
         arrowcolor="black",
-        standoff=10
+        arrow_standoff=5
     )
     
-    # Aggiungi una leggera ombreggiatura dietro il gauge per un effetto più accattivante
-    fig.update_layout(
-        shapes=[
-            {
-                'type': 'circle',
-                'xref': 'paper',
-                'yref': 'paper',
-                'x0': 0.05,
-                'y0': 0.05,
-                'x1': 0.95,
-                'y1': 0.95,
-                'fillcolor': 'rgba(0, 0, 0, 0.05)',
-                'line': {'width': 0},
-                'layer': 'below'
-            }
-        ],
-        margin=dict(t=0, b=0, l=0, r=0),
-        height=300, width=500
+    # Aggiunge una forma circolare semitrasparente dietro il gauge per un effetto ombreggiato
+    fig.add_shape(
+        type="circle",
+        xref="paper", yref="paper",
+        x0=0.05, y0=0.05, x1=0.95, y1=0.95,
+        fillcolor="rgba(0,0,0,0.05)",
+        line=dict(width=0),
+        layer="below"
     )
+    
+    fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), height=300, width=500)
     return fig
 
 #######  Bottone info ###########
