@@ -2394,23 +2394,29 @@ def create_horizontal_bar_chart(df, category_col, value_col):
 
 def create_tachometer(kpi, reference, title="Performance KPI"):
     """
-    Crea un tachimetro a 180° suddiviso in 3 zone (verde, arancione, rossa).
-    Visualizza un indicatore a freccia che parte dal centro del semicerchio e punta al valore percentuale
-    (kpi/reference * 100). Il grafico è impostato per essere trasparente nelle aree colorate.
+    Crea un tachimetro a 180° suddiviso in tre zone (verde, arancione, rossa) 
+    e con un indicatore a freccia.
+    
+    Il grafico mostra un gauge (semicerchio) con la scala percentuale da 0 a 100.
+    L’indicatore a freccia (needle) punta verso il valore (kpi/reference * 100) e la sua origine
+    (la parte opposta con la freccia) viene fissata al centro del semicerchio.
+    
+    Le zone del gauge sono divise equidistantemente in verde, arancione e rossa.
+    La barra del gauge è resa trasparente, mentre le aree sono colorate con trasparenza.
     La dimensione del valore percentuale al centro è ridotta.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea il gauge di base con la barra trasparente e il numero al centro con font più piccolo
+    # Crea il gauge indicator
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 12}},  # Font ridotto per il valore
+        number={'suffix': "%", 'font': {'size': 12}},  # valore con font piccolo
         title={'text': title, 'font': {'size': 18}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},  # Rende trasparente la barra
+            'bar': {'color': "rgba(0,0,0,0)"},  # barra trasparente
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
@@ -2421,25 +2427,41 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
         }
     ))
     
-    # Imposta le dimensioni del grafico
+    # Imposta dimensioni e margini del grafico
     fig.update_layout(margin=dict(t=0, b=0, l=0, r=0), width=500, height=300)
     
-    # Definisce il centro del tachimetro in coordinate "paper"
+    # Coordinate del centro del gauge in "paper" (sempre 0.5, 0.5)
     center_x, center_y = 0.5, 0.5
-
-    # Calcola la posizione del "needle tip" in base alla percentuale
+    
+    # Calcola l'angolo (in radianti) che corrisponde al valore percentuale;
+    # l'angolo 180° (pi) corrisponde al 0% e 0° corrisponde al 100%.
     angle = math.radians(180 * (1 - percentage/100))
+    
+    # Lunghezza della freccia (needle) in unità relative (su scala paper, da 0 a 1)
     needle_length = 0.4  
+    # Calcola la posizione del "needle tip" in coordinate paper
     needle_x = center_x + needle_length * math.cos(angle)
     needle_y = center_y + needle_length * math.sin(angle)
     
-    # Aggiunge l'annotazione con la freccia che parte dal centro e punta al "needle tip"
+    # Converti le coordinate del centro in pixel, usando la larghezza e altezza del grafico
+    width = fig.layout.width
+    height = fig.layout.height
+    center_pixel_x = width * center_x
+    center_pixel_y = height * center_y
+    # Calcola la posizione in pixel del "needle tip"
+    tip_pixel_x = needle_x * width
+    tip_pixel_y = needle_y * height
+    # L'offset in pixel (ax, ay) deve essere tale che: (tip_pixel_x - ax) == center_pixel_x, cioè:
+    ax_val = tip_pixel_x - center_pixel_x
+    ay_val = tip_pixel_y - center_pixel_y
+
+    # Aggiunge l'annotazione con la freccia; "xref" e "yref" rimangono "paper" per mantenere le coordinate relative.
     fig.add_annotation(
-        x=needle_x, 
+        x=needle_x,
         y=needle_y,
-        ax=center_x,
-        ay=center_y,
-        xref="paper", 
+        ax=ax_val,
+        ay=ay_val,
+        xref="paper",
         yref="paper",
         showarrow=True,
         arrowhead=2,
@@ -2449,6 +2471,7 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     )
     
     return fig
+
 #######  Bottone info ###########
 def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(0.3, 5)):
     """
