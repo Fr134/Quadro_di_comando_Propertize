@@ -845,6 +845,16 @@ def render_dashboard():
                 st.plotly_chart(grafico_anello, use_container_width=False)  # Mantieni larghezza compatta
             with col03:
                 st.metric("📊 Commissioni Proprietari (€)", f"{kpis['commissioni_proprietari']:,.2f}")
+            # Supponiamo di avere:
+            kpi_value = 75      # il valore del KPI
+            reference_value = 100  # il valore di riferimento
+
+            # Crea il tachimetro:
+            tachometer_fig = create_tachometer(kpi_value, reference_value, title="Performance KPI")
+
+            # Visualizza il tachimetro in Streamlit:
+            st.plotly_chart(tachometer_fig, use_container_width=True)
+
 
         with col04:
             #grafico ad anello 
@@ -2378,6 +2388,52 @@ def create_horizontal_bar_chart(df, category_col, value_col):
     )
     
     return fig
+
+#################    Tachimetro    #####################
+
+def create_tachometer(kpi, reference, title="Tachimetro KPI"):
+    """
+    Crea un tachimetro (gauge a 180°) che mostra la percentuale (KPI / riferimento * 100)
+    suddiviso in tre zone: 
+      - 0 - 33.33%: verde
+      - 33.33 - 66.66%: arancione
+      - 66.66 - 100%: rossa
+
+    Parametri:
+      - kpi (float): il valore del KPI.
+      - reference (float): il valore di riferimento.
+      - title (str): titolo del tachimetro (default "Tachimetro KPI").
+
+    Ritorna:
+      - fig: un oggetto Plotly Figure contenente il tachimetro.
+    """
+    # Calcola la percentuale
+    percentage = (kpi / reference) * 100
+
+    # Crea il tachimetro utilizzando l'indicatore di Plotly
+    fig = go.Figure(go.Indicator(
+        mode = "gauge+number",
+        value = percentage,
+        number = {'suffix': "%", 'font': {'size': 48}},
+        title = {'text': title, 'font': {'size': 24}},
+        gauge = {
+            'shape': 'angular',
+            'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "darkblue"},
+            'bar': {'color': "darkblue"},
+            'bgcolor': "white",
+            'borderwidth': 2,
+            'bordercolor': "gray",
+            'steps': [
+                {'range': [0, 33.33], 'color': "green"},
+                {'range': [33.33, 66.66], 'color': "orange"},
+                {'range': [66.66, 100], 'color': "red"}
+            ]
+        }
+    ))
+    # Imposta dimensioni e margini per ottenere un gauge a 180°
+    fig.update_layout(height=250, width=500, margin={'t':0, 'b':0, 'l':0, 'r':0})
+    return fig
+
 
 #######  Bottone info ###########
 def render_metric_with_info(metric_label, metric_value, info_text, value_format=",.2f", col_ratio=(0.3, 5)):
