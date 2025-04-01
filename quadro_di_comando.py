@@ -2400,52 +2400,52 @@ def create_tachometer(kpi, reference, title="Tachimetro KPI"):
       - 33.33 - 66.66%: arancione trasparente
       - 66.66 - 100%: rossa trasparente
 
-    Il grafico è realizzato con un indicatore a freccia (invece della barra predefinita),
-    include ombreggiature, linee morbide e il valore percentuale al centro ha dimensione ridotta.
-    
+    Il grafico usa un indicatore a freccia (invece della barra predefinita),
+    aggiunge ombreggiature, trasparenze e linee morbide, e il valore percentuale al centro
+    viene visualizzato con font più piccolo.
+
     Parametri:
-      - kpi (float): valore del KPI.
-      - reference (float): valore di riferimento per il confronto.
+      - kpi (float): il valore del KPI.
+      - reference (float): il valore di riferimento per il confronto.
       - title (str): titolo del tachimetro (default "Tachimetro KPI").
 
     Ritorna:
-      - fig: un oggetto Plotly Figure contenente il tachimetro.
+      - fig: oggetto Plotly Figure contenente il tachimetro.
     """
     # Calcola la percentuale
     percentage = (kpi / reference) * 100
 
-    # Crea l'indicatore gauge di base ma con il "bar" invisibile
+    # Crea l'indicatore gauge base con la barra invisibile
     fig = go.Figure(go.Indicator(
         mode="gauge+number",
         value=percentage,
-        number={'suffix': "%", 'font': {'size': 24}},  # valore con font più piccolo
+        number={'suffix': "%", 'font': {'size': 24}},
         title={'text': title, 'font': {'size': 20}},
         gauge={
             'axis': {'range': [0, 100], 'tickwidth': 1, 'tickcolor': "gray"},
-            'bar': {'color': "rgba(0,0,0,0)"},  # nasconde la barra predefinita
+            'bar': {'color': "rgba(0,0,0,0)"},
             'bgcolor': "white",
             'borderwidth': 0,
             'steps': [
-                {'range': [0, 33.33], 'color': "rgba(0,128,0,0.3)"},    # verde trasparente
-                {'range': [33.33, 66.66], 'color': "rgba(255,165,0,0.3)"},# arancione trasparente
-                {'range': [66.66, 100], 'color': "rgba(255,0,0,0.3)"}     # rossa trasparente
+                {'range': [0, 33.33], 'color': "rgba(0,128,0,0.3)"},
+                {'range': [33.33, 66.66], 'color': "rgba(255,165,0,0.3)"},
+                {'range': [66.66, 100], 'color': "rgba(255,0,0,0.3)"}
             ]
         }
     ))
     
-    # Calcola l'angolo (in radianti) per il puntatore: 0% corrisponde a 180° e 100% a 0°
+    # Calcola l'angolo (in radianti) per il puntatore: il 0% corrisponde a 180° e il 100% a 0°
     angle = math.radians(180 * (1 - (percentage / 100)))
-    center_x, center_y = 0.5, 0.5  # Centro del gauge (in coordinate "paper")
-    arrow_length = 0.35            # Lunghezza relativa della freccia
+    center_x, center_y = 0.5, 0.5
+    arrow_length = 0.35
     end_x = center_x + arrow_length * math.cos(angle)
     end_y = center_y + arrow_length * math.sin(angle)
     
-    # Aggiungi un'annotazione con freccia che funge da puntatore
+    # Aggiungi l'annotazione con freccia (lasciando che axref e ayref usino il valore predefinito "pixel")
     fig.add_annotation(
         x=end_x, y=end_y,
         ax=center_x, ay=center_y,
         xref="paper", yref="paper",
-        axref="paper", ayref="paper",
         showarrow=True,
         arrowhead=3,
         arrowsize=1,
@@ -2454,7 +2454,7 @@ def create_tachometer(kpi, reference, title="Tachimetro KPI"):
         standoff=10
     )
     
-    # Aggiungi una leggera ombreggiatura (shape) dietro il gauge per un effetto più accattivante
+    # Aggiungi una leggera ombreggiatura dietro il gauge per un effetto più accattivante
     fig.update_layout(
         shapes=[
             {
@@ -2471,7 +2471,6 @@ def create_tachometer(kpi, reference, title="Tachimetro KPI"):
             }
         ],
         margin=dict(t=0, b=0, l=0, r=0),
-        # Dimensioni del grafico: puoi regolare in base alle tue necessità
         height=300, width=500
     )
     return fig
