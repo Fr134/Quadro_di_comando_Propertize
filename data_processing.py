@@ -50,10 +50,6 @@ def load_and_preprocess_data(uploaded_file):
         'Cedolare secca', 'Commissioni Proprietari Nette'
     ]
 
-
-
-
-
     for col in numeric_columns:
         data[col] = data[col].str.replace(',', '.', regex=False)
         data[col] = pd.to_numeric(data[col], errors='coerce')
