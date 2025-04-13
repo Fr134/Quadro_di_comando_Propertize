@@ -29,6 +29,7 @@ def upload_file():
             st.session_state['spese'] = carica_elaboara_spese(uploaded_file)
     return uploaded_file
 
+############# funzione per localizzare nella mappa un alloggio ############
 def localizzatore(file_path, data):
     """
     Associa a ogni immobile la posizione e i costi per ogni soggiorno.
@@ -446,6 +447,7 @@ def eleboratore_spese(df):
     })
 
     return df, totali, totali_df
+
 
 def elabora_spese_ricavi(spese, spese_totali, spese_totali_settore, ricavi):
     costi_totali = float(spese_totali["Totale_Spese_netto"].iloc[0]) + float(ricavi["totale_commissioni"])
