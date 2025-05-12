@@ -1,3 +1,5 @@
+import pandas as pd
+
 def load_and_preprocess_data(uploaded_file):
     data = pd.read_excel(
         uploaded_file,
