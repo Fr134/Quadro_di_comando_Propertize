@@ -1,3 +1,5 @@
+import pandas as pd
+
 def calculate_available_nigths(file_path, start_date, end_date):
     """
     Calcola il numero totale di notti disponibili per ogni appartamento

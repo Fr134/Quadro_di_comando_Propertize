@@ -1,18 +1,8 @@
-import pandas as pd
 import streamlit as st
-import plotly.express as px
-import plotly.graph_objects as go
-import folium
-import ast
-import math
-from streamlit_folium import st_folium
 
-from calculate_available_nights import calculate_available_nigths
-from custom_css import inject_custom_css
 from data_processing import carica_elaboara_spese, load_and_preprocess_data
 from draw_dashboard import dashboard_analisi_performance, dashboard_proprietari, dashboard_spese, render_calcolatore, \
     render_dashboard
-from kpis import calculate_kpis, elabora_spese_ricavi, eleboratore_spese, somme_IVA
 
 # Configurazione della pagina
 st.set_page_config(

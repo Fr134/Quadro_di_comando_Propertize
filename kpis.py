@@ -1,3 +1,6 @@
+import pandas as pd
+
+
 def somme_IVA(df, kpsi):
     import pandas as pd
     # df è il DataFrame con i totali (che contiene la colonna 'Totale_IVA')

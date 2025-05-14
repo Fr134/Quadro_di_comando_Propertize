@@ -1,14 +1,15 @@
+import plotly.graph_objects as go
+import pandas as pd
+import plotly.express as px
+import math
+import streamlit as st
+
 def create_donut_chart(totale, kpi):
-
-
-
     """
     Crea un grafico ad anello compatto che mostra la percentuale del kpi passato sul totale
 
 
     """
-
-
     # Calcola la percentuale rispetto al totale
     percentuale = (kpi / totale) * 100
 
@@ -424,7 +425,7 @@ def create_tachometer(kpi, reference, title="Performance KPI"):
     Crea un tachimetro a 180° diviso in tre zone (verde, arancione, rossa) e con un indicatore a freccia.
 
     Il grafico mostra un gauge (semicerchio) con scala percentuale da 0 a 100.
-    L’indicatore (freccia) parte dal centro del semicerchio (0.5,0.5 in coordinate paper)
+    L'indicatore (freccia) parte dal centro del semicerchio (0.5,0.5 in coordinate paper)
     e punta verso il valore percentuale (kpi/reference*100).
 
     Le tre zone sono equidistanti e colorate (verde, arancione, rossa) con trasparenza.

@@ -1,3 +1,5 @@
+import streamlit as st
+
 def inject_custom_css():
     """
     Inietta CSS personalizzato nella pagina Streamlit.
