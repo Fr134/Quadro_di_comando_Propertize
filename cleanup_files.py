@@ -1,7 +1,10 @@
+import datetime
 import os
 import pandas as pd
 from typing import List, Tuple
 import re
+
+from report_columns import get_datetime_columns, get_excel_columns_to_use, get_numeric_columns, get_renamed_columns_to_use
 
 def get_xlsx_files(input_folder: str) -> List[str]:
     """
@@ -9,57 +12,63 @@ def get_xlsx_files(input_folder: str) -> List[str]:
     """
     return [f for f in os.listdir(input_folder) if f.endswith('.xlsx')]
 
-def to_snake_case(s):
-    """
-    Convert a string to snake_case, replacing '%' with 'perc'.
-    """
-    s = str(s).strip().replace(" ", "_").replace("-", "_")
-    s = s.replace('%', 'perc')
-    s = re.sub(r'[^0-9a-zA-Z_]', '', s)
-    s = re.sub(r'([a-z0-9])([A-Z])', r'\1_\2', s)
-    return s.lower()
 
 def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
     """
     Read the 'SHORT STAY' sheet from the Excel file, remove the first 6 rows (set 6th as header),
     and remove the last row if it starts with 'totali'.
-    Also, if a column is named 'Imponibile provvigione $word', the next three columns (%, Provvigione netta, IVA 22%)
-    are renamed to include $word for uniqueness and clarity.
     """
     # Read sheet with no header
-    df = pd.read_excel(xlsx_path, sheet_name='SHORT STAY', engine='openpyxl', header=None)
-    # Set the 6th row as header and remove the first 6 rows
-    columns = list(df.iloc[5])
-    new_columns = []
-    i = 0
-    while i < len(columns):
-        col = columns[i]
-        # Check for 'Imponibile provvigione $word'
-        match = re.match(r'Imponibile provvigione (.+)', str(col))
-        if match and i + 3 < len(columns):
-            word = match.group(1).strip()
-            new_columns.append(col)
-            # Rename next three columns
-            new_columns.append(f'{word} %')
-            new_columns.append(f'{word} provvigione netta')
-            new_columns.append(f'{word} iva 22%')
-            i += 4
-        else:
-            new_columns.append(col)
-            i += 1
-
-    # Add suffixes to specific column ranges
-    for idx in range(38, 46 + 1):  # 0-based index
-        new_columns[idx] = f"pren_{new_columns[idx]}"
-    for idx in range(47, 55 + 1):
-        new_columns[idx] = f"tassasogg_{new_columns[idx]}"
-    df.columns = new_columns
+    df = pd.read_excel(
+        xlsx_path, 
+        sheet_name='SHORT STAY', 
+        engine='openpyxl',
+        usecols=",".join(get_excel_columns_to_use()),
+    )
+    print("DataFrame after read_excel (first 6 rows, row 5 should be headers):")
+    print(df.head(6))
+    df.columns = list(df.iloc[4])
     df = df.iloc[6:].reset_index(drop=True)
+
     # Remove the last row if the first column starts with 'totali' (case-insensitive)
     first_col = df.columns[0]
     if not df.empty and str(df.iloc[-1][first_col]).strip().lower().startswith('totali'):
         df = df.iloc[:-1]
+
+    df = process_columns(df)
+    df = calculate_derived_columns(df)
+
     return df
+
+def process_columns(df: pd.DataFrame) -> pd.DataFrame:
+    # Drop columns that are not needed
+    df.columns = get_renamed_columns_to_use()
+
+    # Correct types
+    # datetime columns (original format: dd/mm/yyyy)
+    for col in get_datetime_columns():
+        df[col] = pd.to_datetime(df[col], format='%d/%m/%Y', dayfirst=True)
+
+    # numeric columns (original format: 1234,56)
+    for col in get_numeric_columns():
+        df[col] = pd.to_numeric(df[col])
+
+    return df
+
+def calculate_derived_columns(df: pd.DataFrame) -> pd.DataFrame:
+    # Calculate derived columns
+    df['durata_soggiorno'] = (df['data_check_out'] - df['data_check_in']).dt.days
+    df['ricavi_totali'] = df['ricavi_locazione'] - df['iva_provvigioni_pm'] + df['ricavi_pulizie'] / 1.22
+    df['commissioni_totali'] = df['commissioni_ota'] / 1.22 + df['commissioni_itw_nette'] + df['commissioni_proprietari_lorde']
+    df['marginalità_totale'] = df['ricavi_totali'] - df['commissioni_totali']
+    df['commissioni_ota_locazioni'] = df['commissioni_ota']/1.22 - (df['ricavi_locazione'] / (df['ricavi_locazione'] + df['ricavi_pulizie']))
+    df['marginalità_locazioni'] = df['ricavi_locazione']-df['commissioni_proprietari_lorde'] - df['iva_provvigioni_pm'] - df['commissioni_ota_locazioni']
+    df['marginalità_pulizie'] = df['ricavi_pulizie']/1.22 - (df['commissioni_ota'] - df['marginalità_locazioni'])
+    df['mese'] = df['data_check_in'].dt.to_period('M').astype(str)
+
+    return df
+
+
 
 def save_df_to_csv(df: pd.DataFrame, csv_path: str):
     """
@@ -81,8 +90,11 @@ def process_all_files(input_folder: str, csv_folder: str) -> List[Tuple[str, str
             csv_path = os.path.join(csv_folder, csv_name)
             save_df_to_csv(df, csv_path)
             csv_paths.append((csv_path, xlsx_file))
+            print(f"CSV saved to {csv_path}")
         except Exception as e:
             print(f"Error processing {xlsx_file}: {e}")
+            raise e
+
     return csv_paths
 
 def concat_csvs_with_filename(csv_paths: List[Tuple[str, str]], output_path: str):
@@ -93,15 +105,13 @@ def concat_csvs_with_filename(csv_paths: List[Tuple[str, str]], output_path: str
     for csv_path, original_file in csv_paths:
         df = pd.read_csv(csv_path)
         df['original_file'] = original_file
+        df['original_file_creation_date'] = datetime.datetime.fromtimestamp(os.path.getctime(csv_path))
         all_dfs.append(df)
     if all_dfs:
         concat_df = pd.concat(all_dfs, ignore_index=True)
         # Remove duplicates ignoring the 'original_file' column
         cols_to_check = [col for col in concat_df.columns if col != 'original_file']
         concat_df = concat_df.drop_duplicates(subset=cols_to_check)
-        # Convert column names to snake_case
-        
-        concat_df.columns = [to_snake_case(col) for col in concat_df.columns]
         concat_df.to_csv(output_path, index=False)
         print(f"Concatenated CSV saved to {output_path}")
     else:

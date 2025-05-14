@@ -1,58 +1,40 @@
-columns = [
-    ('Rif. preno', 'rif_preno', True),
-    ('Codice appartamento', 'codice_appartamento', True),
-    ('Nome appartamento', 'nome_appartamento', True),
-    ('Nome proprietario', 'nome_proprietario', True),
-    ('Tipologia proprietario', 'tipologia_proprietario', True),
-    ('Nome ospite', 'nome_ospite', True),
-    ('Data check-in', 'data_checkin', True),
-    ('Data check-out', 'data_checkout', True),
-    ('Locazione', 'locazione', True),
-    ('Pulizie', 'pulizie', True),
-    ('Suppl. Propr.', 'suppl_propr', True),
-    ('Suppl. PM', 'suppl_pm', True),
-    ('Suppl. Propr. Divisi con il PM', 'suppl_propr_divisi_con_il_pm', True),
-    ('FATTURATO TOTALE PERNOTTO', 'fatturato_totale_pernotto', True),
-    ('FATTURATO TOTALE PER TASSA DI SOGGIORNO', 'fatturato_totale_per_tassa_di_soggiorno', True),
-    ('Ota', 'ota', True),
-    ('Prenotazione con OTA Lorda/OTA netta', 'prenotazione_con_ota_lordaota_netta', True),
-    ('Comm. OTA lordo IVA', 'comm_ota_lordo_iva', True),
-    ('Imponibile provvigione ITW', 'imponibile_provvigione_itw', True),
-    ('%', 'percentuale_itw', True),
-    ('Provvigione netta', 'provvigione_netta_itw', True),
-    ('IVA 22%', 'iva_22_itw', True),
-    ('PROVVIGIONE ITALIANWAY', 'provvigione_italianway', True),
-    ("COSTI D'INCASSO", 'costi_dincasso', True),
-    ('Imponibile provvigione PARTNER', 'imponibile_provvigione_partner', True),
-    ('%', 'percentuale_partner', True),
-    ('Provvigione netta', 'provvigione_netta_partner', True),
-    ('IVA 22%', 'iva_22_partner', True),
-    ('Provvigione PM lorda', 'provvigione_pm_lorda', True),
-    ('Imponibile provvigione RE', 'imponibile_provvigione_re', True),
-    ('%', 'percentuale_re', True),
-    ('Provvigione netta', 'provvigione_netta_re', True),
-    ('IVA 22%', 'iva_22_re', True),
-    ('PROVVIGIONE REAL ESTATE', 'provvigione_real_estate', True),
-    ('Totale fatture emesse dal PM', 'totale_fatture_emesse_dal_pm', True),
-    ('Spettanze lorde locazione', 'spettanze_lorde_locazione', True),
-    ('Trattenuta ex art. 4 DL 50/2017 / CEDOLARE SECCA', 'trattenuta_ex_art_4_dl_50_2017_cedolare_secca', True),
-    ('Spettanze nette locazione', 'spettanze_nette_locazione', True),
-    ('Importi non incassati', 'importi_non_incassati', True),
-    ('Bonifico', 'bonifico_prenotazione', True),
-    ('Data registrazione bonifico', 'data_registrazione_bonifico_prenotazione', True),
-    ('Carta di Credito (Stripe)', 'carta_di_credito_stripe_prenotazione', True),
-    ('Data movimentazione carta di credito', 'data_movimentazione_carta_di_credito_prenotazione', True),
-    ('POS manuale Propr.', 'pos_manuale_propr_prenotazione', True),
-    ('Data movimentazione carta di credito', 'data_movimentazione_carta_di_credito_prenotazione', True),
-    ('Contanti', 'contanti_prenotazione', True),
-    ('Data registrazione incasso', 'data_registrazione_incasso_prenotazione', True),
-    ('Tassa di soggiorno non incassata', 'tassa_di_soggiorno_non_incassata', True),
-    ('Bonifico', 'bonifico_tassa_di_soggiorno', True),
-    ('Data registrazione bonifico', 'data_registrazione_bonifico_tassa_di_soggiorno', True),
-    ('Carta di Credito (Stripe)', 'carta_di_credito_stripe_tassa_di_soggiorno', True),
-    ('Data movimentazione carta di credito', 'data_movimentazione_carta_di_credito_tassa_di_soggiorno', True),
-    ('POS manuale Propr.', 'pos_manuale_propr_tassa_di_soggiorno', True),
-    ('Data movimentazione carta di credito', 'data_movimentazione_carta_di_credito_tassa_di_soggiorno', True),
-    ('Contanti', 'contanti_tassa_di_soggiorno', True),
-    ('Data registrazione incasso', 'data_registrazione_incasso_tassa_di_soggiorno', True)
+# (Excel Colnum, Renamed Column Name, Column Type)
+
+REPORT_COLUMNS: list[tuple[str, str, str]] = [
+    ('B', 'id_appartamento', 'string'),
+    ('C', 'nome_appartamento', 'string'),
+    ('D', 'nome_proprietario', 'string'),
+    ('G', 'data_check_in', 'datetime64[ns]'),
+    ('H', 'data_check_out', 'datetime64[ns]'),
+    ('I', 'ricavi_locazione', 'float64'),
+    ('J', 'ricavi_pulizie', 'float64'),
+    ('O', 'tassa_soggiorno', 'float64'),
+    ('P', 'ota', 'string'),
+    ('Q', 'ota_lordo_netta', 'string'),
+    ('R', 'commissioni_ota', 'float64'),
+    ('U', 'commissioni_itw_nette', 'float64'),
+    ('V', 'iva_commissioni_itw', 'float64'),
+    ('W', 'commissioni_itw_lorde', 'float64'),
+    ('X', 'costi_incasso', 'float64'),
+    ('AA', 'provvigioni_pm_nette', 'float64'),
+    ('AB', 'iva_provvigioni_pm', 'float64'),
+    ('AC', 'provvigioni_pm_lorde', 'float64'),
+    ('AJ', 'commissioni_proprietari_lorde', 'float64'),
+    ('AK', 'cedolare_secca', 'float64'),
+    ('AL', 'commissioni_proprietari_nette', 'float64')
 ]
+
+def get_excel_columns_to_use() -> list[str]:
+    return [col[0] for col in REPORT_COLUMNS]
+
+def get_renamed_columns_to_use() -> list[str]:
+    return [col[1] for col in REPORT_COLUMNS]
+
+def get_numeric_columns() -> list[str]:
+    return [col[1] for col in REPORT_COLUMNS if col[2] == 'float64']
+
+def get_datetime_columns() -> list[str]:
+    return [col[1] for col in REPORT_COLUMNS if col[2] == 'datetime64[ns]']
+
+def get_string_columns() -> list[str]:
+    return [col[1] for col in REPORT_COLUMNS if col[2] == 'string']
