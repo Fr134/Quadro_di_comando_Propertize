@@ -1,0 +1,50 @@
+[
+  {
+    "excel_column": "Numero Reg.",
+    "renamed_column": "numero_registro",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Conto",
+    "renamed_column": "conto",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Partit.",
+    "renamed_column": "partita",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Descrizione conto",
+    "renamed_column": "descrizione_conto",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Importo Dare",
+    "renamed_column": "importo_dare",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Tipo",
+    "renamed_column": "tipo",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Numero doc.",
+    "renamed_column": "numero_documento",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Data doc.",
+    "renamed_column": "data_documento",
+    "column_type": "datetime",
+    "is_required": true
+  }
+]

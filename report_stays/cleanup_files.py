@@ -5,9 +5,8 @@ from typing import List, Tuple
 import pandas as pd
 
 from file_utility import get_xlsx_files, save_df_to_csv
-from report_stays.file_validator import validate_file_has_all_the_columns, validate_filtered_report_stay
-from report_stays.report_stays_columns import get_columns_positions_to_use, get_datetime_columns, get_numeric_columns, \
-    get_renamed_columns_to_use
+from file_validator import validate_file_has_all_the_columns, validate_filtered_report_stay
+from file_columns import REPORT_STAYS_COLUMNS
 
 
 def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
@@ -32,7 +31,7 @@ def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
         df = df.iloc[:-1]
 
     # validate the file
-    validate_file_has_all_the_columns(df)
+    validate_file_has_all_the_columns(df, REPORT_STAYS_COLUMNS)
 
     df = process_raw_columns(df)
     df = df.dropna(subset=['id_appartamento'])
@@ -48,23 +47,23 @@ def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
     return df
 
 def process_raw_columns(df: pd.DataFrame) -> pd.DataFrame:
-    
+
     # only keep the columns we need
-    positions_to_use = get_columns_positions_to_use()
+    positions_to_use = REPORT_STAYS_COLUMNS.get_columns_positions_to_use()
     df = df.iloc[:, positions_to_use].copy()
 
     # rename the columns to the ones we need    
-    df.columns = get_renamed_columns_to_use()
+    df.columns = REPORT_STAYS_COLUMNS.get_renamed_columns_to_use()
 
-    validate_filtered_report_stay(df)
+    validate_filtered_report_stay(df, REPORT_STAYS_COLUMNS)
 
     # Correct types
     # datetime columns (original format: dd/mm/yyyy)
-    for col in get_datetime_columns():
+    for col in REPORT_STAYS_COLUMNS.get_datetime_columns():
         df[col] = pd.to_datetime(df[col], format='%d/%m/%Y', dayfirst=True)
 
     # numeric columns (original format: 1234,56)
-    for col in get_numeric_columns():
+    for col in REPORT_STAYS_COLUMNS.get_numeric_columns():
         df[col] = pd.to_numeric(df[col], errors='coerce')
 
     return df
