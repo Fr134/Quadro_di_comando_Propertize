@@ -1,58 +1,268 @@
 [
-    {"excel_column": "Rif. preno", "is_required": false},
-    {"excel_column": "Codice appartamento", "renamed_column": "id_appartamento", "column_type": "string", "is_required": true},
-    {"excel_column": "Nome appartamento", "renamed_column": "nome_appartamento", "column_type": "string", "is_required": true},
-    {"excel_column": "Nome proprietario", "renamed_column": "nome_proprietario", "column_type": "string", "is_required": true},
-    {"excel_column": "Tipologia proprietario", "is_required": false},
-    {"excel_column": "Nome ospite", "is_required": false},
-    {"excel_column": "Data check-in", "renamed_column": "data_check_in", "column_type": "datetime", "is_required": true},
-    {"excel_column": "Data check-out", "renamed_column": "data_check_out", "column_type": "datetime", "is_required": true},
-    {"excel_column": "Locazione", "renamed_column": "ricavi_locazione", "column_type": "float", "is_required": true},
-    {"excel_column": "Pulizie", "renamed_column": "ricavi_pulizie", "column_type": "float", "is_required": true},
-    {"excel_column": "Suppl. Propr.", "is_required": false},
-    {"excel_column": "Suppl. PM", "is_required": false},
-    {"excel_column": "Suppl. Propr. Divisi con il PM", "is_required": false},
-    {"excel_column": "FATTURATO TOTALE PERNOTTO", "is_required": false},
-    {"excel_column": "FATTURATO TOTALE PER TASSA DI SOGGIORNO", "renamed_column": "tassa_soggiorno", "column_type": "float", "is_required": true},
-    {"excel_column": "Ota", "renamed_column": "ota", "column_type": "string", "is_required": true},
-    {"excel_column": "Prenotazione con OTA Lorda/OTA netta", "renamed_column": "ota_lordo_netta", "column_type": "string", "is_required": true},
-    {"excel_column": "Comm. OTA lordo IVA", "renamed_column": "commissioni_ota", "column_type": "float", "is_required": true},
-    {"excel_column": "Imponibile provvigione ITW", "is_required": false},
-    {"excel_column": "%", "is_required": false},
-    {"excel_column": "Provvigione netta", "renamed_column": "commissioni_itw_nette", "column_type": "float", "is_required": true},
-    {"excel_column": "IVA 22%", "renamed_column": "iva_commissioni_itw", "column_type": "float", "is_required": true},
-    {"excel_column": "PROVVIGIONE ITALIANWAY", "renamed_column": "commissioni_itw_lorde", "column_type": "float", "is_required": true},
-    {"excel_column": "COSTI D'INCASSO", "renamed_column": "costi_incasso", "column_type": "float", "is_required": true},
-    {"excel_column": "Imponibile provvigione PARTNER", "is_required": false},
-    {"excel_column": "%", "is_required": false},
-    {"excel_column": "Provvigione netta", "renamed_column": "provvigioni_pm_nette", "column_type": "float", "is_required": true},
-    {"excel_column": "IVA 22%", "renamed_column": "iva_provvigioni_pm", "column_type": "float", "is_required": true},
-    {"excel_column": "Provvigione PM lorda", "renamed_column": "provvigioni_pm_lorde", "column_type": "float", "is_required": true},
-    {"excel_column": "Imponibile provvigione RE", "is_required": false},
-    {"excel_column": "%", "is_required": false},
-    {"excel_column": "Provvigione netta", "is_required": false},
-    {"excel_column": "IVA 22%", "is_required": false},
-    {"excel_column": "PROVVIGIONE REAL ESTATE", "is_required": false},
-    {"excel_column": "Totale fatture emesse dal PM", "is_required": false},
-    {"excel_column": "Spettanze lorde locazione", "renamed_column": "commissioni_proprietari_lorde", "column_type": "float", "is_required": true},
-    {"excel_column": "Trattenuta ex art. 4 DL 50/2017 / CEDOLARE SECCA", "renamed_column": "cedolare_secca", "column_type": "float", "is_required": true},
-    {"excel_column": "Spettanze nette locazione", "renamed_column": "commissioni_proprietari_nette", "column_type": "float", "is_required": true},
-    {"excel_column": "Importi non incassati", "is_required": false},
-    {"excel_column": "Bonifico", "is_required": false},
-    {"excel_column": "Data registrazione bonifico", "is_required": false},
-    {"excel_column": "Carta di Credito (Stripe)", "is_required": false},
-    {"excel_column": "Data movimentazione carta di credito", "is_required": false},
-    {"excel_column": "POS manuale Propr.", "is_required": false},
-    {"excel_column": "Data movimentazione carta di credito", "is_required": false},
-    {"excel_column": "Contanti", "is_required": false},
-    {"excel_column": "Data registrazione incasso", "is_required": false},
-    {"excel_column": "Tassa di soggiorno non incassata", "is_required": false},
-    {"excel_column": "Bonifico", "is_required": false},
-    {"excel_column": "Data registrazione bonifico", "is_required": false},
-    {"excel_column": "Carta di Credito (Stripe)", "is_required": false},
-    {"excel_column": "Data movimentazione carta di credito", "is_required": false},
-    {"excel_column": "POS manuale Propr.", "is_required": false},
-    {"excel_column": "Data movimentazione carta di credito", "is_required": false},
-    {"excel_column": "Contanti", "is_required": false},
-    {"excel_column": "Data registrazione incasso", "is_required": false}
+  {
+    "excel_column": "Rif. preno",
+    "is_required": false
+  },
+  {
+    "excel_column": "Codice appartamento",
+    "renamed_column": "id_appartamento",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Nome appartamento",
+    "renamed_column": "nome_appartamento",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Nome proprietario",
+    "renamed_column": "nome_proprietario",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Tipologia proprietario",
+    "is_required": false
+  },
+  {
+    "excel_column": "Nome ospite",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data check-in",
+    "renamed_column": "data_check_in",
+    "column_type": "datetime",
+    "is_required": true
+  },
+  {
+    "excel_column": "Data check-out",
+    "renamed_column": "data_check_out",
+    "column_type": "datetime",
+    "is_required": true
+  },
+  {
+    "excel_column": "Locazione",
+    "renamed_column": "ricavi_locazione",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Pulizie",
+    "renamed_column": "ricavi_pulizie",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Suppl. Propr.",
+    "is_required": false
+  },
+  {
+    "excel_column": "Suppl. PM",
+    "is_required": false
+  },
+  {
+    "excel_column": "Suppl. Propr. Divisi con il PM",
+    "is_required": false
+  },
+  {
+    "excel_column": "FATTURATO TOTALE PERNOTTO",
+    "is_required": false
+  },
+  {
+    "excel_column": "FATTURATO TOTALE PER TASSA DI SOGGIORNO",
+    "renamed_column": "tassa_soggiorno",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Ota",
+    "renamed_column": "ota",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Prenotazione con OTA Lorda/OTA netta",
+    "renamed_column": "ota_lordo_netta",
+    "column_type": "string",
+    "is_required": true
+  },
+  {
+    "excel_column": "Comm. OTA lordo IVA",
+    "renamed_column": "commissioni_ota",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Imponibile provvigione ITW",
+    "is_required": false
+  },
+  {
+    "excel_column": "%",
+    "is_required": false
+  },
+  {
+    "excel_column": "Provvigione netta",
+    "renamed_column": "commissioni_itw_nette",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "IVA 22%",
+    "renamed_column": "iva_commissioni_itw",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "PROVVIGIONE ITALIANWAY",
+    "renamed_column": "commissioni_itw_lorde",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "COSTI D'INCASSO",
+    "renamed_column": "costi_incasso",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Imponibile provvigione PARTNER",
+    "is_required": false
+  },
+  {
+    "excel_column": "%",
+    "is_required": false
+  },
+  {
+    "excel_column": "Provvigione netta",
+    "renamed_column": "provvigioni_pm_nette",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "IVA 22%",
+    "renamed_column": "iva_provvigioni_pm",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Provvigione PM lorda",
+    "renamed_column": "provvigioni_pm_lorde",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Imponibile provvigione RE",
+    "is_required": false
+  },
+  {
+    "excel_column": "%",
+    "is_required": false
+  },
+  {
+    "excel_column": "Provvigione netta",
+    "is_required": false
+  },
+  {
+    "excel_column": "IVA 22%",
+    "is_required": false
+  },
+  {
+    "excel_column": "PROVVIGIONE REAL ESTATE",
+    "is_required": false
+  },
+  {
+    "excel_column": "Totale fatture emesse dal PM",
+    "is_required": false
+  },
+  {
+    "excel_column": "Spettanze lorde locazione",
+    "renamed_column": "commissioni_proprietari_lorde",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Trattenuta ex art. 4 DL 50/2017 / CEDOLARE SECCA",
+    "renamed_column": "cedolare_secca",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Spettanze nette locazione",
+    "renamed_column": "commissioni_proprietari_nette",
+    "column_type": "float",
+    "is_required": true
+  },
+  {
+    "excel_column": "Importi non incassati",
+    "is_required": false
+  },
+  {
+    "excel_column": "Bonifico",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data registrazione bonifico",
+    "is_required": false
+  },
+  {
+    "excel_column": "Carta di Credito (Stripe)",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data movimentazione carta di credito",
+    "is_required": false
+  },
+  {
+    "excel_column": "POS manuale Propr.",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data movimentazione carta di credito",
+    "is_required": false
+  },
+  {
+    "excel_column": "Contanti",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data registrazione incasso",
+    "is_required": false
+  },
+  {
+    "excel_column": "Tassa di soggiorno non incassata",
+    "is_required": false
+  },
+  {
+    "excel_column": "Bonifico",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data registrazione bonifico",
+    "is_required": false
+  },
+  {
+    "excel_column": "Carta di Credito (Stripe)",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data movimentazione carta di credito",
+    "is_required": false
+  },
+  {
+    "excel_column": "POS manuale Propr.",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data movimentazione carta di credito",
+    "is_required": false
+  },
+  {
+    "excel_column": "Contanti",
+    "is_required": false
+  },
+  {
+    "excel_column": "Data registrazione incasso",
+    "is_required": false
+  }
 ]

@@ -1,7 +1,7 @@
 import streamlit as st
 
-from data_processing import carica_elaboara_spese, load_and_preprocess_data
-from draw_dashboard import dashboard_analisi_performance, dashboard_proprietari, dashboard_spese, render_calcolatore, \
+from streamlit.data_processing import carica_elaboara_spese, load_and_preprocess_data
+from streamlit.draw_dashboard import dashboard_analisi_performance, dashboard_proprietari, dashboard_spese, render_calcolatore, \
     render_dashboard
 
 # Configurazione della pagina
