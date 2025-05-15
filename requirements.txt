@@ -4,3 +4,5 @@ pandas
 numpy
 openpyxl
 streamlit_folium
+csvvalidator
+pytest

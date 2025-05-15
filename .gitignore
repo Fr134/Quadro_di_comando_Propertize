@@ -3,3 +3,4 @@
 /raw_files
 /files_to_upload
 /__pycache__
+*.pyc

@@ -16,6 +16,12 @@ def save_df_to_csv(df: pd.DataFrame, csv_path: str):
     """
     df.to_csv(csv_path, index=False)
 
+def delete_file(file_path: str):
+    """
+    Delete the file at the given path.
+    """
+    os.remove(file_path)
+
 def __get_project_root_path() -> str:
     """
     Get the project root path.
@@ -30,7 +36,7 @@ def create_folder_structure_for_company(company_name: str):
     raw_files_base_path = os.path.join(base_path, 'raw_files', company_name)
     os.makedirs(raw_files_base_path, exist_ok=True)
     os.makedirs(os.path.join(raw_files_base_path, 'report_stays'), exist_ok=True)
-    files_to_upload_path = os.path.join(base_path, 'files_to_upload ', company_name)
+    files_to_upload_path = os.path.join(base_path, 'files_to_upload', company_name)
     os.makedirs(files_to_upload_path, exist_ok=True)
     os.makedirs(os.path.join(files_to_upload_path, 'intermediate_files'), exist_ok=True)
 

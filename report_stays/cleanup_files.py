@@ -5,7 +5,8 @@ from typing import List, Tuple
 import pandas as pd
 
 from file_utility import get_xlsx_files, save_df_to_csv
-from report_stays.report_stays_columns import get_datetime_columns, get_excel_columns_to_use, get_numeric_columns, \
+from report_stays.file_validator import validate_file_has_all_the_columns, validate_filtered_report_stay
+from report_stays.report_stays_columns import get_columns_positions_to_use, get_datetime_columns, get_numeric_columns, \
     get_renamed_columns_to_use
 
 
@@ -19,7 +20,6 @@ def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
         xlsx_path, 
         sheet_name='SHORT STAY', 
         engine='openpyxl',
-        usecols=",".join(get_excel_columns_to_use()),
     )
 
     # Remove the first 4 rows and set the 5th as header
@@ -31,6 +31,9 @@ def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
     if not df.empty and str(df.iloc[-1][first_col]).strip().lower().startswith('totali'):
         df = df.iloc[:-1]
 
+    # validate the file
+    validate_file_has_all_the_columns(df)
+
     df = process_raw_columns(df)
     df = df.dropna(subset=['id_appartamento'])
     
@@ -39,13 +42,21 @@ def clean_short_stay_sheet(xlsx_path: str) -> pd.DataFrame:
 
     # Round all numeric columns to 2 decimal places
     for col in df.columns:
-        if df[col].dtype == 'float64':
+        if df[col].dtype == 'float':
             df[col] = df[col].round(2)
 
     return df
 
 def process_raw_columns(df: pd.DataFrame) -> pd.DataFrame:
+    
+    # only keep the columns we need
+    positions_to_use = get_columns_positions_to_use()
+    df = df.iloc[:, positions_to_use].copy()
+
+    # rename the columns to the ones we need    
     df.columns = get_renamed_columns_to_use()
+
+    validate_filtered_report_stay(df)
 
     # Correct types
     # datetime columns (original format: dd/mm/yyyy)
