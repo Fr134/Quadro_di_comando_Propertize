@@ -1,3 +1,5 @@
 *.xlsx
 /.idea
 /raw_files
+/files_to_upload
+/__pycache__
