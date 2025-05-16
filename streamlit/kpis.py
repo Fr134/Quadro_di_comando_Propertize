@@ -22,15 +22,11 @@ def somme_IVA(df, kpsi):
 
 def calculate_kpis(data, notti_disponibili_filtrate):
 
-
     #   RICAVI   SENZA IVA   #
-
-
 
     totale_ricavi_locazione = data['Ricavi Locazione'].sum() - data['IVA Provvigioni PM'].sum()
     totale_ricavi_pulizie = data['Ricavi Pulizie'].sum() / 1.22
     ricavi_totali = totale_ricavi_locazione + totale_ricavi_pulizie
-
 
     #   COMMISSIONI SENZA IVA   #
 
@@ -45,7 +41,6 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     marginalità_locazioni = totale_ricavi_locazione - commissioni_ota_locazioni - data['Commissioni Proprietari Lorde'].sum()
     marginalità_pulizie = totale_ricavi_pulizie - (data['Commissioni OTA'].sum() / 1.22 - commissioni_ota_locazioni)
     marginalità_totale = marginalità_locazioni + marginalità_pulizie
-
 
     #  SALDO IVA   #
 
@@ -64,11 +59,6 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     costo_scorte_ps_totali = data['costo_scorte_ps'].sum()
     costo_manutenzioni_ps_totali = data['costo_manutenzioni_ps'].sum()
     altri_costi = costo_scorte_ps_totali + costo_manutenzioni_ps_totali
-
-
-
-
-
 
     #  CALCOLO NOTTI, PRENOTAZIONI ECC...   #
 
@@ -90,9 +80,7 @@ def calculate_kpis(data, notti_disponibili_filtrate):
     notti_libere = notti_disponibili - notti_occupate
     tasso_di_occupazione = notti_occupate/notti_disponibili*100
 
-
     #   MARGINALITà MEDIA SENZA IVA   #
-
 
     margine_medio_prenotazione = marginalità_totale/numero_prenotazioni
     margine_medio_notte = marginalità_locazioni/data['Notti Occupate'].sum()

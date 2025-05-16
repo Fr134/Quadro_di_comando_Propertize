@@ -79,38 +79,35 @@ def calculate_derived_columns(df: pd.DataFrame) -> pd.DataFrame:
     return df
 
 
-def process_stays_reports(input_folder: str, output_folder: str):
+def process_stays_reports(input_folder: str, output_folder: str) -> pd.DataFrame:
     """
     Process all xlsx files: clean them and save as CSVs. Return list of (csv_path, original_file_name).
     """
     xlsx_files = get_xlsx_files(input_folder)
     print(f"Found {len(xlsx_files)} xlsx files in {input_folder}")
-    csv_paths = []
+    dfs = []
     for xlsx_file in xlsx_files:
         xlsx_path = os.path.join(input_folder, xlsx_file)
         try:
             df = clean_short_stay_sheet(xlsx_path)
+            df['original_file'] = xlsx_file
+            df['original_file_creation_date'] = datetime.datetime.fromtimestamp(os.path.getctime(xlsx_path))
             csv_name = os.path.splitext(xlsx_file)[0] + '.csv'
             csv_path = os.path.join(output_folder, 'intermediate_files', csv_name)
             save_df_to_csv(df, csv_path)
-            csv_paths.append((csv_path, xlsx_file))
+            dfs.append((df, csv_path))
             print(f"CSV saved to {csv_path}")
         except Exception as e:
             print(f"Error processing {xlsx_file}: {e}")
             raise e
         
-    concat_csvs_with_filename(csv_paths, output_folder + '/all_short_stay_concat.csv')
+    return concat_csvs_with_filename(dfs=dfs, output_path=output_folder + '/all_short_stay_concat.csv')
 
-def concat_csvs_with_filename(csv_paths: List[Tuple[str, str]], output_path: str):
+def concat_csvs_with_filename(dfs: List[Tuple[pd.DataFrame, str]], output_path: str) -> pd.DataFrame:
     """
     Concatenate all CSVs, adding a column for the original file name, and save to output_path.
     """
-    all_dfs = []
-    for csv_path, original_file in csv_paths:
-        df = pd.read_csv(csv_path)
-        df['original_file'] = original_file
-        df['original_file_creation_date'] = datetime.datetime.fromtimestamp(os.path.getctime(csv_path))
-        all_dfs.append(df)
+    all_dfs = [df.copy() for df, _ in dfs if not df.empty]
     if all_dfs:
         concat_df = pd.concat(all_dfs, ignore_index=True)
 
@@ -122,3 +119,4 @@ def concat_csvs_with_filename(csv_paths: List[Tuple[str, str]], output_path: str
         print(f"Concatenated CSV saved to {output_path}")
     else:
         print("No CSVs were created.")
+    return concat_df
