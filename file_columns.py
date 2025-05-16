@@ -26,8 +26,11 @@ class FileColumns:
     def get_numeric_columns(self) -> list[str]:
         return [col['renamed_column'] for col in self.__get_required_columns() if col['column_type'] == 'float']
 
-    def get_datetime_columns(self) -> list[str]:
-        return [col['renamed_column'] for col in self.__get_required_columns() if col['column_type'] == 'datetime']
+    def get_numeric_columns_and_can_be_negative(self) -> list[tuple[str, bool]]:
+        return [(col['renamed_column'], col.get('can_be_negative', False)) for col in self.__get_required_columns() if col['column_type'] == 'float']
+
+    def get_datetime_columns_and_format(self) -> list[tuple[str, str]]:
+        return [(col['renamed_column'], col['format']) for col in self.__get_required_columns() if col['column_type'] == 'datetime']
 
     def get_string_columns(self) -> list[str]:
         return [col['renamed_column'] for col in self.__get_required_columns() if col['column_type'] == 'string']

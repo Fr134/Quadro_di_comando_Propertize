@@ -33,13 +33,15 @@
     "excel_column": "Data check-in",
     "renamed_column": "data_check_in",
     "column_type": "datetime",
-    "is_required": true
+    "is_required": true,
+    "format": "%d/%m/%Y"
   },
   {
     "excel_column": "Data check-out",
     "renamed_column": "data_check_out",
     "column_type": "datetime",
-    "is_required": true
+    "is_required": true,
+    "format": "%d/%m/%Y"
   },
   {
     "excel_column": "Locazione",

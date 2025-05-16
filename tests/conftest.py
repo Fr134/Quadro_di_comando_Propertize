@@ -18,7 +18,7 @@ def valid_report_stay_df() -> pd.DataFrame:
     renamed_cols = REPORT_STAYS_COLUMNS.get_renamed_columns_to_use()
 
     numeric_default = {c: 100.0 for c in REPORT_STAYS_COLUMNS.get_numeric_columns()}
-    datetime_default = {c: "01/01/2023" for c in REPORT_STAYS_COLUMNS.get_datetime_columns()}
+    datetime_default = {c: "01/01/2023" for c, _ in REPORT_STAYS_COLUMNS.get_datetime_columns_and_format()}
     string_default = {c: "test" for c in REPORT_STAYS_COLUMNS.get_string_columns()}
 
     row = {c: None for c in renamed_cols}
